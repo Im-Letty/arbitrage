@@ -1164,6 +1164,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <div class="jrow"><span id="jmark" class="jmark">?</span><span id="jlabel" class="jlabel">通貨を選んで判定します</span></div>
 <ul id="jreasons" class="jreasons"></ul>
 <p class="jdisc">これは本物の価格データを「プロの7か条」の物差しで見た“今の条件の良し悪し”の目安です。「確実に儲かる」という意味ではありません。最終判断はご自身で。</p>
+  <p style="margin-top:8px"><a href="/log" style="color:#7ea8ff;font-size:13px">U0001F4DC 過去の判定を振り返る（あのとき◎→その後どう動いたか）</a></p>
 </div>
 <div class="panel">
   <label>どの通貨を社員に分析してもらう？</label>
@@ -1248,7 +1249,19 @@ function renderJudge(snap){
   else if(score===1){ mark="○"; label="条件は良いほう"; color="#3ec78a"; }
   else if(score===0){ mark="△"; label="微妙・様子見"; color="#d9a441"; }
   else { mark="×"; label="今は条件が良くない"; color="#ff6b6b"; }
-  jm.textContent=mark; jm.style.color=color; jl.textContent=label; jl.style.color=color;
+  jm.textContent=mark; jm.style.color=color; jl.textContent=label;  jl.style.color=color;
+  try{
+    var __key="arbi_judge_log";
+    var __log=JSON.parse(localStorage.getItem(__key)||"[]");
+    var __now=Date.now();
+    var __sym=(snap&&snap.symbol)||"?";
+    var __last=__log.length?__log[__log.length-1]:null;
+    if(!(__last&&__last.symbol===__sym&&(__now-__last.ts)<60000)){
+      __log.push({ts:__now,symbol:__sym,price:(snap&&snap.price)||null,changePct:(snap&&snap.changePct)||null,mark:mark,label:label});
+      if(__log.length>100)__log=__log.slice(__log.length-100);
+      localStorage.setItem(__key,JSON.stringify(__log));
+    }
+  }catch(__e){}
   jr.innerHTML=reasons.map(function(t){var li=document.createElement("li");li.textContent=t;return li.outerHTML;}).join("");
 }
 var goBtn=document.getElementById("go");
@@ -1282,6 +1295,51 @@ renderJudge(snapshot);
 </div></body></html>"""
 
 # 分析に参加する社員（順番に発言する）
+LOG_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>判定の振り返り — arbitrage</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:880px;margin:0 auto;padding:24px;background:#0b0e14;color:#e6e6e6;line-height:1.7}
+a{color:#7ea8ff}h1{font-size:22px}.muted{color:#8a93a3;font-size:14px}
+.card{background:#141925;border:1px solid #232b3a;border-radius:12px;padding:16px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid #232b3a}
+.mark{font-size:18px;font-weight:bold}.up{color:#3ddc84}.down{color:#ff6b6b}.flat{color:#cbd2e0}
+.note{background:#10151f;border:1px dashed #2c3547;border-radius:10px;padding:12px;color:#9aa3b2;font-size:13px;margin:12px 0}
+.btn{display:inline-block;background:#2b6cff;color:#fff;padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
+</style></head><body>
+<p><a href="/market">&larr; 市場室へ</a> &nbsp; <a href="/">arbitrage トップ</a></p>
+<h1>U0001F4DC 判定の振り返り（社員たちが向上するための記録）</h1>
+<p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
+<div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
+<div class="card"><div id="summary" class="muted">読み込み中…</div></div>
+<div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
+<p><button class="btn" id="clearBtn">記録を消す</button></p>
+<script>
+var B="https://"+"api."+"binance"+".com";
+function fmt(n){n=parseFloat(n);return isNaN(n)?"?":n.toLocaleString("en-US",{maximumFractionDigits:2});}
+function symPair(sym){return (sym&&sym!=="?")?(sym+"USDT"):null;}
+function load(){
+  var log=[];try{log=JSON.parse(localStorage.getItem("arbi_judge_log")||"[]");}catch(e){}
+  var rows=document.getElementById("rows");
+  var summ=document.getElementById("summary");
+  if(!log.length){summ.textContent="まだ記録がありません。市場室で「判定」するとここに貯まります。";return;}
+  summ.textContent="記録 "+log.length+" 件。◎/○ は「条件が良い」と評価したとき、× は「良くない」と評価したときの目安です。当てる記録ではなく、判断を見直すための記録です。";
+  var nowPrices={};
+  var syms=[];log.forEach(function(r){var p=symPair(r.symbol);if(p&&syms.indexOf(p)<0)syms.push(p);});
+  syms.forEach(function(p){try{var x=new XMLHttpRequest();x.open("GET",B+"/api/v3/ticker/price?symbol="+p,false);x.send(null);nowPrices[p]=parseFloat(JSON.parse(x.responseText).price);}catch(e){}});
+  var html="";
+  for(var i=log.length-1;i>=0;i--){var r=log[i];var d=new Date(r.ts);var pair=symPair(r.symbol);var now=pair?nowPrices[pair]:null;var then=parseFloat(r.price);
+    var after="—",cls="flat";
+    if(now&&then&&then>0){var ch=(now-then)/then*100;cls=ch>0.05?"up":(ch<-0.05?"down":"flat");after=(ch>=0?"+":"")+ch.toFixed(2)+"%";}
+    var mk=r.mark||"?";var mcls=(mk==="◎"||mk==="○")?"up":(mk==="×"?"down":"flat");
+    html+="<tr><td class=muted>"+d.toLocaleString("ja-JP")+"</td><td>"+(r.symbol||"?")+"</td><td class='mark "+mcls+"'>"+mk+"</td><td>$"+fmt(then)+"</td><td>"+(now?"$"+fmt(now):"?")+"</td><td class="+cls+">"+after+"</td></tr>";
+  }
+  rows.innerHTML=html;
+}
+document.getElementById("clearBtn").onclick=function(){if(confirm("この端末の判定記録をすべて消しますか？")){localStorage.removeItem("arbi_judge_log");location.reload();}};
+load();
+</script></body></html>"""
+
 MARKET_TEAM = [
     {"key": "checker", "name": "事実確認係ハジメ", "job": "各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みを足さない。出どころ・鮮度・一情報源だけ、を警告し、最新値は持たないと正直に言い、確認は本人に促す。"},
     {"key": "spread", "name": "価格差ウォッチャー サヤミ⚖️", "job": "同じ先物が取引所Aと取引所Bでいくら違うか（価格差・乖離）を見て、差が開いているか・縮みそうかを評価する。狙うのは相場の上下を当てることではなく、取引所間の歪みを取ること。ただし『見かけの価格差』はコストで消えやすいので、差があるというだけでは“いい”と言わない。差の大きさ・続きそうかをどう見るか具体的に示す。"},
@@ -1334,6 +1392,10 @@ def build_market_system(member, lang):
 @app.route("/market")
 def market():
     return Response(MARKET_HTML, mimetype="text/html")
+
+@app.route("/log")
+def judge_log():
+    return Response(LOG_HTML, mimetype="text/html")
 
 @app.route("/market_analyze", methods=["POST"])
 def market_analyze():
