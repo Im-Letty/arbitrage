@@ -1164,7 +1164,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <div class="jrow"><span id="jmark" class="jmark">?</span><span id="jlabel" class="jlabel">通貨を選んで判定します</span></div>
 <ul id="jreasons" class="jreasons"></ul>
 <p class="jdisc">これは本物の価格データを「プロの7か条」の物差しで見た“今の条件の良し悪し”の目安です。「確実に儲かる」という意味ではありません。最終判断はご自身で。</p>
-  <p style="margin-top:8px"><a href="/log" style="color:#7ea8ff;font-size:13px">U0001F4DC 過去の判定を振り返る（あのとき◎→その後どう動いたか）</a></p>
+  <p style="margin-top:8px"><a href="/log" style="color:#7ea8ff;font-size:13px">📜 過去の判定を振り返る（あのとき◎→その後どう動いたか）</a></p>
 </div>
 <div class="panel">
   <label>どの通貨を社員に分析してもらう？</label>
@@ -1308,7 +1308,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .btn{display:inline-block;background:#2b6cff;color:#fff;padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
 </style></head><body>
 <p><a href="/market">&larr; 市場室へ</a> &nbsp; <a href="/">arbitrage トップ</a></p>
-<h1>U0001F4DC 判定の振り返り（社員たちが向上するための記録）</h1>
+<h1>📜 判定の振り返り（社員たちが向上するための記録）</h1>
 <p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
 <div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
 <div class="card"><div id="summary" class="muted">読み込み中…</div></div>
