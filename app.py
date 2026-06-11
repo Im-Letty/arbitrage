@@ -15,7 +15,7 @@ LANG_NAMES = {
 }
 
 # AIアナリストの「頭脳」＝ 守るルール
-RULES = """あなたは「kabuka」のAIアナリストです。経済・投資・お金についての質問に答えます。
+RULES = """あなたは「arbitrage」のAIアナリストです。経済・投資・お金についての質問に答えます。
 あなたは人間のプロ投資家ではなく、プロが使う分析の作法を守って情報提供するAIです。これは正直に伝えてかまいません。
 
 必ず守るルール:
@@ -82,7 +82,7 @@ def build_meeting_system(role, lang):
         "",
         REASON_RULES,
         "",
-        "あなたは投資情報会社kabukaの社員「" + role["name"] + "」として、社員会議で発言します。",
+        "あなたは投資情報会社arbitrageの社員「" + role["name"] + "」として、社員会議で発言します。",
         "あなたは世界最上級のプロです。プロの中でも、とりわけ『自分のまちがいに、誰よりも早く気づく』ことに長けた一流です。",
         "あなたの担当：" + role["job"],
         "",
@@ -104,7 +104,7 @@ HOME_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — 取引所間 先物サヤ取りの投資情報会社</title>
+<title>arbitrage — 取引所間 先物サヤ取りの投資情報会社</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -141,13 +141,13 @@ HOME_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar"><span class="brand">kabuka</span><span class="badge">投資・お金の情報・教育</span></div>
-  <h1 class="hero">ようこそ kabuka へ</h1>
+  <div class="topbar"><span class="brand">arbitrage</span><span class="badge">投資・お金の情報・教育</span></div>
+  <h1 class="hero">ようこそ arbitrage へ</h1>
   <p class="lead">世界中の人が、初心者からプロまで、自分の言語で使える「投資・お金の情報会社」。ここは情報・教育の場です。</p>
   <div style="background:#e3f1ec;border:1px solid #cfe5dd;border-radius:14px;padding:14px 16px;margin:0 0 18px"><p style="font-size:15px;font-weight:700;color:#0f7a5f;margin:0 0 6px">🧭 わたしたちのモットー：「まちがいに早く気づく会社」</p><p style="font-size:12.5px;color:#5d6470;margin:0">絶対に勝つことはできません。だからこそ、すぐに結論を出さない・まちがえても責めない・わからないときは「わからない」と言える——そんな環境を大切にします。</p></div>
-<div class="flow"><span>世界の情報</span><span class="arw">→</span><span>kabukaの中で読み解く</span><span class="arw">→</span><span>あなた（世界の利用者）へ</span></div>
+<div class="flow"><span>世界の情報</span><span class="arw">→</span><span>arbitrageの中で読み解く</span><span class="arw">→</span><span>あなた（世界の利用者）へ</span></div>
   <div class="building">
-    <div class="building-title">kabuka — あなたの投資情報会社</div>
+    <div class="building-title">arbitrage — あなたの投資情報会社</div>
     <div class="rooms">
       <a class="room analyze full" href="/reception">
         <p class="rt">💬 受付カウンター（AIアナリスト）</p>
@@ -163,7 +163,7 @@ HOME_HTML = r"""<!DOCTYPE html>
       </a>
       <a class="room safe full" href="/members">
 <p class="rt">👥 社員紹介室</p>
-<p class="rd">kabukaで働く社員たちと、それぞれが守る約束を見る。</p>
+<p class="rd">arbitrageで働く社員たちと、それぞれが守る約束を見る。</p>
 </a>
 <a class="room jade full" href="/meeting-room">
 <p class="rt">🗣️ 社員会議室</p>
@@ -196,7 +196,7 @@ HOME_HTML = r"""<!DOCTYPE html>
       </div>
     </div>
   </div>
-  <div class="foot">kabuka は教育・情報提供を目的としたサービスです。お金を運用するものではなく、利益を保証するものでもありません。投資にはリスクがあり、最終的な判断はご自身の責任で行ってください。</div>
+  <div class="foot">arbitrage は教育・情報提供を目的としたサービスです。お金を運用するものではなく、利益を保証するものでもありません。投資にはリスクがあり、最終的な判断はご自身の責任で行ってください。</div>
 </div>
 </body>
 </html>"""
@@ -206,7 +206,7 @@ ANALYST_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — AIアナリスト</title>
+<title>arbitrage — AIアナリスト</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -243,9 +243,9 @@ ANALYST_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← kabuka トップへ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← arbitrage トップへ</a></p>
   <div class="topbar">
-    <span class="brand">kabuka</span>
+    <span class="brand">arbitrage</span>
     <span class="badge">AIアナリスト</span>
   </div>
   <h1 class="hero">AIアナリストに質問</h1>
@@ -267,7 +267,7 @@ ANALYST_HTML = r"""<!DOCTYPE html>
   <button class="ask" id="askBtn">聞いてみる</button>
   <div class="answer" id="answer"></div>
   <div class="foot">
-    kabuka のAIアナリストは、プロが使う分析の作法で中立に読み解くAIです。AIによる情報提供であり、利益を保証するものではありません。投資の判断はご自身の責任で行ってください。
+    arbitrage のAIアナリストは、プロが使う分析の作法で中立に読み解くAIです。AIによる情報提供であり、利益を保証するものではありません。投資の判断はご自身の責任で行ってください。
   </div>
 </div>
 <script>
@@ -318,7 +318,7 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — 投資の練習場</title>
+<title>arbitrage — 投資の練習場</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -349,8 +349,8 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="/">← kabuka トップへ</a>
-  <p class="brand">kabuka</p>
+  <a class="back" href="/">← arbitrage トップへ</a>
+  <p class="brand">arbitrage</p>
   <h1 class="hero">投資の練習場</h1>
   <p class="lead">すべて架空のお金です。本物のお金は使いません。安全に、投資のやり方を体験しましょう。</p>
   <div class="grid">
@@ -384,7 +384,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — 練習投資シミュレーター</title>
+<title>arbitrage — 練習投資シミュレーター</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -428,7 +428,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
   <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
-    <span class="brand">kabuka</span>
+    <span class="brand">arbitrage</span>
     <span class="badge">練習モード・仮想のお金</span>
   </div>
 
@@ -568,7 +568,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — ファクター投資の練習</title>
+<title>arbitrage — ファクター投資の練習</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -621,7 +621,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
   <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
-    <span class="brand">kabuka</span>
+    <span class="brand">arbitrage</span>
     <span class="badge">練習モード・架空の100万円</span>
   </div>
 
@@ -793,7 +793,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — アービトラージの練習</title>
+<title>arbitrage — アービトラージの練習</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -839,7 +839,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
   <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
-    <span class="brand">kabuka</span>
+    <span class="brand">arbitrage</span>
     <span class="badge">練習モード・架空の100万円</span>
   </div>
 
@@ -976,7 +976,7 @@ SHAIN_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — 社員紹介室</title>
+<title>arbitrage — 社員紹介室</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1005,8 +1005,8 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 </head>
 <body>
 <div class="wrap">
-<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← kabuka トップへ</a></p>
-<div class="topbar"><span class="brand">kabuka</span><span class="badge">社員紹介室</span></div>
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← arbitrage トップへ</a></p>
+<div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員紹介室</span></div>
 <h1 class="hero">うちの社員たち</h1>
 <p class="lead">「負けない会社」をつくるために集めた仲間です。一人ひとりが、破ってはいけない約束のどれかを担当しています。スター選手はいません。でも、みんなで支え合います。</p>
 <a href="/meeting-room" style="display:inline-block;text-decoration:none;background:#0f7a5f;color:#fff;font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
@@ -1022,7 +1022,7 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 <div class="member"><div class="mhead"><span class="me">🔍</span><span class="mn">監査役カンサ</span></div><p class="md">全員の意見にあやしい点・言い過ぎ・抜けがないかを最後に点検する。ルール違反（断定・個別売買の指示）があれば指摘し、最終判断は本人に委ねる。</p><p class="mp"><span class="ptag">守る約束</span> ②④ あやしい点を遠慮なく指摘し、最終判断は本人に委ねる</p></div>
 <div class="note">この人たちがいても「絶対にうまくいく」とは言えません。それでも、誰が何に責任を持つかがはっきりしていると、まちがいに早く気づけます。それが、このチームをそろえる理由です。</div>
 </div>
-<div class="foot">kabuka は教育・情報提供を目的としたサービスです。利益を保証するものではなく、投資の判断はご自身の責任で行ってください。</div>
+<div class="foot">arbitrage は教育・情報提供を目的としたサービスです。利益を保証するものではなく、投資の判断はご自身の責任で行ってください。</div>
 </div>
 </body>
 </html>
@@ -1033,7 +1033,7 @@ KAIGI_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — 社員会議室</title>
+<title>arbitrage — 社員会議室</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1067,8 +1067,8 @@ textarea{width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:1
 </head>
 <body>
 <div class="wrap">
-<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← kabuka トップへ</a></p>
-<div class="topbar"><span class="brand">kabuka</span><span class="badge">社員会議室</span></div>
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← arbitrage トップへ</a></p>
+<div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員会議室</span></div>
 <h1 class="hero">社員みんなで会議する</h1>
 <p class="lead">あなたの相談について、社員が一人ずつ順番に意見を出します。事実確認 → 分析 → 反対意見 → やさしくまとめ → 最終チェック、の順です。最初の一人が出るまで少し時間がかかることがあります。</p>
 <p class="label">答えの言語</p>
@@ -1118,7 +1118,7 @@ def arbitrage():
 # ===== 練習市場室（ペーパー・暗号資産）=====
 MARKET_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>取引所間 先物サヤ取り市場室 — kabuka</title>
+<title>取引所間 先物サヤ取り市場室 — arbitrage</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; margin:0; background:#0f1117; color:#e8eaed; line-height:1.7; }
@@ -1156,7 +1156,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 </style></head><body><div class="wrap">
 <h1>📈 取引所間 先物サヤ取り市場室</h1>
 <p class="sub">複数取引所のリアルタイム価格を見て、社員たちが取引所間の先物価格差（アービトラージ）の観点から判断・分析する部屋です。</p>
-<div class="motto">🧭 モットー：まちがいに早く気づく会社。ここは投資情報会社kabukaの<strong>『取引所間 先物サヤ取り市場室』</strong>です。同じ先物の取引所間の価格差を、手数料・送金・税を引いた“手取り”の目線で判断・分析します。社員は「絶対もうかる」とは言わず、わからないことは正直に言います。投資の判断は、いつもあなた自身のものです。</div>
+<div class="motto">🧭 モットー：まちがいに早く気づく会社。ここは投資情報会社arbitrageの<strong>『取引所間 先物サヤ取り市場室』</strong>です。同じ先物の取引所間の価格差を、手数料・送金・税を引いた“手取り”の目線で判断・分析します。社員は「絶対もうかる」とは言わず、わからないことは正直に言います。投資の判断は、いつもあなた自身のものです。</div>
 <div id="grid" class="grid"><div class="coin">読み込み中…</div></div>
 <p id="upd" class="upd"></p>
 <div class="judge">
@@ -1289,7 +1289,7 @@ def build_market_system(member, lang):
         "",
         REASON_RULES,
         "",
-        "ここは投資情報会社kabukaの『取引所間 先物サヤ取り市場室』です。複数取引所のリアルタイム価格データを見て、取引所間の先物価格差（アービトラージ）の観点から判断・分析する場です。",
+        "ここは投資情報会社arbitrageの『取引所間 先物サヤ取り市場室』です。複数取引所のリアルタイム価格データを見て、取引所間の先物価格差（アービトラージ）の観点から判断・分析する場です。",
         "あなたは世界最上級のプロです。プロの中でも、とりわけ『自分のまちがいに、誰よりも早く気づく』ことに長けた一流です。社員「" + member["name"] + "」として発言します。あなたの役割：" + member["job"],
         "",
         "【全手法共通のマンデート（判断の物差し）】",
