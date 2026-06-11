@@ -1324,17 +1324,24 @@ function load(){
   var summ=document.getElementById("summary");
   if(!log.length){summ.textContent="まだ記録がありません。市場室で「判定」するとここに貯まります。";return;}
   summ.textContent="記録 "+log.length+" 件。◎/○ は「条件が良い」と評価したとき、× は「良くない」と評価したときの目安です。当てる記録ではなく、判断を見直すための記録です。";
-  var nowPrices={};
-  var syms=[];log.forEach(function(r){var p=symPair(r.symbol);if(p&&syms.indexOf(p)<0)syms.push(p);});
-  syms.forEach(function(p){try{var x=new XMLHttpRequest();x.open("GET",B+"/api/v3/ticker/price?symbol="+p,false);x.send(null);nowPrices[p]=parseFloat(JSON.parse(x.responseText).price);}catch(e){}});
   var html="";
-  for(var i=log.length-1;i>=0;i--){var r=log[i];var d=new Date(r.ts);var pair=symPair(r.symbol);var now=pair?nowPrices[pair]:null;var then=parseFloat(r.price);
-    var after="—",cls="flat";
-    if(now&&then&&then>0){var ch=(now-then)/then*100;cls=ch>0.05?"up":(ch<-0.05?"down":"flat");after=(ch>=0?"+":"")+ch.toFixed(2)+"%";}
+  for(var i=log.length-1;i>=0;i--){var r=log[i];var d=new Date(r.ts);var then=parseFloat(r.price);
     var mk=r.mark||"?";var mcls=(mk==="◎"||mk==="○")?"up":(mk==="×"?"down":"flat");
-    html+="<tr><td class=muted>"+d.toLocaleString("ja-JP")+"</td><td>"+(r.symbol||"?")+"</td><td class='mark "+mcls+"'>"+mk+"</td><td>$"+fmt(then)+"</td><td>"+(now?"$"+fmt(now):"?")+"</td><td class="+cls+">"+after+"</td></tr>";
+    html+="<tr data-sym='"+(r.symbol||"?")+"' data-then='"+(isNaN(then)?"":then)+"'><td class=muted>"+d.toLocaleString("ja-JP")+"</td><td>"+(r.symbol||"?")+"</td><td class='mark "+mcls+"'>"+mk+"</td><td>$"+fmt(then)+"</td><td class='nowp'>…</td><td class='aft'>…</td></tr>";
   }
   rows.innerHTML=html;
+  var syms=[];log.forEach(function(r){var p=symPair(r.symbol);if(p&&syms.indexOf(p)<0)syms.push(p);});
+  syms.forEach(function(p){
+    fetch(B+"/api/v3/ticker/price?symbol="+p).then(function(res){return res.json();}).then(function(j){
+      var now=parseFloat(j.price);var sym=p.replace("USDT","");
+      var trs=document.querySelectorAll("tr[data-sym='"+sym+"']");
+      trs.forEach(function(tr){var then=parseFloat(tr.getAttribute("data-then"));var nc=tr.querySelector(".nowp");var ac=tr.querySelector(".aft");
+        if(nc)nc.textContent=now?"$"+fmt(now):"?";
+        if(ac&&now&&then&&then>0){var ch=(now-then)/then*100;ac.textContent=(ch>=0?"+":"")+ch.toFixed(2)+"%";ac.className="aft "+(ch>0.05?"up":(ch<-0.05?"down":"flat"));}
+        else if(ac){ac.textContent="—";}
+      });
+    }).catch(function(){});
+  });
 }
 document.getElementById("clearBtn").onclick=function(){if(confirm("この端末の判定記録をすべて消しますか？")){localStorage.removeItem("arbi_judge_log");location.reload();}};
 load();
