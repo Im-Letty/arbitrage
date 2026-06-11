@@ -1372,7 +1372,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <h1>📜 判定の振り返り（社員たちが向上するための記録）</h1>
 <p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
 <div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
-<div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div>
+<div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div><div class="card"><div id="board"></div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
 <p><button class="btn" id="exportBtn">バックアップを保存</button> <button class="btn" id="importBtn">バックアップから復元</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></p>
 <p><button class="btn" id="clearBtn">記録を消す</button></p>
@@ -1463,6 +1463,49 @@ if(__ib&&__if){
     reader.readAsText(file);
   };
 }
+
+var BOARD_MOVE_THRESH=0.3;
+var __boardHorizon="r1";
+var BOARD_HKEYS=[["r1","1時間後"],["r4","4時間後"],["r24","24時間後"]];
+var BOARD_MARKS=["◎","○","△","×","？"];
+function boardRead(){try{return JSON.parse(localStorage.getItem("arbi_judge_log")||"[]")||[];}catch(e){return [];}}
+function boardPct(n,d){return d?(Math.round(n/d*1000)/10):null;}
+function drawBoard(){
+  var el=document.getElementById("board");if(!el)return;
+  var log=boardRead();
+  var hk=__boardHorizon;
+  var any=false;
+  for(var i=0;i<log.length;i++){var v=log[i]&&log[i][hk];if(v!=null&&v!==undefined&&!isNaN(v)){any=true;break;}}
+  var btns="";for(var b=0;b<BOARD_HKEYS.length;b++){var hkk=BOARD_HKEYS[b][0];var hlbl=BOARD_HKEYS[b][1];btns+='<button class="btn'+(hkk===hk?" on":"")+'" data-hz="'+hkk+'" style="margin-right:6px">'+hlbl+'</button>';}
+  var head='<div style="margin-bottom:8px">'+btns+'</div>';
+  if(!any){el.innerHTML=head+'<div class="muted">まだ成績データがありません。判定が記録され、時間が経つとここに表示されます。</div>';boardBind();return;}
+  var rowsHtml="";
+  for(var m=0;m<BOARD_MARKS.length;m++){
+    var mk=BOARD_MARKS[m];
+    var cnt=0,dirN=0,dirHit=0,moveHit=0,absSum=0;
+    for(var j=0;j<log.length;j++){
+      var r=log[j];if(!r||r.mark!==mk)continue;
+      var v=r[hk];if(v==null||v===undefined||isNaN(v))continue;
+      var ch=parseFloat(v);cnt++;absSum+=Math.abs(ch);
+      if(Math.abs(ch)>=BOARD_MOVE_THRESH)moveHit++;
+      var dir=r.trendDir||"neutral";
+      if(dir==="up"||dir==="down"){dirN++;if((dir==="up"&&ch>0)||(dir==="down"&&ch<0))dirHit++;}
+    }
+    var p1=boardPct(dirHit,dirN);var p2=boardPct(moveHit,cnt);
+    var avg=cnt?(Math.round(absSum/cnt*100)/100):null;
+    var few=(cnt>0&&cnt<30)?' <span class="muted">件数僅少（参考値）</span>':"";
+    rowsHtml+="<tr><td>"+mk+"</td><td>"+cnt+few+"</td><td>"+(p1==null?"—":p1+"%")+"</td><td>"+(p2==null?"—":p2+"%")+"</td><td>"+(avg==null?"—":avg+"%")+"</td></tr>";
+  }
+  var tbl='<table><thead><tr><th>印</th><th>件数</th><th>方向的中率</th><th>±0.3%以上</th><th>平均変化幅</th></tr></thead><tbody>'+rowsHtml+"</tbody></table>";
+  el.innerHTML=head+tbl;
+  boardBind();
+}
+function boardBind(){
+  var el=document.getElementById("board");if(!el)return;
+  var bs=el.querySelectorAll("button[data-hz]");
+  for(var i=0;i<bs.length;i++){bs[i].onclick=function(){__boardHorizon=this.getAttribute("data-hz");drawBoard();};}
+}
+drawBoard();
 load();
 </script></body></html>"""
 
