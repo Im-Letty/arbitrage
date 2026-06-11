@@ -131,7 +131,7 @@ HOME_HTML = r"""<!DOCTYPE html>
   <div class="building">
     <div class="building-title">kabuka — あなたの投資情報会社</div>
     <div class="rooms">
-      <a class="room analyze full" href="/analyst">
+      <a class="room analyze full" href="/reception">
         <p class="rt">💬 受付カウンター（AIアナリスト）</p>
         <p class="rd">情報をチェックし、冷静に分析し、あなたの言語とレベルで答えます。質問してみてください。</p>
       </a>
@@ -139,15 +139,15 @@ HOME_HTML = r"""<!DOCTYPE html>
         <p class="rt">📈 株価グラフ＆分析</p>
         <p class="rd">本物のリアルタイム価格をグラフで見て、社員の分析メモ付きで読む。</p>
       </a>
-      <a class="room safe" href="/renshujo">
+      <a class="room safe" href="/practice">
         <p class="rt">🎯 投資の練習場</p>
         <p class="rd">積立・分散・ファクターなどを、リスクなしで試して学ぶ。</p>
       </a>
-      <a class="room safe full" href="/shain">
+      <a class="room safe full" href="/members">
 <p class="rt">👥 社員紹介室</p>
 <p class="rd">kabukaで働く社員たちと、それぞれが守る約束を見る。</p>
 </a>
-<a class="room jade full" href="/kaigi">
+<a class="room jade full" href="/meeting-room">
 <p class="rt">🗣️ 社員会議室</p>
 <p class="rd">あなたの相談に、社員たちが順番に意見を出し合って答えます。</p>
 </a>
@@ -159,7 +159,7 @@ HOME_HTML = r"""<!DOCTYPE html>
 <p class="rt">💹 アービトラージの学習</p>
 <p class="rd">取引所間の先物サヤ取りの考え方を、やさしく学ぶ。</p>
 </a>
-<a class="room safe full" href="/kihon">
+<a class="room safe full" href="/basics">
 <p class="rt">🧮 練習投資シミュレーター</p>
 <p class="rd">積立・分散などをリスクなしで試して、数字の動きを体感する。</p>
 </a>
@@ -336,7 +336,7 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
   <h1 class="hero">投資の練習場</h1>
   <p class="lead">すべて架空のお金です。本物のお金は使いません。安全に、投資のやり方を体験しましょう。</p>
   <div class="grid">
-    <a class="card" href="/kihon">
+    <a class="card" href="/basics">
       <span class="badge">使えます</span>
       <h3>コツコツ積立で比べる</h3>
       <p>「ひとつに集中」と「分散・長期・積立」を比べ、揺れの違いを体験します。</p>
@@ -407,7 +407,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/renshujo" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
+  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
     <span class="brand">kabuka</span>
@@ -600,7 +600,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/renshujo" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
+  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
     <span class="brand">kabuka</span>
@@ -818,7 +818,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/renshujo" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
+  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
     <span class="brand">kabuka</span>
@@ -991,7 +991,7 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 <div class="topbar"><span class="brand">kabuka</span><span class="badge">社員紹介室</span></div>
 <h1 class="hero">うちの社員たち</h1>
 <p class="lead">「負けない会社」をつくるために集めた仲間です。一人ひとりが、破ってはいけない約束のどれかを担当しています。スター選手はいません。でも、みんなで支え合います。</p>
-<a href="/kaigi" style="display:inline-block;text-decoration:none;background:#0f7a5f;color:#fff;font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
+<a href="/meeting-room" style="display:inline-block;text-decoration:none;background:#0f7a5f;color:#fff;font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
 <div class="members">
 <div class="member"><div class="mhead"><span class="me">🔎</span><span class="mn">事実確認係ハジメ</span></div><p class="md">各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みは足さない。</p><p class="mp"><span class="ptag">守る約束</span> ②③ 出どころ・鮮度・一情報源を警告し、最新値は持たないと正直に言い、確認は本人に促す</p></div>
 <div class="member"><div class="mhead"><span class="me">⚖️</span><span class="mn">価格差ウォッチャー サヤミ</span></div><p class="md">同じ先物が取引所Aと取引所Bでいくら違うか（価格差・乖離）を見て、差が開いているか・縮みそうかを評価する。狙うのは上下当てではなく取引所間の歪み。</p><p class="mp"><span class="ptag">守る約束</span> ①④ 『見かけの価格差』はコストで消えやすいので、差があるだけでは“いい”と言わない</p></div>
@@ -1077,15 +1077,15 @@ btn.addEventListener("click",run);
 def home():
     return Response(HOME_HTML, mimetype="text/html")
 
-@app.route("/analyst")
+@app.route("/reception")
 def analyst():
     return Response(ANALYST_HTML, mimetype="text/html")
 
-@app.route("/renshujo")
+@app.route("/practice")
 def renshujo():
     return Response(RENSHUJO_HTML, mimetype="text/html")
 
-@app.route("/kihon")
+@app.route("/basics")
 def kihon():
     return Response(KIHON_HTML, mimetype="text/html")
 
@@ -1286,11 +1286,11 @@ def market_analyze():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route("/shain")
+@app.route("/members")
 def shain():
     return Response(SHAIN_HTML, mimetype="text/html")
 
-@app.route("/kaigi")
+@app.route("/meeting-room")
 def kaigi():
     return Response(KAIGI_HTML, mimetype="text/html")
 
