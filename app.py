@@ -1302,8 +1302,9 @@ goBtn.onclick=async function(){
     var snapshot={symbol:NAMES[sym],price:tr.lastPrice,changePct:tr.priceChangePercent,high24:tr.highPrice,low24:tr.lowPrice,hourlyCloses:closes,quoteVolume:(tr.quoteVolume||tr.volume||null),trades:(tr.count!=null?tr.count:null),wap:(tr.weightedAvgPrice||null),volPct:(function(){if(!closes||closes.length<3)return null;var r=[];for(var k=1;k<closes.length;k++){var a=parseFloat(closes[k-1]),b=parseFloat(closes[k]);if(a>0)r.push((b-a)/a*100);}if(!r.length)return null;var m=r.reduce(function(x,y){return x+y;},0)/r.length;var v=r.reduce(function(x,y){return x+(y-m)*(y-m);},0)/r.length;return Math.sqrt(v);})(),trendFirstHalf:(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[0]),b=parseFloat(closes[h-1]);if(a>0)return (b-a)/a*100;return null;})(),trendSecondHalf:(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[h]),b=parseFloat(closes[closes.length-1]);if(a>0)return (b-a)/a*100;return null;})()};
 renderJudge(snapshot);
     var transcript=""; var step=0; var total=999;
-    while(step<total){
-      var res=await fetch("/market_analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({snapshot:snapshot,step:step,transcript:transcript})});
+    var histStr=(function(){try{var lg=JSON.parse(localStorage.getItem('arbi_judge_log')||'[]');var sym=(snapshot&&snapshot.symbol)||'';var cur=(snapshot&&snapshot.price)||null;var rows=lg.filter(function(e){return e&&e.symbol===sym&&e.price&&e.mark&&e.ts;});if(!rows.length||!cur)return '';var byMark={};rows.forEach(function(e){var ch=((cur-e.price)/e.price)*100;if(!byMark[e.mark])byMark[e.mark]={n:0,up:0,sum:0};byMark[e.mark].n++;byMark[e.mark].sum+=ch;if(ch>0)byMark[e.mark].up++;});var lines=['\u3010\u904e\u53bb\u306e\u81ea\u5206\u305f\u3061\u306e\u5224\u5b9a\u5b9f\u7e3e\uff08\u540c\u3058\u901a\u8ca8\u30fb\u53c2\u8003\u60c5\u5831\uff09\u3011'];['\u25ce','\u25cb','\u25b3','\u00d7','?'].forEach(function(m){var d=byMark[m];if(!d)return;var avg=(d.sum/d.n).toFixed(2);var rate=Math.round((d.up/d.n)*100);lines.push('\u5224\u5b9a'+m+'\uff1a'+d.n+'\u4ef6\u3002\u305d\u306e\u5f8c\u3001\u73fe\u5728\u5024\u307e\u3067\u5e73\u5747'+avg+'%\uff08\u4e0a\u6607\u3057\u305f\u5272\u5408'+rate+'%\uff09');});if(lines.length<2)return '';lines.push('\u203b\u3053\u308c\u306f\u904e\u53bb\u306e\u50be\u5411\u306e\u53c2\u8003\u3067\u3042\u308a\u3001\u672a\u6765\u3092\u4fdd\u8a3c\u3059\u308b\u3082\u306e\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u58f2\u8cb7\u30b5\u30a4\u30f3\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002');return lines.join('\n');}catch(e){return '';}})();
+      while(step<total){
+      var res=await fetch("/market_analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({snapshot:snapshot,step:step,transcript:transcript,history:histStr})});
       var j=await res.json();
       if(j.error){ out.innerHTML+="<div class=\"speak err\">"+j.error+"</div>"; break; }
       total=j.total;
@@ -1438,6 +1439,7 @@ def market_analyze():
     snap = data.get("snapshot") or {}
     step = int(data.get("step", 0))
     transcript = (data.get("transcript") or "").strip()
+    history = (data.get("history") or "").strip()
     lang = data.get("lang", "ja")
     if not snap:
         return jsonify({"error": "価格データがありません。"}), 400
@@ -1458,6 +1460,8 @@ def market_analyze():
         + "1時間ごとの値動きの荒さ（標準偏差%）：" + str(snap.get("volPct", "?")) + "\n"
         + "直近24hの前半トレンド%：" + str(snap.get("trendFirstHalf", "?")) + " / 後半トレンド%：" + str(snap.get("trendSecondHalf", "?"))
     )
+    if history:
+        facts += "\n\n" + history
     user_content = "今の本物の市場データ（練習用）：\n" + facts
     if transcript:
         user_content += "\n\nここまでの社員の発言：\n" + transcript
