@@ -83,7 +83,7 @@ HOME_HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kabuka — 投資・お金の情報・教育</title>
+<title>kabuka — 取引所間 先物サヤ取りの投資情報会社</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -132,9 +132,9 @@ HOME_HTML = r"""<!DOCTYPE html>
         <p class="rt">💬 受付カウンター（AIアナリスト）</p>
         <p class="rd">情報をチェックし、冷静に分析し、あなたの言語とレベルで答えます。質問してみてください。</p>
       </a>
-      <a class="room jade" href="https://kabuka-graph.onrender.com">
+      <a class="room jade" href="/market">
         <p class="rt">📈 株価グラフ＆分析</p>
-        <p class="rd">本物の値をグラフで見て、分析メモ付きで読む。</p>
+        <p class="rd">本物のリアルタイム価格をグラフで見て、社員の分析メモ付きで読む。</p>
       </a>
       <a class="room safe" href="/renshujo">
         <p class="rt">🎯 投資の練習場</p>
@@ -151,6 +151,18 @@ HOME_HTML = r"""<!DOCTYPE html>
 <a class="room gold full" href="/market">
 <p class="rt">📈 練習市場室</p>
 <p class="rd">本物のリアルタイム価格（暗号資産）を見て、社員たちが各手法の観点から判断・分析します。</p>
+</a>
+<a class="room jade full" href="/arbitrage">
+<p class="rt">💹 アービトラージの学習</p>
+<p class="rd">取引所間の先物サヤ取りの考え方を、やさしく学ぶ。</p>
+</a>
+<a class="room safe full" href="/kihon">
+<p class="rt">🧮 練習投資シミュレーター</p>
+<p class="rd">積立・分散などをリスクなしで試して、数字の動きを体感する。</p>
+</a>
+<a class="room safe full" href="/factor">
+<p class="rt">🔬 ファクター投資の練習</p>
+<p class="rd">割安・規模・勢いなどの「ファクター」の考え方を練習する。</p>
 </a>
 <div class="rule">
         <p class="rt">📘 社員のルールブック — 破ってはいけない4つの約束</p>
@@ -1057,7 +1069,7 @@ btn.addEventListener("click",run);
 
 @app.route("/")
 def home():
-    return Response(MARKET_HTML, mimetype="text/html")
+    return Response(HOME_HTML, mimetype="text/html")
 
 @app.route("/analyst")
 def analyst():
