@@ -1374,6 +1374,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
 <div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
+<p><button class="btn" id="exportBtn">バックアップを保存</button> <button class="btn" id="importBtn">バックアップから復元</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></p>
 <p><button class="btn" id="clearBtn">記録を消す</button></p>
 <script>
 var B="https://"+"api."+"binance"+".com";
@@ -1419,6 +1420,49 @@ function load(){
   });
 }
 document.getElementById("clearBtn").onclick=function(){if(confirm("この端末の判定記録をすべて消しますか？")){localStorage.removeItem("arbi_judge_log");location.reload();}};
+var BK_KEY="arbi_judge_log";
+function bkRead(){try{return JSON.parse(localStorage.getItem(BK_KEY)||"[]")||[];}catch(e){return [];}}
+function bkDate(){var d=new Date();function p(n){return (n<10?"0":"")+n;}return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());}
+var __eb=document.getElementById("exportBtn");
+if(__eb){__eb.onclick=function(){
+  var data=bkRead();
+  var payload={format:"v1",exportedAt:new Date().toISOString(),count:data.length,data:data};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");a.href=url;a.download="arbi_backup_"+bkDate()+".json";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+};}
+var __ib=document.getElementById("importBtn");var __if=document.getElementById("importFile");
+if(__ib&&__if){
+  __ib.onclick=function(){__if.value="";__if.click();};
+  __if.onchange=function(){
+    var file=__if.files&&__if.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(){
+      var obj;try{obj=JSON.parse(reader.result);}catch(e){alert("読み込み失敗：JSONを解析できませんでした。");return;}
+      if(!obj||obj.format!=="v1"){alert("形式が違います（v1のバックアップではありません）。");return;}
+      var incoming=(obj&&obj.data)||[];if(!(incoming instanceof Array)){alert("データ形式が不正です。");return;}
+      var cur=bkRead();
+      var seen={};for(var i=0;i<cur.length;i++){var c=cur[i];if(c&&c.ts!=null&&c.symbol!=null){seen[c.ts+"|"+c.symbol]=true;}}
+      var add=[],skip=0;
+      for(var j=0;j<incoming.length;j++){
+        var e=incoming[j];
+        if(!e||e.ts==null||e.symbol==null||e.price==null||e.mark==null){skip++;continue;}
+        var k=e.ts+"|"+e.symbol;
+        if(seen[k]){continue;}
+        seen[k]=true;add.push(e);
+      }
+      if(add.length===0){alert("追加できる新しい記録はありませんでした（現在 "+cur.length+" 件、スキップ "+skip+" 件）。");return;}
+      if(!confirm("現在 "+cur.length+" 件、追加されるのは "+add.length+" 件（スキップ "+skip+" 件）。実行しますか？")){return;}
+      var merged=cur.concat(add);
+      merged.sort(function(a,b){return (a.ts||0)-(b.ts||0);});
+      localStorage.setItem(BK_KEY,JSON.stringify(merged));
+      location.reload();
+    };
+    reader.readAsText(file);
+  };
+}
 load();
 </script></body></html>"""
 
