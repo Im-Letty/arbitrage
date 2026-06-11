@@ -143,7 +143,7 @@ HOME_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
   <div class="topbar"><span class="brand">arbitrage</span><span class="badge">投資・お金の情報・教育</span></div>
   <h1 class="hero">ようこそ arbitrage へ</h1>
-  <p class="lead">世界中の人が、初心者からプロまで、自分の言語で使える「投資・お金の情報会社」。ここは情報・教育の場です。</p>
+  <p class="lead">暗号資産の先物サヤ取り（取引所どうしの価格差）に特化した、情報・教育の場です。本物の価格を見ながら、できるだけ正確に・根拠を持って判断しようとし、まちがいに早く気づこうとする社員たちが、「今は条件がいい・悪い」を理由つきで考えます。初心者からプロまで、自分の言語で使えます。</p>
   <div style="background:#e3f1ec;border:1px solid #cfe5dd;border-radius:14px;padding:14px 16px;margin:0 0 18px"><p style="font-size:15px;font-weight:700;color:#0f7a5f;margin:0 0 6px">🧭 わたしたちのモットー：「まちがいに早く気づく会社」</p><p style="font-size:12.5px;color:#5d6470;margin:0">絶対に勝つことはできません。だからこそ、すぐに結論を出さない・まちがえても責めない・わからないときは「わからない」と言える——そんな環境を大切にします。</p></div>
 <div class="flow"><span>世界の情報</span><span class="arw">→</span><span>arbitrageの中で読み解く</span><span class="arw">→</span><span>あなた（世界の利用者）へ</span></div>
   <div class="building">
