@@ -1227,7 +1227,41 @@ async function loadGrid(){
     document.getElementById("upd").textContent="最終更新："+now.toLocaleTimeString("ja-JP")+"（数秒ごとに自動更新）";
   }catch(e){ document.getElementById("grid").innerHTML="<div class=\"coin err\">価格を取得できませんでした。</div>"; }
 }
-loadGrid(); setInterval(loadGrid, 10000);
+loadGrid(); setInterval(loadGrid, 10000); try{arbiFillResults();}catch(e){}
+function arbiFillResults(){
+  var KEY="arbi_judge_log";
+  var log=[];try{log=JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return;}
+  if(!log||!log.length)return;
+  var now=Date.now();
+  var HRS={r1:3600000,r4:14400000,r24:86400000};
+  var pending=[];
+  for(var i=0;i<log.length;i++){var r=log[i];if(!r||!r.ts||!r.symbol)continue;
+    var need=false;
+    for(var k in HRS){if(r[k]===null||r[k]===undefined){if(now>=(r.ts+HRS[k]+60000))need=true;}}
+    if(need)pending.push(i);
+  }
+  pending.sort(function(a,b){return log[a].ts-log[b].ts;});
+  pending=pending.slice(0,20);
+  if(!pending.length)return;
+  var tasks=[];
+  pending.forEach(function(idx){var r=log[idx];
+    for(var k in HRS){if((r[k]===null||r[k]===undefined)&&now>=(r.ts+HRS[k]+60000)){
+      var target=r.ts+HRS[k];var startTime=Math.floor(target/60000)*60000;
+      tasks.push({idx:idx,key:k,sym:r.symbol,startTime:startTime,base:parseFloat(r.price)});
+    }}
+  });
+  if(!tasks.length)return;
+  var done=0;
+  tasks.forEach(function(tk){
+    var url=API+"/api/v3/klines"+"?"+"symbol"+"="+tk.sym+"&interval=1m&startTime="+tk.startTime+"&limit=1";
+    fetch(url).then(function(res){return res.json();}).then(function(j){
+      if(j&&j.length&&j[0]&&j[0][4]!==undefined){var close=parseFloat(j[0][4]);
+        if(!isNaN(close)&&tk.base>0){var ch=(close-tk.base)/tk.base*100;log[tk.idx][tk.key]=Math.round(ch*1000)/1000;}}
+    }).catch(function(){}).then(function(){
+      done++;if(done===tasks.length){try{localStorage.setItem(KEY,JSON.stringify(log));}catch(e){}}
+    });
+  });
+}
 function renderJudge(snap){
   var jm=document.getElementById("jmark"), jl=document.getElementById("jlabel"), jr=document.getElementById("jreasons");
   var reasons=[]; var score=0;
@@ -1338,7 +1372,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <h1>📜 判定の振り返り（社員たちが向上するための記録）</h1>
 <p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
 <div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
-<div class="card"><div id="summary" class="muted">読み込み中…</div></div>
+<div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
 <p><button class="btn" id="clearBtn">記録を消す</button></p>
 <script>
@@ -1357,6 +1391,20 @@ function load(){
     html+="<tr data-sym='"+(r.symbol||"?")+"' data-then='"+(isNaN(then)?"":then)+"'><td class=muted>"+d.toLocaleString("ja-JP")+"</td><td>"+(r.symbol||"?")+"</td><td class='mark "+mcls+"'>"+mk+"</td><td>$"+fmt(then)+"</td><td class='nowp'>…</td><td class='aft'>…</td></tr>";
   }
   rows.innerHTML=html;
+  (function(){
+    var obs=[];
+    log.forEach(function(r){["r1","r4","r24"].forEach(function(k){var v=r[k];if(v!==null&&v!==undefined&&!isNaN(v)){obs.push({ch:parseFloat(v),dir:r.trendDir||"neutral"});}});});
+    var sum=document.getElementById("summary2");if(!sum)return;
+    if(!obs.length){sum.textContent="答え合わせ済みデータがまだありません（1時間以上経過した判定から自動で埋まります）。";return;}
+    var dirObs=obs.filter(function(o){return o.dir==="up"||o.dir==="down";});
+    var dirHit=dirObs.filter(function(o){return (o.dir==="up"&&o.ch>0)||(o.dir==="down"&&o.ch<0);}).length;
+    var moveHit=obs.filter(function(o){return Math.abs(o.ch)>=0.3;}).length;
+    var p1=dirObs.length?Math.round(dirHit/dirObs.length*1000)/10:null;
+    var p2=Math.round(moveHit/obs.length*1000)/10;
+    var msg="答え合わせ "+obs.length+"件（1h/4h/24h後の値動き）｜トレンド方向に動いた率: "+(p1===null?"—":p1+"%")+"（対象"+dirObs.length+"件）｜方向不問で±0.3%以上動いた率: "+p2+"%";
+    sum.textContent=msg;
+  })();
+
   var syms=[];log.forEach(function(r){var p=symPair(r.symbol);if(p&&syms.indexOf(p)<0)syms.push(p);});
   syms.forEach(function(p){
     fetch(B+"/api/v3/ticker/price?symbol="+p).then(function(res){return res.json();}).then(function(j){
