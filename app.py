@@ -1203,7 +1203,21 @@ async function loadGrid(){
 loadGrid(); setInterval(loadGrid, 10000);
 function renderJudge(snap){
   var jm=document.getElementById("jmark"), jl=document.getElementById("jlabel"), jr=document.getElementById("jreasons");
-  var reasons=[]; var score=0; var ok=true;
+  var reasons=[]; var score=0;
+  try{
+    var __c=(typeof closes!=='undefined'&&closes)?closes.map(parseFloat).filter(function(x){return !isNaN(x);}):[];
+    if(__c.length>=3){
+      var __r=[];for(var __i=1;__i<__c.length;__i++){if(__c[__i-1]>0)__r.push((__c[__i]-__c[__i-1])/__c[__i-1]*100);}
+      if(__r.length){var __m=__r.reduce(function(a,b){return a+b;},0)/__r.length;var __v=Math.sqrt(__r.reduce(function(a,b){return a+(b-__m)*(b-__m);},0)/__r.length);
+        if(__v>=0.3&&__v<=1.5)score+=1; else if(__v>2.5)score-=1;
+      }
+      var __h=Math.floor(__c.length/2);
+      if(__c.length>=4&&__c[0]>0&&__c[__h]>0){var __t1=(__c[__h-1]-__c[0])/__c[0]*100;var __t2=(__c[__c.length-1]-__c[__h])/__c[__h]*100;
+        if((__t1>=0&&__t2>=0)||(__t1<0&&__t2<0))score+=1;
+      }
+    }
+  }catch(__e){}
+  var __dummy=0; var ok=true;
   var price=parseFloat(snap.price), hi=parseFloat(snap.high24), lo=parseFloat(snap.low24), chg=parseFloat(snap.changePct);
   var closes=(snap.hourlyCloses||[]).map(Number).filter(function(x){return !isNaN(x);});
   if(isNaN(price)||isNaN(hi)||isNaN(lo)||closes.length<6){ ok=false; }
@@ -1246,7 +1260,7 @@ goBtn.onclick=async function(){
     var tr=await fetch(API+"/api/v3/ticker/24hr?symbol="+sym).then(r=>r.json());
     var kl=await fetch(API+"/api/v3/klines?symbol="+sym+"&interval=1h&limit=24").then(r=>r.json());
     var closes=kl.map(function(k){return parseFloat(k[4]);});
-    var snapshot={symbol:NAMES[sym],price:tr.lastPrice,changePct:tr.priceChangePercent,high24:tr.highPrice,low24:tr.lowPrice,hourlyCloses:closes};
+    var snapshot={symbol:NAMES[sym],price:tr.lastPrice,changePct:tr.priceChangePercent,high24:tr.highPrice,low24:tr.lowPrice,hourlyCloses:closes,quoteVolume:(tr.quoteVolume||tr.volume||null),trades:(tr.count!=null?tr.count:null),wap:(tr.weightedAvgPrice||null),volPct:(function(){if(!closes||closes.length<3)return null;var r=[];for(var k=1;k<closes.length;k++){var a=parseFloat(closes[k-1]),b=parseFloat(closes[k]);if(a>0)r.push((b-a)/a*100);}if(!r.length)return null;var m=r.reduce(function(x,y){return x+y;},0)/r.length;var v=r.reduce(function(x,y){return x+(y-m)*(y-m);},0)/r.length;return Math.sqrt(v);})(),trendFirstHalf:(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[0]),b=parseFloat(closes[h-1]);if(a>0)return (b-a)/a*100;return null;})(),trendSecondHalf:(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[h]),b=parseFloat(closes[closes.length-1]);if(a>0)return (b-a)/a*100;return null;})()};
 renderJudge(snapshot);
     var transcript=""; var step=0; var total=999;
     while(step<total){
@@ -1340,7 +1354,12 @@ def market_analyze():
         + "今の価格：" + str(snap.get("price", "?")) + "\n"
         + "24時間の変化率：" + str(snap.get("changePct", "?")) + "%\n"
         + "24時間の高値：" + str(snap.get("high24", "?")) + " / 安値：" + str(snap.get("low24", "?")) + "\n"
-        + "直近24時間の1時間ごとの終値：" + closes_str
+        + "直近24時間の1時間ごとの終値：" + closes_str + "\n"
+        + "24時間の出来高（ドル建て）：" + str(snap.get("quoteVolume", "?")) + "\n"
+        + "24時間の取引回数：" + str(snap.get("trades", "?")) + "\n"
+        + "24時間の加重平均価格：" + str(snap.get("wap", "?")) + "\n"
+        + "1時間ごとの値動きの荒さ（標準偏差%）：" + str(snap.get("volPct", "?")) + "\n"
+        + "直近24hの前半トレンド%：" + str(snap.get("trendFirstHalf", "?")) + " / 後半トレンド%：" + str(snap.get("trendSecondHalf", "?"))
     )
     user_content = "今の本物の市場データ（練習用）：\n" + facts
     if transcript:
