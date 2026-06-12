@@ -6,9 +6,9 @@
 const { arbiJudge } = require('../judge.js');
 const { Client } = require('pg');
 
-// Public market-data host (data-api.binance.com) is used instead of api.binance.com because
+// Public market-data host (data-api.binance.vision) is used instead of api.binance.com because
 // api.binance.com geo-blocks many data-center IPs (e.g. GitHub Actions runners) with HTTP 451.
-const API = "https://data-api.binance.com";
+const API = "https://data-api.binance.vision";
 const SYMS = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT'];
 const NAMES = { BTCUSDT: 'BTC', ETHUSDT: 'ETH', BNBUSDT: 'BNB', SOLUSDT: 'SOL', XRPUSDT: 'XRP' };
 
