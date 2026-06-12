@@ -1270,11 +1270,11 @@ function renderJudge(snap){
     if(__c.length>=3){
       var __r=[];for(var __i=1;__i<__c.length;__i++){if(__c[__i-1]>0)__r.push((__c[__i]-__c[__i-1])/__c[__i-1]*100);}
       if(__r.length){var __m=__r.reduce(function(a,b){return a+b;},0)/__r.length;var __v=Math.sqrt(__r.reduce(function(a,b){return a+(b-__m)*(b-__m);},0)/__r.length);
-        if(__v>=0.3&&__v<=1.5)score+=1; else if(__v>2.5)score-=1;
+        if(__v>=0.3&&__v<=1.5)score+=1; else if(__v>2.5)score-=1;if(typeof __v==='number'&&!isNaN(__v)){if(__v>0.3&&__v<1.5)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3067\u7a0b\u3088\u304f\u3001\u4fa1\u683c\u5dee\u304c\u51fa\u3064\u3064\u57f7\u884c\u3082\u9593\u306b\u5408\u3044\u3084\u3059\u3044\u3002");else if(__v>2.5)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u8352\u304f\u3001\u5dee\u304c\u3059\u3050\u52d5\u3044\u3066\u7d04\u5b9a\u524d\u306b\u6d88\u3048\u3084\u3059\u3044\u3002");else if(__v<=0.3)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u3054\u304f\u5c0f\u3055\u304f\u3001\u4fa1\u683c\u5dee\u3082\u51fa\u306b\u304f\u3044\u3002");else reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u3084\u3084\u5927\u304d\u3081\u3067\u3001\u69d8\u5b50\u898b\u306e\u6c34\u6e96\u3002");}
       }
       var __h=Math.floor(__c.length/2);
       if(__c.length>=4&&__c[0]>0&&__c[__h]>0){var __t1=(__c[__h-1]-__c[0])/__c[0]*100;var __t2=(__c[__c.length-1]-__c[__h])/__c[__h]*100;
-        if((__t1>=0&&__t2>=0)||(__t1<0&&__t2<0))score+=1;
+        if((__t1>=0&&__t2>=0)||(__t1<0&&__t2<0))score+=1;if(typeof __t1==='number'&&typeof __t2==='number'&&!isNaN(__t1)&&!isNaN(__t2)){if((__t1>0&&__t2>0)||(__t1<0&&__t2<0))reasons.push("\u524d\u534a\u3068\u5f8c\u534a\u3067\u5024\u52d5\u304d\u306e\u5411\u304d\u304c\u305d\u308d\u3063\u3066\u304a\u308a\u3001\u6d41\u308c\u304c\u7d9a\u304d\u3084\u3059\u3044\u3002");else reasons.push("\u524d\u534a\u3068\u5f8c\u534a\u3067\u5024\u52d5\u304d\u306e\u5411\u304d\u304c\u98df\u3044\u9055\u3044\u3001\u6d41\u308c\u304c\u5b9a\u307e\u308a\u306b\u304f\u3044\u3002");}
       }
     }
   }catch(__e){}
