@@ -16,7 +16,7 @@ const TOP_N = 20;
 
 // Stablecoin bases: a USDT pair whose base is itself a stablecoin (e.g. USDCUSDT) is excluded,
 // because stable-vs-stable pairs are not meaningful for this educational arbitrage signal.
-const STABLES = new Set(['USDC', 'FDUSD', 'TUSD', 'DAI', 'BUSD', 'USDP', 'UST', 'USDD', 'PYUSD', 'EUR']);
+const STABLES = new Set(['USDC', 'FDUSD', 'TUSD', 'DAI', 'BUSD', 'USDP', 'UST', 'USDD', 'PYUSD', 'EUR', 'USD1', 'RLUSD', 'U', 'USDE', 'GUSD', 'USDS', 'FRAX', 'LUSD', 'AEUR']);
 
 // Leveraged tokens (e.g. BTCUPUSDT, ETHDOWNUSDT, ...BULL/...BEAR) are excluded.
 const LEV_RE = /(UP|DOWN|BULL|BEAR)$/;
