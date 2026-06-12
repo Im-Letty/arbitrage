@@ -1,11 +1,13 @@
 /* judge.js - single source of arbitrage judgment logic.
  * Used by browser (window.arbiJudge) and Node/GitHub Actions (module.exports).
- * Body extracted verbatim from MARKET_HTML renderJudge computation (behavior unchanged).
+ * v2.1: closes self-supplied from snap.hourlyCloses (no free-variable dependency);
+ * restores pre-S1 intended behavior (C1/C2/volPct/t1/t2 now computed; var-hoisting bug fixed).
  */
 function arbiJudge(snap){
 var reasons=[]; var score=0; var TH={C1_LO:0.3,C1_HI:1.5,C1_MAX:2.5,C3_LO:1.2,C3_HI:6,C4_LO:0.8,C4_HI:1.8};
   try{
-    var __c=(typeof closes!=='undefined'&&closes)?closes.map(parseFloat).filter(function(x){return !isNaN(x);}):[];
+    var closes=(snap.hourlyCloses||[]).map(Number).filter(function(x){return !isNaN(x);});
+    var __c=closes.map(parseFloat).filter(function(x){return !isNaN(x);});
     if(__c.length>=3){
       var __r=[];for(var __i=1;__i<__c.length;__i++){if(__c[__i-1]>0)__r.push((__c[__i]-__c[__i-1])/__c[__i-1]*100);}
       if(__r.length){var __m=__r.reduce(function(a,b){return a+b;},0)/__r.length;var __v=Math.sqrt(__r.reduce(function(a,b){return a+(b-__m)*(b-__m);},0)/__r.length);
@@ -19,7 +21,6 @@ var reasons=[]; var score=0; var TH={C1_LO:0.3,C1_HI:1.5,C1_MAX:2.5,C3_LO:1.2,C3
   }catch(__e){}
   var __dummy=0; var ok=true;
   var price=parseFloat(snap.price), hi=parseFloat(snap.high24), lo=parseFloat(snap.low24), chg=parseFloat(snap.changePct);
-  var closes=(snap.hourlyCloses||[]).map(Number).filter(function(x){return !isNaN(x);});
   if(isNaN(price)||isNaN(hi)||isNaN(lo)||closes.length<6){ ok=false; }
   // 1) ボラティリティ（24hの値幅）：サヤ取りは荒すぎると送金・約定が間に合わず危険、静かすぎると差が出ない
   var rangePct = (ok && hi>0)? ((hi-lo)/((hi+lo)/2))*100 : NaN;
@@ -49,7 +50,7 @@ var reasons=[]; var score=0; var TH={C1_LO:0.3,C1_HI:1.5,C1_MAX:2.5,C3_LO:1.2,C3
   else if(score===0){ mark="△"; label="微妙・様子見"; color="#d9a441"; }
   else { mark="×"; label="今は条件が良くない"; color="#ff6b6b"; }
   
-  var conds=[];try{if(typeof ok!=='undefined' && ok===false){conds.push({id:'G',dir:0});}else{if(typeof __v==='number' && !isNaN(__v)){if(__v>=TH.C1_LO && __v<TH.C1_HI)conds.push({id:'C1',dir:1});else if(__v>TH.C1_MAX)conds.push({id:'C1',dir:-1});else conds.push({id:'C1',dir:0});}if(typeof __t1==='number' && typeof __t2==='number' && !isNaN(__t1) && !isNaN(__t2)){if((__t1>0&&__t2>0)||(__t1<0&&__t2<0))conds.push({id:'C2',dir:1});else conds.push({id:'C2',dir:0});}if(typeof rangePct==='number' && !isNaN(rangePct)){if(rangePct>=TH.C3_LO && rangePct<TH.C3_HI)conds.push({id:'C3',dir:1});else if(rangePct>TH.C3_HI)conds.push({id:'C3',dir:-1});else conds.push({id:'C3',dir:0});}if(typeof sd==='number' && !isNaN(sd)){if(sd<TH.C4_LO)conds.push({id:'C4',dir:1});else if(sd>TH.C4_HI)conds.push({id:'C4',dir:-1});else conds.push({id:'C4',dir:0});}}}catch(__ce){}var __tfh=(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[0]),b=parseFloat(closes[h-1]);if(a>0)return (b-a)/a*100;return null;})();var __tsh=(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[h]),b=parseFloat(closes[closes.length-1]);if(a>0)return (b-a)/a*100;return null;})();var trendDir='neutral';if(typeof __tfh==='number' && typeof __tsh==='number'){var __dd=__tsh-__tfh;if(__dd>0.1)trendDir='up';else if(__dd<-0.1)trendDir='down';}
+  var conds=[];try{if(typeof ok!=='undefined' && ok===false){conds.push({id:'G',dir:0});}else{if(typeof __v==='number' && !isNaN(__v)){if(__v>TH.C1_LO && __v<TH.C1_HI)conds.push({id:'C1',dir:1});else if(__v>TH.C1_MAX)conds.push({id:'C1',dir:-1});else conds.push({id:'C1',dir:0});}if(typeof __t1==='number' && typeof __t2==='number' && !isNaN(__t1) && !isNaN(__t2)){if((__t1>0&&__t2>0)||(__t1<0&&__t2<0))conds.push({id:'C2',dir:1});else conds.push({id:'C2',dir:0});}if(typeof rangePct==='number' && !isNaN(rangePct)){if(rangePct>TH.C3_LO && rangePct<TH.C3_HI)conds.push({id:'C3',dir:1});else if(rangePct>TH.C3_HI)conds.push({id:'C3',dir:-1});else conds.push({id:'C3',dir:0});}if(typeof sd==='number' && !isNaN(sd)){if(sd<TH.C4_LO)conds.push({id:'C4',dir:1});else if(sd>TH.C4_HI)conds.push({id:'C4',dir:-1});else conds.push({id:'C4',dir:0});}}}catch(__ce){}var __tfh=(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[0]),b=parseFloat(closes[h-1]);if(a>0)return (b-a)/a*100;return null;})();var __tsh=(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[h]),b=parseFloat(closes[closes.length-1]);if(a>0)return (b-a)/a*100;return null;})();var trendDir='neutral';if(typeof __tfh==='number' && typeof __tsh==='number'){var __dd=__tsh-__tfh;if(__dd>0.1)trendDir='up';else if(__dd<-0.1)trendDir='down';}
   return {score:score, mark:mark, label:label, color:color, reasons:reasons, ok:ok, volPct:(typeof __v!=="undefined"?__v:null), rangePct:(typeof rangePct!=="undefined"?rangePct:null), sd:(typeof sd!=="undefined"?sd:null), t1:(typeof __t1!=="undefined"?__t1:null), t2:(typeof __t2!=="undefined"?__t2:null), conds:conds, trendDir:trendDir};
 }
 if(typeof module!=="undefined"&&module.exports){module.exports={arbiJudge:arbiJudge};}
