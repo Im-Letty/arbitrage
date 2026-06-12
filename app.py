@@ -1274,7 +1274,7 @@ function renderJudge(snap){
     var __sym=(snap&&snap.symbol)||"?";
     var __last=__log.length?__log[__log.length-1]:null;
     if(!(__last&&__last.symbol===__sym&&(__now-__last.ts)<60000)){
-      __log.push({ts:__now,symbol:__sym,source:'binance-spot',via:'manual',price:(snap&&snap.price)||null,changePct:(snap&&snap.changePct)||null,mark:mark,label:label,trendDir:__J.trendDir,r1:null,r4:null,r24:null,conds:__J.conds});
+      __log.push({ts:__now,symbol:__sym,source:'binance-spot',via:'manual',price:(snap&&snap.price)||null,changePct:(snap&&snap.changePct)||null,mark:mark,label:label,trendDir:__J.trendDir,r1:null,r4:null,r24:null,conds:__J.conds,jv:'2.1'});
       if(__log.length>2000)__log=__log.slice(__log.length-2000);
       localStorage.setItem(__key,JSON.stringify(__log));
     }
