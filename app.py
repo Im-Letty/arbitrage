@@ -1264,13 +1264,13 @@ function arbiFillResults(){
 }
 function renderJudge(snap){
   var jm=document.getElementById("jmark"), jl=document.getElementById("jlabel"), jr=document.getElementById("jreasons");
-  var reasons=[]; var score=0;
+  var reasons=[]; var score=0; var TH={C1_LO:0.3,C1_HI:1.5,C1_MAX:2.5,C3_LO:1.2,C3_HI:6,C4_LO:0.8,C4_HI:1.8};
   try{
     var __c=(typeof closes!=='undefined'&&closes)?closes.map(parseFloat).filter(function(x){return !isNaN(x);}):[];
     if(__c.length>=3){
       var __r=[];for(var __i=1;__i<__c.length;__i++){if(__c[__i-1]>0)__r.push((__c[__i]-__c[__i-1])/__c[__i-1]*100);}
       if(__r.length){var __m=__r.reduce(function(a,b){return a+b;},0)/__r.length;var __v=Math.sqrt(__r.reduce(function(a,b){return a+(b-__m)*(b-__m);},0)/__r.length);
-        if(__v>=0.3&&__v<=1.5)score+=1; else if(__v>2.5)score-=1;if(typeof __v==='number'&&!isNaN(__v)){if(__v>0.3&&__v<1.5)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3067\u7a0b\u3088\u304f\u3001\u4fa1\u683c\u5dee\u304c\u51fa\u3064\u3064\u57f7\u884c\u3082\u9593\u306b\u5408\u3044\u3084\u3059\u3044\u3002");else if(__v>2.5)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u8352\u304f\u3001\u5dee\u304c\u3059\u3050\u52d5\u3044\u3066\u7d04\u5b9a\u524d\u306b\u6d88\u3048\u3084\u3059\u3044\u3002");else if(__v<=0.3)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u3054\u304f\u5c0f\u3055\u304f\u3001\u4fa1\u683c\u5dee\u3082\u51fa\u306b\u304f\u3044\u3002");else reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u3084\u3084\u5927\u304d\u3081\u3067\u3001\u69d8\u5b50\u898b\u306e\u6c34\u6e96\u3002");}
+        if(__v>=TH.C1_LO&&__v<=TH.C1_HI)score+=1; else if(__v>TH.C1_MAX)score-=1;if(typeof __v==='number'&&!isNaN(__v)){if(__v>TH.C1_LO&&__v<TH.C1_HI)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3067\u7a0b\u3088\u304f\u3001\u4fa1\u683c\u5dee\u304c\u51fa\u3064\u3064\u57f7\u884c\u3082\u9593\u306b\u5408\u3044\u3084\u3059\u3044\u3002");else if(__v>TH.C1_MAX)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u8352\u304f\u3001\u5dee\u304c\u3059\u3050\u52d5\u3044\u3066\u7d04\u5b9a\u524d\u306b\u6d88\u3048\u3084\u3059\u3044\u3002");else if(__v<=TH.C1_LO)reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u3054\u304f\u5c0f\u3055\u304f\u3001\u4fa1\u683c\u5dee\u3082\u51fa\u306b\u304f\u3044\u3002");else reasons.push("\u77ed\u3044\u8db3\u306e\u52d5\u304d\u304c"+__v.toFixed(2)+"%\u3068\u3084\u3084\u5927\u304d\u3081\u3067\u3001\u69d8\u5b50\u898b\u306e\u6c34\u6e96\u3002");}
       }
       var __h=Math.floor(__c.length/2);
       if(__c.length>=4&&__c[0]>0&&__c[__h]>0){var __t1=(__c[__h-1]-__c[0])/__c[0]*100;var __t2=(__c[__c.length-1]-__c[__h])/__c[__h]*100;
@@ -1285,8 +1285,8 @@ function renderJudge(snap){
   // 1) ボラティリティ（24hの値幅）：サヤ取りは荒すぎると送金・約定が間に合わず危険、静かすぎると差が出ない
   var rangePct = (ok && hi>0)? ((hi-lo)/((hi+lo)/2))*100 : NaN;
   if(!isNaN(rangePct)){
-    if(rangePct>=1.2 && rangePct<=6){ score+=1; reasons.push("24hの値幅が"+rangePct.toFixed(1)+"%で、取引所間に差が出つつ執行も間に合いやすい水準。"); }
-    else if(rangePct>6){ score-=1; reasons.push("24hの値幅が"+rangePct.toFixed(1)+"%と荒い。差は出やすいが送金・約定が間に合わず、コストとリスクで手取りが消えやすい。"); }
+    if(rangePct>=TH.C3_LO && rangePct<=TH.C3_HI){ score+=1; reasons.push("24hの値幅が"+rangePct.toFixed(1)+"%で、取引所間に差が出つつ執行も間に合いやすい水準。"); }
+    else if(rangePct>TH.C3_HI){ score-=1; reasons.push("24hの値幅が"+rangePct.toFixed(1)+"%と荒い。差は出やすいが送金・約定が間に合わず、コストとリスクで手取りが消えやすい。"); }
     else { reasons.push("24hの値幅が"+rangePct.toFixed(1)+"%と静か。差が小さく、手数料・送金・税を引くと手取りが残りにくい。"); }
   }
   // 2) 直近トレンドの安定（終値の連続変化のばらつき）
@@ -1295,8 +1295,8 @@ function renderJudge(snap){
     var mean=rets.reduce(function(a,b){return a+b;},0)/rets.length;
     var varc=rets.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/rets.length;
     var sd=Math.sqrt(varc)*100;
-    if(sd<=0.8){ score+=1; reasons.push("直近の1時間ごとの動きが安定（ブレ"+sd.toFixed(2)+"%）で、価格差が読みやすい。"); }
-    else if(sd>1.8){ score-=1; reasons.push("直近の動きのブレが"+sd.toFixed(2)+"%と大きく、差がすぐ逆行・消失しやすい。"); }
+    if(sd<=TH.C4_LO){ score+=1; reasons.push("直近の1時間ごとの動きが安定（ブレ"+sd.toFixed(2)+"%）で、価格差が読みやすい。"); }
+    else if(sd>TH.C4_HI){ score-=1; reasons.push("直近の動きのブレが"+sd.toFixed(2)+"%と大きく、差がすぐ逆行・消失しやすい。"); }
     else { reasons.push("直近の動きのブレは"+sd.toFixed(2)+"%でふつう。"); }
   }
   // 3) コスト負けの注意（常に効く物差し）
@@ -1317,7 +1317,7 @@ function renderJudge(snap){
     var __sym=(snap&&snap.symbol)||"?";
     var __last=__log.length?__log[__log.length-1]:null;
     if(!(__last&&__last.symbol===__sym&&(__now-__last.ts)<60000)){
-      var __tf=(snap&&snap.trendFirstHalf);var __ts2=(snap&&snap.trendSecondHalf);var __dir='neutral';if(typeof __tf==='number'&&typeof __ts2==='number'){var __dd=__ts2-__tf;if(__dd>0.1)__dir='up';else if(__dd<-0.1)__dir='down';}var __conds=[];try{if(typeof ok!=='undefined' && ok===false){__conds.push({id:'G',dir:0});}else{if(typeof __v==='number' && !isNaN(__v)){if(__v>0.3 && __v<1.5)__conds.push({id:'C1',dir:1});else if(__v>2.5)__conds.push({id:'C1',dir:-1});else __conds.push({id:'C1',dir:0});}if(typeof __t1==='number' && typeof __t2==='number' && !isNaN(__t1) && !isNaN(__t2)){if((__t1>0&&__t2>0)||(__t1<0&&__t2<0))__conds.push({id:'C2',dir:1});else __conds.push({id:'C2',dir:0});}if(typeof rangePct==='number' && !isNaN(rangePct)){if(rangePct>1.2 && rangePct<6)__conds.push({id:'C3',dir:1});else if(rangePct>6)__conds.push({id:'C3',dir:-1});else __conds.push({id:'C3',dir:0});}if(typeof sd==='number' && !isNaN(sd)){if(sd<0.8)__conds.push({id:'C4',dir:1});else if(sd>1.8)__conds.push({id:'C4',dir:-1});else __conds.push({id:'C4',dir:0});}}}catch(__ce){}__log.push({ts:__now,symbol:__sym,source:'binance-spot',price:(snap&&snap.price)||null,changePct:(snap&&snap.changePct)||null,mark:mark,label:label,trendDir:__dir,r1:null,r4:null,r24:null,conds:__conds});
+      var __tf=(snap&&snap.trendFirstHalf);var __ts2=(snap&&snap.trendSecondHalf);var __dir='neutral';if(typeof __tf==='number'&&typeof __ts2==='number'){var __dd=__ts2-__tf;if(__dd>0.1)__dir='up';else if(__dd<-0.1)__dir='down';}var __conds=[];try{if(typeof ok!=='undefined' && ok===false){__conds.push({id:'G',dir:0});}else{if(typeof __v==='number' && !isNaN(__v)){if(__v>TH.C1_LO && __v<TH.C1_HI)__conds.push({id:'C1',dir:1});else if(__v>TH.C1_MAX)__conds.push({id:'C1',dir:-1});else __conds.push({id:'C1',dir:0});}if(typeof __t1==='number' && typeof __t2==='number' && !isNaN(__t1) && !isNaN(__t2)){if((__t1>0&&__t2>0)||(__t1<0&&__t2<0))__conds.push({id:'C2',dir:1});else __conds.push({id:'C2',dir:0});}if(typeof rangePct==='number' && !isNaN(rangePct)){if(rangePct>TH.C3_LO && rangePct<TH.C3_HI)__conds.push({id:'C3',dir:1});else if(rangePct>TH.C3_HI)__conds.push({id:'C3',dir:-1});else __conds.push({id:'C3',dir:0});}if(typeof sd==='number' && !isNaN(sd)){if(sd<TH.C4_LO)__conds.push({id:'C4',dir:1});else if(sd>TH.C4_HI)__conds.push({id:'C4',dir:-1});else __conds.push({id:'C4',dir:0});}}}catch(__ce){}__log.push({ts:__now,symbol:__sym,source:'binance-spot',price:(snap&&snap.price)||null,changePct:(snap&&snap.changePct)||null,mark:mark,label:label,trendDir:__dir,r1:null,r4:null,r24:null,conds:__conds});
       if(__log.length>2000)__log=__log.slice(__log.length-2000);
       localStorage.setItem(__key,JSON.stringify(__log));
     }
