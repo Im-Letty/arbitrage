@@ -1144,6 +1144,7 @@ def arbitrage():
 # ===== 練習市場室（ペーパー・暗号資産）=====
 MARKET_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <script src="/judge.js"></script>
+<script src="/weights.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>取引所間 先物サヤ取り市場室 — arbitrage</title>
 <style>
@@ -1521,6 +1522,14 @@ def build_market_system(member, lang):
 @app.route("/judge.js")
 def judge_js():
     with open("judge.js", "r", encoding="utf-8") as f:
+        js = f.read()
+    resp = Response(js, mimetype="application/javascript")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+@app.route("/weights.js")
+def weights_js():
+    with open("weights.js", "r", encoding="utf-8") as f:
         js = f.read()
     resp = Response(js, mimetype="application/javascript")
     resp.headers["Cache-Control"] = "no-cache"
