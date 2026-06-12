@@ -1354,7 +1354,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
 <div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div><div class="card"><div id="board"></div></div><div class="card"><div id="cboard"></div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
-<p><button class="btn" id="exportBtn">バックアップを保存</button> <button class="btn" id="importBtn">バックアップから復元</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></p>
+<p><button class="btn" id="exportBtn">バックアップを保存</button> <button class="btn" id="importBtn">バックアップから復元</button> <button class="btn" id="serverImportBtn">サーバー記録を取り込む</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></p>
 <p><button class="btn" id="clearBtn">記録を消す</button></p>
 <script>
 var B="https://"+"api."+"binance"+".com";
@@ -1413,14 +1413,7 @@ if(__eb){__eb.onclick=function(){
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},1000);
 };}
-var __ib=document.getElementById("importBtn");var __if=document.getElementById("importFile");
-if(__ib&&__if){
-  __ib.onclick=function(){__if.value="";__if.click();};
-  __if.onchange=function(){
-    var file=__if.files&&__if.files[0];if(!file)return;
-    var reader=new FileReader();
-    reader.onload=function(){
-      var obj;try{obj=JSON.parse(reader.result);}catch(e){alert("読み込み失敗：JSONを解析できませんでした。");return;}
+function applyV1Records(obj){
       if(!obj||obj.format!=="v1"){alert("形式が違います（v1のバックアップではありません）。");return;}
       var incoming=(obj&&obj.data)||[];if(!(incoming instanceof Array)){alert("データ形式が不正です。");return;}
       var cur=bkRead();
@@ -1439,6 +1432,25 @@ if(__ib&&__if){
       merged.sort(function(a,b){return (a.ts||0)-(b.ts||0);});
       localStorage.setItem(BK_KEY,JSON.stringify(merged));
       location.reload();
+    }
+    var __sib=document.getElementById("serverImportBtn");
+    if(__sib){
+      __sib.onclick=function(){
+        fetch("/api/export-v1").then(function(r){return r.json();}).then(function(obj){
+          if(obj && obj.error){ alert("サーバーエラー: "+obj.error); return; }
+          applyV1Records(obj);
+        }).catch(function(e){ alert("サーバー記録の取り込みに失敗しました（通信エラー）"); });
+      };
+    }
+    var __ib=document.getElementById("importBtn");var __if=document.getElementById("importFile");
+if(__ib&&__if){
+  __ib.onclick=function(){__if.value="";__if.click();};
+  __if.onchange=function(){
+    var file=__if.files&&__if.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(){
+      var obj;try{obj=JSON.parse(reader.result);}catch(e){alert("読み込み失敗：JSONを解析できませんでした。");return;}
+      applyV1Records(obj);
     };
     reader.readAsText(file);
   };
@@ -1556,6 +1568,54 @@ def weights_js():
     resp = Response(js, mimetype="application/javascript")
     resp.headers["Cache-Control"] = "no-cache"
     return resp
+
+@app.route("/api/export-v1")
+def api_export_v1():
+    db_url = os.environ.get("NEON_DATABASE_URL")
+    if not db_url:
+        return jsonify({"format": "v1", "error": "NEON_DATABASE_URL not configured", "count": 0, "data": []})
+    conn = None
+    try:
+        import psycopg2
+        conn = psycopg2.connect(db_url, sslmode="require")
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver "
+            "FROM (SELECT * FROM judge_records ORDER BY ts DESC LIMIT 2000) sub ORDER BY ts ASC"
+        )
+        rows = cur.fetchall()
+        data = []
+        for r in rows:
+            ts_val = r[0]
+            ts_ms = int(ts_val.timestamp() * 1000) if ts_val is not None else None
+            data.append({
+                "ts": ts_ms,
+                "symbol": r[1],
+                "source": r[2],
+                "via": r[3],
+                "price": r[4],
+                "changePct": r[5],
+                "mark": r[6],
+                "label": r[7],
+                "trendDir": r[8],
+                "r1": r[9],
+                "r4": r[10],
+                "r24": r[11],
+                "conds": r[12] if r[12] is not None else [],
+                "jv": r[13],
+            })
+        cur.close()
+        resp = jsonify({"format": "v1", "exportedAt": __import__("datetime").datetime.utcnow().isoformat() + "Z", "count": len(data), "data": data})
+        resp.headers["Cache-Control"] = "no-cache"
+        return resp
+    except Exception as e:
+        return jsonify({"format": "v1", "error": str(e), "count": 0, "data": []})
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 @app.route("/market")
 def market():
