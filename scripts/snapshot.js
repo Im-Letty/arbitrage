@@ -128,7 +128,7 @@ async function main() {
             JSON.stringify(r.conds || [])
           ]
         );
-        console.log("ok " + sym + " " + r.mark + " " + trendDir);
+        console.log("ok " + sym + " " + r.mark + " " + r.trendDir);
       } catch (e) {
         console.error("skip " + sym + ": " + (e && e.message ? e.message : e));
       }
