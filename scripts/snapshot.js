@@ -6,7 +6,9 @@
 const { arbiJudge } = require('../judge.js');
 const { Client } = require('pg');
 
-const API = "https://api.binance.com";
+// Public market-data host (data-api.binance.com) is used instead of api.binance.com because
+// api.binance.com geo-blocks many data-center IPs (e.g. GitHub Actions runners) with HTTP 451.
+const API = "https://data-api.binance.com";
 const SYMS = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT'];
 const NAMES = { BTCUSDT: 'BTC', ETHUSDT: 'ETH', BNBUSDT: 'BNB', SOLUSDT: 'SOL', XRPUSDT: 'XRP' };
 
@@ -31,9 +33,28 @@ CREATE TABLE IF NOT EXISTS judge_records (
 CREATE INDEX IF NOT EXISTS judge_records_symbol_ts_idx ON judge_records (symbol, ts);
 `;
 
+// Fetch JSON and, when the shape is unexpected, surface a diagnostic (HTTP status + body head).
+async function fetchJson(url) {
+  const res = await fetch(url);
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch (e) { data = null; }
+  return { status: res.status, ok: res.ok, data: data, bodyHead: text.slice(0, 200) };
+}
+
 async function fetchSnapshot(sym) {
-  const tr = await fetch(API + "/api/v3/ticker/24hr?symbol=" + sym).then(r => r.json());
-  const kl = await fetch(API + "/api/v3/klines?symbol=" + sym + "&interval=1h&limit=24").then(r => r.json());
+  const trRes = await fetchJson(API + "/api/v3/ticker/24hr?symbol=" + sym);
+  const tr = trRes.data;
+  if (!tr || typeof tr !== 'object' || Array.isArray(tr) || tr.lastPrice === undefined) {
+    console.error("ticker unexpected for " + sym + " status=" + trRes.status + " body=" + trRes.bodyHead);
+    throw new Error("ticker response not in expected shape");
+  }
+  const klRes = await fetchJson(API + "/api/v3/klines?symbol=" + sym + "&interval=1h&limit=24");
+  const kl = klRes.data;
+  if (!Array.isArray(kl)) {
+    console.error("klines unexpected for " + sym + " status=" + klRes.status + " body=" + klRes.bodyHead);
+    throw new Error("klines response not an array");
+  }
   const closes = kl.map(function (k) { return parseFloat(k[4]); });
   return {
     symbol: NAMES[sym],
