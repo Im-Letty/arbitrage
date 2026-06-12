@@ -1,0 +1,34 @@
+name: snapshot
+
+on:
+  schedule:
+    # Every 15 minutes. GitHub Actions schedules can be delayed several minutes under load;
+    # each record stores its own ts, so interval drift is tolerated by design.
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+# Avoid overlapping runs if one is slow; cancel the older one.
+concurrency:
+  group: snapshot
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pg
+        run: npm install pg
+
+      - name: Run snapshot
+        env:
+          NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+        run: node scripts/snapshot.js
