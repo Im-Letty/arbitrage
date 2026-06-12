@@ -1286,6 +1286,7 @@ var goBtn=document.getElementById("go");
 goBtn.onclick=async function(){
   var sym=document.getElementById("sym").value;
   var out=document.getElementById("out"); out.innerHTML="";
+  try{ if(typeof WEIGHT_PROFILES!=="undefined"&&WEIGHT_PROFILES){ var __nv=document.createElement("div"); __nv.className="vpoint-note"; __nv.textContent="※「視点」はメンバー別の重み(v"+WEIGHT_PROFILES.version+")による参考値です。公式判定は全員共通のmarkです。"; out.appendChild(__nv); } }catch(__ne){}
   goBtn.disabled=true; goBtn.textContent="社員たちが分析中…";
   try{
     var tr=await fetch(API+"/api/v3/ticker/24hr?symbol="+sym).then(r=>r.json());
@@ -1295,6 +1296,9 @@ goBtn.onclick=async function(){
 renderJudge(snapshot);
     var transcript=""; var step=0; var total=999;
     var histStr=(function(){try{var lg=JSON.parse(localStorage.getItem('arbi_judge_log')||'[]');var sym=(snapshot&&snapshot.symbol)||'';var cur=(snapshot&&snapshot.price)||null;var rows=lg.filter(function(e){return e&&e.symbol===sym&&e.price&&e.mark&&e.ts;});if(!rows.length||!cur)return '';var byMark={};rows.forEach(function(e){var ch=((cur-e.price)/e.price)*100;if(!byMark[e.mark])byMark[e.mark]={n:0,up:0,sum:0};byMark[e.mark].n++;byMark[e.mark].sum+=ch;if(ch>0)byMark[e.mark].up++;});var lines=['\u3010\u904e\u53bb\u306e\u81ea\u5206\u305f\u3061\u306e\u5224\u5b9a\u5b9f\u7e3e\uff08\u540c\u3058\u901a\u8ca8\u30fb\u53c2\u8003\u60c5\u5831\uff09\u3011'];['\u25ce','\u25cb','\u25b3','\u00d7','?'].forEach(function(m){var d=byMark[m];if(!d)return;var avg=(d.sum/d.n).toFixed(2);var rate=Math.round((d.up/d.n)*100);lines.push('\u5224\u5b9a'+m+'\uff1a'+d.n+'\u4ef6\u3002\u305d\u306e\u5f8c\u3001\u73fe\u5728\u5024\u307e\u3067\u5e73\u5747'+avg+'%\uff08\u4e0a\u6607\u3057\u305f\u5272\u5408'+rate+'%\uff09');});if(lines.length<2)return '';lines.push('\u203b\u3053\u308c\u306f\u904e\u53bb\u306e\u50be\u5411\u306e\u53c2\u8003\u3067\u3042\u308a\u3001\u672a\u6765\u3092\u4fdd\u8a3c\u3059\u308b\u3082\u306e\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u58f2\u8cb7\u30b5\u30a4\u30f3\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002');return lines.join('\n');}catch(e){return '';}})();
+      // ※順序はサーバーのMEETING_AGENDAと一致必須。メンバーの順序・人数を変更する際は両方を同時に更新すること
+      var TEAM_KEYS=["checker","spread","cost","transfer","liq","spread2","history","devil","audit"];
+      var __mj=null; try{ if(typeof arbiJudge==="function") __mj=arbiJudge(snapshot); }catch(__pe){ __mj=null; }
       while(step<total){
       var res=await fetch("/market_analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({snapshot:snapshot,step:step,transcript:transcript,history:histStr})});
       var j=await res.json();
@@ -1302,6 +1306,24 @@ renderJudge(snapshot);
       total=j.total;
       var div=document.createElement("div"); div.className="speak";
       div.innerHTML="<div class=\"who\">"+j.who+"</div><div class=\"body\"></div>";
+      try{
+        var __wp=(typeof WEIGHT_PROFILES!=="undefined")?WEIGHT_PROFILES:null;
+        var __mk=(TEAM_KEYS&&TEAM_KEYS[step])?TEAM_KEYS[step]:null;
+        if(__wp&&__wp.weights&&__mk&&__wp.weights[__mk]&&__mj&&__mj.conds){
+          var __w=__wp.weights[__mk];
+          var __vm;
+          if(__mj.ok===false){ __vm="?"; }
+          else{
+            var __s=0;
+            __mj.conds.forEach(function(__c){ if(__w[__c.id]!=null){ __s+=__c.dir*__w[__c.id]; } });
+            var __mark=(__s>=2)?"◎":((__s>=1)?"○":((__s>=0)?"△":"×"));
+            var __sg=(__s>0?"+":"")+__s.toFixed(1);
+            __vm=__mark+"（"+__sg+"）";
+          }
+          var __wd=div.querySelector(".who");
+          if(__wd){ var __vs=document.createElement("span"); __vs.className="vpoint"; __vs.textContent=" 視点: "+__vm; __wd.appendChild(__vs); }
+        }
+      }catch(__ve){}
       div.querySelector(".body").textContent=j.text;
       out.appendChild(div);
       transcript+=j.who+"："+j.text+"\n";
