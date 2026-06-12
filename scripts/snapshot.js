@@ -86,6 +86,50 @@ async function fetchCloses(sym) {
   return kl.map(function (k) { return parseFloat(k[4]); });
 }
 
+// Second job (case A): fill in r1/r4/r24 once the target time (ts+Nh) + 60s has passed,
+// using the same data-api.binance.vision spot source as the original record. Browser-side
+// arbiFillResults (localStorage) is intentionally left untouched: server fills server rows.
+async function backfillResults(client) {
+  const SELECT_SQL =
+    "SELECT id, symbol, ts, price, horizon FROM (" +
+    "  SELECT id, symbol, ts, price, '1' AS horizon FROM judge_records" +
+    "   WHERE r1 IS NULL AND price IS NOT NULL AND ts + interval '1 hour' + interval '60 sec' < now()" +
+    " UNION ALL " +
+    "  SELECT id, symbol, ts, price, '4' AS horizon FROM judge_records" +
+    "   WHERE r4 IS NULL AND price IS NOT NULL AND ts + interval '4 hours' + interval '60 sec' < now()" +
+    " UNION ALL " +
+    "  SELECT id, symbol, ts, price, '24' AS horizon FROM judge_records" +
+    "   WHERE r24 IS NULL AND price IS NOT NULL AND ts + interval '24 hours' + interval '60 sec' < now()" +
+    ") t ORDER BY ts ASC LIMIT 60";
+  const rows = (await client.query(SELECT_SQL)).rows;
+  let filled = 0, failed = 0;
+  for (const row of rows) {
+    try {
+      const hours = row.horizon === "24" ? 24 : (row.horizon === "4" ? 4 : 1);
+      const targetMs = new Date(row.ts).getTime() + hours * 3600 * 1000;
+      const bucket = Math.floor(targetMs / 60000) * 60000;
+      const klRes = await fetchJson(API + "/api/v3/klines?symbol=" + row.symbol + "&interval=1m&startTime=" + bucket + "&limit=1");
+      const kl = klRes.data;
+      if (!Array.isArray(kl) || !kl.length || !Array.isArray(kl[0])) { failed++; continue; }
+      const close = parseFloat(kl[0][4]);
+      const base = parseFloat(row.price);
+      if (!isFinite(close) || !isFinite(base) || base === 0) { failed++; continue; }
+      const pct = Math.round((close - base) / base * 100 * 1000) / 1000;
+      const col = row.horizon === "24" ? "r24" : (row.horizon === "4" ? "r4" : "r1");
+      const UPDATE_SQL = col === "r24"
+        ? "UPDATE judge_records SET r24 = $1 WHERE id = $2"
+        : (col === "r4"
+          ? "UPDATE judge_records SET r4 = $1 WHERE id = $2"
+          : "UPDATE judge_records SET r1 = $1 WHERE id = $2");
+      await client.query(UPDATE_SQL, [pct, row.id]);
+      filled++;
+    } catch (e) {
+      failed++;
+    }
+  }
+  console.log("backfill: candidates=" + rows.length + " filled=" + filled + " failed=" + failed);
+}
+
 async function main() {
   const url = process.env.NEON_DATABASE_URL;
   if (!url) { console.error("NEON_DATABASE_URL is not set"); process.exit(1); }
@@ -133,6 +177,7 @@ async function main() {
         console.error("skip " + sym + ": " + (e && e.message ? e.message : e));
       }
     }
+    await backfillResults(client);
   } finally {
     await client.end();
   }
