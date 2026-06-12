@@ -1353,6 +1353,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
 <div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
 <div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div><div class="card"><div id="board"></div></div><div class="card"><div id="cboard"></div></div>
+<div class="card"><div id="mboard"></div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
 <p><button class="btn" id="exportBtn">バックアップを保存</button> <button class="btn" id="importBtn">バックアップから復元</button> <button class="btn" id="serverImportBtn">サーバー記録を取り込む</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></p>
 <p><button class="btn" id="clearBtn">記録を消す</button></p>
@@ -1497,7 +1498,58 @@ function boardBind(){
   var bs=el.querySelectorAll("button[data-hz]");
   for(var i=0;i<bs.length;i++){bs[i].onclick=function(){__boardHorizon=this.getAttribute("data-hz");drawBoard();};}
 }
-var __cHorizon="r1";var CB_HKEYS=[["r1","1\u6642\u9593\u5f8c"],["r4","4\u6642\u9593\u5f8c"],["r24","24\u6642\u9593\u5f8c"]];var CB_IDS=["C1","C2","C3","C4"];var CB_NAMES={C1:"C1 \u77ed\u671f\u30dc\u30e9",C2:"C2 \u524d\u5f8c\u534a\u30c8\u30ec\u30f3\u30c9\u4e00\u81f4",C3:"C3 24h\u5024\u5e45",C4:"C4 \u6642\u9593\u8db3sd"};function cbDirLabel(d){return d>0?"+1":(d<0?"-1":"0");}function drawCBoard(){var el=document.getElementById("cboard");if(!el)return;var log=boardRead();var hk=__cHorizon;var gFire=0;var anyData=false;var buckets={};for(var i=0;i<log.length;i++){var r=log[i];if(!r||!r.conds||!r.conds.length)continue;var hasG=false;for(var g=0;g<r.conds.length;g++){if(r.conds[g]&&r.conds[g].id==="G")hasG=true;}if(hasG){gFire++;continue;}var v=r[hk];if(v===null||v===undefined||isNaN(v))continue;var ch=parseFloat(v);anyData=true;for(var c=0;c<r.conds.length;c++){var cd=r.conds[c];if(!cd||CB_IDS.indexOf(cd.id)<0)continue;var key=cd.id+"|"+cd.dir;if(!buckets[key])buckets[key]={id:cd.id,dir:cd.dir,cnt:0,dirN:0,dirHit:0,moveHit:0,absSum:0};var bk=buckets[key];bk.cnt++;bk.absSum+=Math.abs(ch);if(cd.dir!==0){if(Math.abs(ch)>=BOARD_MOVE_THRESH)bk.moveHit++;var dir=r.trendDir||"neutral";if(dir==="up"||dir==="down"){bk.dirN++;if((dir==="up"&&ch>0)||(dir==="down"&&ch<0))bk.dirHit++;}}}}var btns="";for(var b=0;b<CB_HKEYS.length;b++){var hkk=CB_HKEYS[b][0];var hlbl=CB_HKEYS[b][1];btns+='<button class="btn'+(hkk===hk?" on":"")+'" data-chz="'+hkk+'" style="margin-right:6px">'+hlbl+'</button>';}var head='<h3 style="margin:0 0 8px">\u6761\u4ef6\u5225\u306e\u6210\u7e3e</h3><div style="margin-bottom:8px">'+btns+'</div>';if(!anyData){el.innerHTML=head+'<div class="muted">\u307e\u3060\u6761\u4ef6\u5225\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093\u3002\u2463-A\u4ee5\u964d\u306e\u5224\u5b9a\u304c\u7b54\u3048\u5408\u308f\u305b\u3055\u308c\u308b\u3068\u3053\u3053\u306b\u8868\u793a\u3055\u308c\u307e\u3059</div>'+'<div class="muted" style="margin-top:6px">G\u30b2\u30fc\u30c8\u767a\u706b: '+gFire+'\u56de</div>';cboardBind();return;}var rowsHtml="";var order=[1,-1,0];for(var k=0;k<CB_IDS.length;k++){var id=CB_IDS[k];for(var o=0;o<order.length;o++){var dv=order[o];var bk=buckets[id+"|"+dv];if(!bk)continue;var p1=(dv!==0)?boardPct(bk.dirHit,bk.dirN):null;var p2=(dv!==0)?boardPct(bk.moveHit,bk.cnt):null;var avg=bk.cnt?(Math.round(bk.absSum/bk.cnt*100)/100):null;var few=(bk.cnt>0&&bk.cnt<30)?' <span class="muted">\u4ef6\u6570\u50fc\u5c11\uff08\u53c2\u8003\u5024\uff09</span>':"";var c1=(dv===0)?"\u2014":(p1===null?"\u2014":p1+"%");var c2=(dv===0)?"\u2014":(p2===null?"\u2014":p2+"%");var c3=(avg===null?"\u2014":avg+"%");rowsHtml+="<tr><td>"+CB_NAMES[id]+"</td><td>"+cbDirLabel(dv)+"</td><td>"+bk.cnt+few+"</td><td>"+c1+"</td><td>"+c2+"</td><td>"+c3+"</td></tr>";}}var tbl='<table><thead><tr><th>\u6761\u4ef6</th><th>\u767a\u706b</th><th>\u4ef6\u6570</th><th>\u65b9\u5411\u7684\u4e2d\u7387</th><th>\u00b10.3%\u4ee5\u4e0a</th><th>\u5e73\u5747\u5909\u5316\u5e45</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>';var gline='<div class="muted" style="margin-top:6px">G\u30b2\u30fc\u30c8\u767a\u706b: '+gFire+'\u56de\uff08\u6210\u7e3e\u8a08\u7b97\u5bfe\u8c61\u5916\uff09</div>';el.innerHTML=head+tbl+gline;cboardBind();}function cboardBind(){var el=document.getElementById("cboard");if(!el)return;var bs=el.querySelectorAll("button[data-chz]");for(var i=0;i<bs.length;i++){bs[i].onclick=function(){__cHorizon=this.getAttribute("data-chz");drawCBoard();};}}drawCBoard();
+var __cHorizon="r1";var CB_HKEYS=[["r1","1\u6642\u9593\u5f8c"],["r4","4\u6642\u9593\u5f8c"],["r24","24\u6642\u9593\u5f8c"]];var CB_IDS=["C1","C2","C3","C4"];var CB_NAMES={C1:"C1 \u77ed\u671f\u30dc\u30e9",C2:"C2 \u524d\u5f8c\u534a\u30c8\u30ec\u30f3\u30c9\u4e00\u81f4",C3:"C3 24h\u5024\u5e45",C4:"C4 \u6642\u9593\u8db3sd"};function cbDirLabel(d){return d>0?"+1":(d<0?"-1":"0");}function drawCBoard(){var el=document.getElementById("cboard");if(!el)return;var log=boardRead();var hk=__cHorizon;var gFire=0;var anyData=false;var buckets={};for(var i=0;i<log.length;i++){var r=log[i];if(!r||!r.conds||!r.conds.length)continue;var hasG=false;for(var g=0;g<r.conds.length;g++){if(r.conds[g]&&r.conds[g].id==="G")hasG=true;}if(hasG){gFire++;continue;}var v=r[hk];if(v===null||v===undefined||isNaN(v))continue;var ch=parseFloat(v);anyData=true;for(var c=0;c<r.conds.length;c++){var cd=r.conds[c];if(!cd||CB_IDS.indexOf(cd.id)<0)continue;var key=cd.id+"|"+cd.dir;if(!buckets[key])buckets[key]={id:cd.id,dir:cd.dir,cnt:0,dirN:0,dirHit:0,moveHit:0,absSum:0};var bk=buckets[key];bk.cnt++;bk.absSum+=Math.abs(ch);if(cd.dir!==0){if(Math.abs(ch)>=BOARD_MOVE_THRESH)bk.moveHit++;var dir=r.trendDir||"neutral";if(dir==="up"||dir==="down"){bk.dirN++;if((dir==="up"&&ch>0)||(dir==="down"&&ch<0))bk.dirHit++;}}}}var btns="";for(var b=0;b<CB_HKEYS.length;b++){var hkk=CB_HKEYS[b][0];var hlbl=CB_HKEYS[b][1];btns+='<button class="btn'+(hkk===hk?" on":"")+'" data-chz="'+hkk+'" style="margin-right:6px">'+hlbl+'</button>';}var head='<h3 style="margin:0 0 8px">\u6761\u4ef6\u5225\u306e\u6210\u7e3e</h3><div style="margin-bottom:8px">'+btns+'</div>';if(!anyData){el.innerHTML=head+'<div class="muted">\u307e\u3060\u6761\u4ef6\u5225\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093\u3002\u2463-A\u4ee5\u964d\u306e\u5224\u5b9a\u304c\u7b54\u3048\u5408\u308f\u305b\u3055\u308c\u308b\u3068\u3053\u3053\u306b\u8868\u793a\u3055\u308c\u307e\u3059</div>'+'<div class="muted" style="margin-top:6px">G\u30b2\u30fc\u30c8\u767a\u706b: '+gFire+'\u56de</div>';cboardBind();return;}var rowsHtml="";var order=[1,-1,0];for(var k=0;k<CB_IDS.length;k++){var id=CB_IDS[k];for(var o=0;o<order.length;o++){var dv=order[o];var bk=buckets[id+"|"+dv];if(!bk)continue;var p1=(dv!==0)?boardPct(bk.dirHit,bk.dirN):null;var p2=(dv!==0)?boardPct(bk.moveHit,bk.cnt):null;var avg=bk.cnt?(Math.round(bk.absSum/bk.cnt*100)/100):null;var few=(bk.cnt>0&&bk.cnt<30)?' <span class="muted">\u4ef6\u6570\u50fc\u5c11\uff08\u53c2\u8003\u5024\uff09</span>':"";var c1=(dv===0)?"\u2014":(p1===null?"\u2014":p1+"%");var c2=(dv===0)?"\u2014":(p2===null?"\u2014":p2+"%");var c3=(avg===null?"\u2014":avg+"%");rowsHtml+="<tr><td>"+CB_NAMES[id]+"</td><td>"+cbDirLabel(dv)+"</td><td>"+bk.cnt+few+"</td><td>"+c1+"</td><td>"+c2+"</td><td>"+c3+"</td></tr>";}}var tbl='<table><thead><tr><th>\u6761\u4ef6</th><th>\u767a\u706b</th><th>\u4ef6\u6570</th><th>\u65b9\u5411\u7684\u4e2d\u7387</th><th>\u00b10.3%\u4ee5\u4e0a</th><th>\u5e73\u5747\u5909\u5316\u5e45</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>';var gline='<div class="muted" style="margin-top:6px">G\u30b2\u30fc\u30c8\u767a\u706b: '+gFire+'\u56de\uff08\u6210\u7e3e\u8a08\u7b97\u5bfe\u8c61\u5916\uff09</div>';el.innerHTML=head+tbl+gline;cboardBind();}function cboardBind(){var el=document.getElementById("cboard");if(!el)return;var bs=el.querySelectorAll("button[data-chz]");for(var i=0;i<bs.length;i++){bs[i].onclick=function(){__cHorizon=this.getAttribute("data-chz");drawCBoard();};}}
+var __mHorizon="r1";
+var MB_KEYS=["checker","spread","cost","transfer","liq","spread2","history","devil","audit"];
+var MB_NAMES={checker:"\u4e8b\u5b9f\u78ba\u8a8d\u4fc2\u30cf\u30b8\u30e1",spread:"\u4fa1\u683c\u5dee\u30a6\u30a9\u30c3\u30c1\u30e3\u30fc\u0020\u30b5\u30e4\u30df\u2696\ufe0f",cost:"\u30b3\u30b9\u30c8\u7cbe\u67fb\u5f79\u0020\u30c6\u30b9\u30ea\ud83e\uddee",transfer:"\u9001\u91d1\u30fb\u7d04\u5b9a\u30ea\u30b9\u30af\u4fc2\u0020\u30aa\u30af\u30ea\ud83d\ude9a",liq:"\u6e05\u7b97\u30fb\u30ec\u30d0\u30ec\u30c3\u30b8\u4fc2\u0020\u30bb\u30a4\u30b5\u30f3\u26a0\ufe0f",spread2:"\u8cc7\u91d1\u5206\u6563\u4fc2\u0020\u30d6\u30f3\u30b5\u30f3\ud83d\udce6",history:"\u6b74\u53f2\u4fc2\u30b3\u30e8\u30df\ud83d\udcdc",devil:"\u60aa\u9b54\u306e\u4ee3\u5f01\u8005\u30a2\u30de\u30ce\u30b8\u30e3\u30af\ud83d\ude08",audit:"\u76e3\u67fb\u5f79\u30ab\u30f3\u30b5\ud83d\udd0d"};
+function mbMark(s){return (s>=2)?"\u25ce":((s>=1)?"\u25cb":((s>=0)?"\u25b3":"\u00d7"));}
+function drawMBoard(){
+  var el=document.getElementById("mboard");if(!el)return;
+  if(typeof WEIGHT_PROFILES==="undefined"||!WEIGHT_PROFILES||!WEIGHT_PROFILES.weights){el.innerHTML="";return;}
+  var WP=WEIGHT_PROFILES;var log=boardRead();var hk=__mHorizon;
+  var stats={};for(var ki=0;ki<MB_KEYS.length;ki++){stats[MB_KEYS[ki]]={cnt:0,dirN:0,dirHit:0,moveHit:0,absSum:0};}
+  var anyData=false;
+  for(var i=0;i<log.length;i++){
+    var r=log[i];if(!r||!r.conds||!r.conds.length)continue;
+    var v=r[hk];if(v===null||v===undefined||isNaN(v))continue;
+    var ch=parseFloat(v);anyData=true;
+    var dir=r.trendDir||"neutral";var dirIsSet=(dir==="up"||dir==="down");
+    var hit=(dir==="up"&&ch>0)||(dir==="down"&&ch<0);
+    var moved=(Math.abs(ch)>=BOARD_MOVE_THRESH);
+    for(var ki2=0;ki2<MB_KEYS.length;ki2++){
+      var key=MB_KEYS[ki2];var w=WP.weights[key];if(!w)continue;
+      var s=0;for(var c=0;c<r.conds.length;c++){var cd=r.conds[c];if(cd&&w[cd.id]!=null)s+=cd.dir*w[cd.id];}
+      if(mbMark(s)!=="\u25ce")continue;
+      var st=stats[key];st.cnt++;st.absSum+=Math.abs(ch);
+      if(dirIsSet){st.dirN++;if(hit)st.dirHit++;}
+      if(moved)st.moveHit++;
+    }
+  }
+  var btns="";for(var b=0;b<BOARD_HKEYS.length;b++){var hkk=BOARD_HKEYS[b][0];var hlbl=BOARD_HKEYS[b][1];btns+='<button class="btn"'+(hkk===hk?" on":"")+' data-mhz="'+hkk+'" style="margin-right:6px">'+hlbl+"</button>";}
+  var head='<div style="margin-bottom:8px">'+btns+"</div>";
+  var titleLine='<div style="font-weight:600;margin-bottom:4px">\u30e1\u30f3\u30d0\u30fc\u5225\u0020\u6210\u7e3e\u0028\u8996\u70b9\u30ea\u30fc\u30b0\u6226\u0029</div>';
+  var explLine='<div class="muted" style="margin-bottom:6px">\u25ce\u306f\u0022\u6761\u4ef6\u304c\u5b89\u5b9a\u0022\u306e\u898b\u7acb\u3066\u3002\u00b1\u0030\u002e\u0033\u0025\u7387\u304c\u4f4e\u3044\u307b\u3069\u898b\u7acb\u3066\u901a\u308a\u3060\u3063\u305f\u3053\u3068\u3092\u793a\u3057\u307e\u3059</div>';
+  if(!anyData){el.innerHTML=titleLine+head+'<div class="muted">\u7b54\u3048\u5408\u308f\u305b\u6e08\u307f\u306e\u0063\u006f\u006e\u0064\u0073\u4ed8\u304d\u30c7\u30fc\u30bf\u304c\u84c4\u7a4d\u3055\u308c\u308b\u3068\u3001\u30e1\u30f3\u30d0\u30fc\u5225\u306e\u9806\u4f4d\u304c\u8868\u793a\u3055\u308c\u307e\u3059\u3002</div>';mboardBind();return;}
+  var rows=[];for(var ki3=0;ki3<MB_KEYS.length;ki3++){var k2=MB_KEYS[ki3];var st2=stats[k2];
+    var p1=st2.dirN?boardPct(st2.dirHit,st2.dirN):null;
+    var p2=st2.cnt?boardPct(st2.moveHit,st2.cnt):null;
+    var avg=st2.cnt?(Math.round(st2.absSum/st2.cnt*100)/100):null;
+    rows.push({key:k2,cnt:st2.cnt,p1:p1,p2:p2,avg:avg});}
+  rows.sort(function(a,b){var pa=(a.p2===null)?Infinity:a.p2;var pb=(b.p2===null)?Infinity:b.p2;if(pa!==pb)return pa-pb;return b.cnt-a.cnt;});
+  var rowsHtml="";for(var ri=0;ri<rows.length;ri++){var rw=rows[ri];
+    var few=(rw.cnt>0&&rw.cnt<30)?' <span class="muted">\u4ef6\u6570\u50c5\u5c11\uff08\u53c2\u8003\u5024\uff09</span>':"";
+    var c1=(rw.p1===null)?"\u2014":(rw.p1+"%");
+    var c2=(rw.p2===null)?"\u2014":(rw.p2+"%");
+    var c3=(rw.avg===null)?"\u2014":(rw.avg+"%");
+    rowsHtml+="<tr><td>"+(ri+1)+"</td><td>"+MB_NAMES[rw.key]+"</td><td>"+rw.cnt+few+"</td><td>"+c1+"</td><td>"+c2+"</td><td>"+c3+"</td></tr>";}
+  var tbl='<table><thead><tr><th>\u9806\u4f4d</th><th>\u30e1\u30f3\u30d0\u30fc</th><th>\u25ce\u4ef6\u6570</th><th>\u65b9\u5411\u7684\u4e2d\u7387</th><th>\u00b1\u0030\u002e\u0033\u0025\u4ee5\u4e0a\u7387</th><th>\u5e73\u5747\u5909\u5316\u5e45</th></tr></thead><tbody>'+rowsHtml+"</tbody></table>";
+  var ver=(WP.version!=null?WP.version:"?");
+  var note='<div class="muted" style="margin-top:6px">\u91cd\u307f\u0076"+ver+"\u306b\u3088\u308b\u9061\u53ca\u8a08\u7b97</div>';
+  el.innerHTML=titleLine+explLine+head+tbl+note;mboardBind();
+}
+function mboardBind(){var el=document.getElementById("mboard");if(!el)return;var bs=el.querySelectorAll("button[data-mhz]");for(var i=0;i<bs.length;i++){bs[i].onclick=function(){__mHorizon=this.getAttribute("data-mhz");drawMBoard();};}}
+drawCBoard();
+drawMBoard();
 drawBoard();
 load();
 </script></body></html>"""
