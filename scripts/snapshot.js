@@ -14,6 +14,12 @@ const API = "https://data-api.binance.vision";
 // Number of top-volume symbols to record each run. Bump this to widen coverage.
 const TOP_N = 20;
 
+// Event promotion slots: in addition to the always-on top-volume set, temporarily promote
+// symbols that are "having an event" (large 24h move) but are not in the top TOP_N.
+// No extra API calls: reuse the single ticker list already fetched by selectTickers().
+const EVENT_CHG = 10;   // promote when abs(priceChangePercent) >= this (percent)
+const EVENT_MAX = 10;   // max number of promoted symbols per run
+
 // Stablecoin bases: a USDT pair whose base is itself a stablecoin (e.g. USDCUSDT) is excluded,
 // because stable-vs-stable pairs are not meaningful for this educational arbitrage signal.
 const STABLES = new Set(['USDC', 'FDUSD', 'TUSD', 'DAI', 'BUSD', 'USDP', 'UST', 'USDD', 'PYUSD', 'EUR', 'USD1', 'RLUSD', 'U', 'USDE', 'GUSD', 'USDS', 'FRAX', 'LUSD', 'AEUR']);
@@ -72,7 +78,7 @@ async function selectTickers() {
     cand.push({ it: it, sym: sym, qv: qv });
   }
   cand.sort(function (a, b) { return b.qv - a.qv; });
-  return cand.slice(0, TOP_N);
+  return cand;
 }
 
 // Fetch the 24x1h closes for one symbol. Ticker fields come from the already-fetched list item.
@@ -100,7 +106,7 @@ async function backfillResults(client) {
     " UNION ALL " +
     "  SELECT id, symbol, ts, price, '24' AS horizon FROM judge_records" +
     "   WHERE r24 IS NULL AND price IS NOT NULL AND ts + interval '24 hours' + interval '60 sec' < now()" +
-    ") t ORDER BY ts ASC LIMIT 60";
+    ") t ORDER BY ts ASC LIMIT 120";
   const rows = (await client.query(SELECT_SQL)).rows;
   let filled = 0, failed = 0;
   for (const row of rows) {
@@ -138,7 +144,17 @@ async function main() {
   try {
     await client.query(CREATE_SQL);
     await client.query("ALTER TABLE judge_records ADD COLUMN IF NOT EXISTS judge_ver text");
-    const picked = await selectTickers();
+    await client.query("ALTER TABLE judge_records ADD COLUMN IF NOT EXISTS pick text");
+    const cand = await selectTickers();
+    const topSet = cand.slice(0, TOP_N).map(function (c) { c.pick = "top"; return c; });
+    const topSyms = new Set(topSet.map(function (c) { return c.sym; }));
+    const events = cand
+      .filter(function (c) { return !topSyms.has(c.sym) && Math.abs(parseFloat(c.it.priceChangePercent)) >= EVENT_CHG; })
+      .sort(function (a, b) { return Math.abs(parseFloat(b.it.priceChangePercent)) - Math.abs(parseFloat(a.it.priceChangePercent)); })
+      .slice(0, EVENT_MAX)
+      .map(function (c) { c.pick = "event"; return c; });
+    const picked = topSet.concat(events);
+    console.log("picked top=" + topSet.length + " event=" + events.length + (events.length ? " [" + events.map(function (c) { return c.sym; }).join(",") + "]" : ""));
     for (const p of picked) {
       const sym = p.sym;
       const it = p.it;
@@ -156,7 +172,7 @@ async function main() {
         const price = parseFloat(snap.price);
         const changePct = parseFloat(snap.changePct);
         await client.query(
-          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '2.1')",
+          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver, pick) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '2.1', $13)",
           [
             snap.symbol,
             'binance-spot',
@@ -169,7 +185,8 @@ async function main() {
             null,
             null,
             null,
-            JSON.stringify(r.conds || [])
+            JSON.stringify(r.conds || []),
+            p.pick
           ]
         );
         console.log("ok " + sym + " " + r.mark + " " + r.trendDir);
