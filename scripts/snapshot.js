@@ -29,6 +29,7 @@ const EVENT_MAX = 10;   // max number of promoted symbols per run
 // Kraken USD coverage is much wider than USDT, so we query USD pairs. Symbols absent on Kraken simply
 // get no snap.kr (=> C1-C4 only = backward compatible). One bulk Ticker call per run (no per-symbol calls).
 const KRAKEN = "https://api.kraken.com";
+const BYBIT = "https://api.bybit.com";
 // Binance base -> Kraken base alias (Kraken quirk: BTC is XBT). Others are same-named.
 const KR_ALIAS = { BTC: "XBT", DOGE: "XDG" };
 
@@ -243,6 +244,33 @@ async function main() {
     } catch (e) {
       console.warn("kraken fetch failed (continuing with C1-C4 only): " + (e && e.message ? e.message : e));
     }
+    // C8/C9: one bulk Bybit linear (USDT perp) fetch for all symbols (server-only, v4).
+    // /v5/market/tickers?category=linear returns every perp in one call; symbol is BTCUSDT form (same as picked.sym),
+    // so NO pre-filter/alias step is needed (unlike Kraken). Build futMap[symbol]={fr,oi,oiUsd,mark}.
+    // On any failure, futMap stays empty => every symbol gets C1-C5 only (pre-v4 output, fully backward compatible).
+    const futMap = {};
+    try {
+      const by = await fetchJson(BYBIT + "/v5/market/tickers?category=linear");
+      const byList = (by && by.data && by.data.result && by.data.result.list) ? by.data.result.list : null;
+      if (byList) {
+        byList.forEach(function (x) {
+          if (!x || !x.symbol) return;
+          const fr = parseFloat(x.fundingRate);
+          const oi = parseFloat(x.openInterest);
+          const oiUsd = parseFloat(x.openInterestValue);
+          const mark = parseFloat(x.markPrice);
+          const f = {};
+          if (isFinite(fr)) f.fr = fr;
+          if (isFinite(oi)) f.oi = oi;
+          if (isFinite(oiUsd)) f.oiUsd = oiUsd;
+          if (isFinite(mark)) f.mark = mark;
+          futMap[x.symbol] = f;
+        });
+      }
+      console.log("bybit-fut: status=" + (by ? by.status : "n/a") + " perps=" + Object.keys(futMap).length);
+    } catch (e) {
+      console.warn("bybit-fut fetch failed (continuing with C1-C5 only): " + (e && e.message ? e.message : e));
+    }
     for (const p of picked) {
       const sym = p.sym;
       const it = p.it;
@@ -263,11 +291,14 @@ async function main() {
         if (typeof __krPx === "number" && isFinite(__krPx) && isFinite(__biPx) && __biPx > 0) {
           snap.kr = { price: __krPx, dev: (__krPx - __biPx) / __biPx * 100 };
         }
+        // C8/C9: attach Bybit perp data only when this symbol has a Bybit linear perp (futMap hit).
+        const __fut = futMap[sym];
+        if (__fut && Object.keys(__fut).length > 0) { snap.fut = __fut; }
         const r = arbiJudge(snap);
         const price = parseFloat(snap.price);
         const changePct = parseFloat(snap.changePct);
         await client.query(
-          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver, pick) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '3.0', $13)",
+          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver, pick) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '4.0', $13)",
           [
             snap.symbol,
             'binance-spot',
