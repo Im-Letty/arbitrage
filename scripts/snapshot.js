@@ -30,7 +30,7 @@ const EVENT_MAX = 10;   // max number of promoted symbols per run
 // get no snap.kr (=> C1-C4 only = backward compatible). One bulk Ticker call per run (no per-symbol calls).
 const KRAKEN = "https://api.kraken.com";
 // Binance base -> Kraken base alias (Kraken quirk: BTC is XBT). Others are same-named.
-const KR_ALIAS = { BTC: "XBT" };
+const KR_ALIAS = { BTC: "XBT", DOGE: "XDG" };
 
 // Stablecoin bases: a USDT pair whose base is itself a stablecoin (e.g. USDCUSDT) is excluded,
 // because stable-vs-stable pairs are not meaningful for this educational arbitrage signal.
@@ -170,34 +170,71 @@ async function main() {
     // --- C5: one bulk Kraken USD price fetch for all picked symbols (server-only) ---
     const krMap = {};
     try {
-      const reqList = picked.map(function (p) {
+      // Build the candidate base list from picked symbols (Binance base -> Kraken base alias).
+      let reqList = picked.map(function (p) {
         const base = p.sym.slice(0, -4);
         const kbase = (KR_ALIAS[base] || base);
-        return { sym: p.sym, kbase: kbase, krpair: kbase + "USD" };
+        return { sym: p.sym, kbase: kbase, krpair: null };
       });
-      const pairParam = reqList.map(function (x) { return x.krpair; }).join(",");
-      const t0 = Date.now();
-      const kr = await fetchJson(KRAKEN + "/0/public/Ticker?pair=" + pairParam);
-      const ms = Date.now() - t0;
-      const result = (kr && kr.data && kr.data.result) ? kr.data.result : null;
-      const errs = (kr && kr.data && kr.data.error) ? kr.data.error : [];
+      // Case A: fetch Kraken's real AssetPairs once and keep only USD pairs that actually exist.
+      // This prevents one unknown symbol from poisoning the whole Ticker batch (Kraken is all-or-nothing).
+      const ap = await fetchJson(KRAKEN + "/0/public/AssetPairs");
+      const apResult = (ap && ap.data && ap.data.result) ? ap.data.result : null;
+      const apErrs = (ap && ap.data && ap.data.error) ? ap.data.error : [];
+      // Normalize a Kraken base/asset code to a comparable base (strip leading class-prefix X on 4-char XClass codes).
+      const normBase = function (b) { return (b && b.length === 4 && b.charAt(0) === "X") ? b.slice(1) : b; };
+      const validByBase = {};
+      if (apResult && (!apErrs || apErrs.length === 0)) {
+        // Map normalized base -> { altname, tickerKey } for pairs quoted in USD (quote ZUSD or USD).
+        Object.keys(apResult).forEach(function (key) {
+          const info = apResult[key];
+          if (!info) return;
+          const quote = info.quote;
+          if (quote !== "ZUSD" && quote !== "USD") return;
+          const nb = normBase(info.base);
+          // Prefer the altname for the Ticker request; remember the canonical key for response lookup.
+          if (nb && !validByBase[nb]) validByBase[nb] = { altname: info.altname || key, tickerKey: key };
+        });
+      }
+      // Keep only picked symbols whose Kraken base exists as a USD pair.
+      reqList = reqList.filter(function (x) {
+        const v = validByBase[x.kbase];
+        if (!v) return false;
+        x.krpair = v.altname; x.tickerKey = v.tickerKey;
+        return true;
+      });
+      const validCount = Object.keys(validByBase).length;
+      // Fallback: if AssetPairs failed/empty, skip Kraken entirely (all symbols get C1-C4 only).
+      // Also skip the Ticker call if no picked symbol resolved to a real Kraken USD pair.
+      let kr = null, ms = 0, result = null, errs = [];
+      if (validCount > 0 && reqList.length > 0) {
+        const pairParam = reqList.map(function (x) { return x.krpair; }).join(",");
+        const t0 = Date.now();
+        kr = await fetchJson(KRAKEN + "/0/public/Ticker?pair=" + pairParam);
+        ms = Date.now() - t0;
+        result = (kr && kr.data && kr.data.result) ? kr.data.result : null;
+        errs = (kr && kr.data && kr.data.error) ? kr.data.error : [];
+      } else {
+        console.log("kraken: skipped (assetpairs valid=" + validCount + ", resolved=" + reqList.length + ")" + (apErrs && apErrs.length ? (" apErr=" + JSON.stringify(apErrs)) : ""));
+      }
       if (result && (!errs || errs.length === 0)) {
-        // Normalize a Kraken canonical response key to a comparable base.
-        // IMPORTANT: strip ZUSD before USD (every ...ZUSD also ends in USD), then drop a
-        // leading class-prefix X for the 4-char XClass forms (XXBT->XBT, XETH->ETH, XXRP->XRP).
-        const norm = function (key) {
-          var k = key;
-          if (k.slice(-4) === "ZUSD") k = k.slice(0, -4);
-          else if (k.slice(-3) === "USD") k = k.slice(0, -3);
-          if (k.length === 4 && k.charAt(0) === "X") k = k.slice(1);
-          return k;
-        };
-        const keyByBase = {};
-        Object.keys(result).forEach(function (key) { keyByBase[norm(key)] = key; });
+        // Match each requested symbol to its Kraken price using the canonical key learned from
+        // AssetPairs (x.tickerKey). If Kraken's Ticker echoes a slightly different key, fall back
+        // to the altname or a direct scan. This avoids base-code mismatches (e.g. DOGE base is XDG).
         reqList.forEach(function (x) {
-          const key = keyByBase[x.kbase];
-          if (key && result[key] && result[key].c && result[key].c[0] != null) {
-            const px = parseFloat(result[key].c[0]);
+          var entry = result[x.tickerKey] || result[x.krpair];
+          if (!entry) {
+            // Last resort: find any result key whose stripped-USD form equals the altname's stripped form.
+            var want = (x.krpair || "").replace(/USD$/, "");
+            var hit = Object.keys(result).filter(function (k) {
+              var kk = k.replace(/ZUSD$/, "").replace(/USD$/, "");
+              if (kk.length === 4 && kk.charAt(0) === "X") kk = kk.slice(1);
+              return kk === want;
+            })[0];
+            if (hit) entry = result[hit];
+          }
+          if (entry && entry.c && entry.c[0] != null) {
+            var px = parseFloat(entry.c[0]);
             if (isFinite(px) && px > 0) krMap[x.sym] = px;
           }
         });
