@@ -143,22 +143,22 @@ HOME_HTML = r"""<!DOCTYPE html>
 
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-family:'Noto Sans JP',system-ui,'Hiragino Sans','Yu Gothic','Malgun Gothic','Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:820px;margin:0 auto;padding:24px 18px 60px}
+  .wrap{max-width:820px;margin:0 auto;padding:28px 20px 70px}
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
   .brand{font-size:22px;font-weight:700;letter-spacing:.5px}
   .badge{font-size:12px;font-weight:500;color:var(--jade);background:var(--jade-soft);padding:5px 11px;border-radius:999px}
-  .hero{font-size:25px;font-weight:700;margin:0 0 6px}
+  .hero{font-size:25px;font-weight:700;margin:0 0 14px}
   .lead{font-size:14px;color:var(--muted);margin:0 0 22px}
   .flow{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin:0 0 10px;flex-wrap:wrap}
   .flow .arw{color:var(--jade);font-weight:700}
-  .building{border:1px solid var(--border-strong);border-radius:24px;background:var(--surface);padding:18px;box-shadow:0 12px 26px -10px rgba(188,131,120,.30)}
-  .building-title{text-align:center;font-weight:700;font-size:15px;margin:4px 0 16px;color:var(--ink)}
-  .rooms{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .room{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:24px;padding:16px 18px;background:var(--surface);box-shadow:0 10px 28px -16px rgba(170,120,110,.40);transition:transform .08s,box-shadow .08s}
-  .room:hover{transform:translateY(-2px);box-shadow:0 16px 32px -14px rgba(170,120,110,.50)}
-  .room.jade{border-left:3px solid var(--acc)}
-  .room.analyze{border-left:3px solid var(--acc)}
-  .room.safe{border-left:3px solid var(--acc)}
+  .building{border:1px solid var(--border-strong);border-radius:28px;background:var(--surface);padding:22px;box-shadow:0 16px 34px -14px rgba(188,131,120,.26)}
+  .building-title{text-align:center;font-weight:700;font-size:15px;margin:4px 0 16px;color:var(--ink);position:relative;padding-bottom:16px}.building-title::after{content:"\25C7";display:block;color:var(--acc);font-size:12px;letter-spacing:4px;opacity:.85;width:120px;margin:8px auto 0;padding-bottom:12px;border-bottom:1px solid;border-image:linear-gradient(90deg,transparent,var(--acc) 50%,transparent) 1}
+  .rooms{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .room{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:28px;padding:20px 22px;background:var(--surface);box-shadow:0 14px 34px -18px rgba(170,120,110,.34);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+  .room:hover{transform:translateY(-3px);box-shadow:0 22px 40px -16px rgba(170,120,110,.42)}[data-theme="B"] .room{background:linear-gradient(180deg,#ffffff 0%,#fdf6f4 100%)}[data-theme="B"] .room:hover{background:linear-gradient(180deg,#ffffff 0%,#fbeeea 100%)}
+  .room.jade{border-left:1px solid var(--border)}
+  .room.analyze{border-left:1px solid var(--border)}
+  .room.safe{border-left:1px solid var(--border)}
   .room .rt{font-weight:700;font-size:15px;margin:0 0 3px}
   .room .rd{font-size:12.5px;color:var(--muted);margin:0}
   .room.full{grid-column:1 / -1}
