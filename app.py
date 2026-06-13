@@ -453,7 +453,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
   .card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:18px}
   .row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
   .row label{font-size:14px; min-width:96px; color:var(--muted)}
-  .row input[type=range]{flex:1; accent-color:var(--jade)}
+  .row input[type=range]{flex:1; accent-color:var(--jade);height:6px;border-radius:999px;background:var(--jade-soft);-webkit-appearance:none;appearance:none}.row input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--jade);margin-top:-5px}.row input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--jade)}
   .row .val{font-size:15px; font-weight:500; min-width:92px; text-align:right}
   .run{width:100%; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px;
     background:var(--ink); color:var(--surface); cursor:pointer}
@@ -647,7 +647,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
   .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
   .row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
   .row label{font-size:14px; min-width:60px; color:var(--muted)}
-  .row input[type=range]{flex:1; accent-color:var(--jade)}
+  .row input[type=range]{flex:1; accent-color:var(--jade);height:6px;border-radius:999px;background:var(--jade-soft);-webkit-appearance:none;appearance:none}.row input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--jade);margin-top:-5px}.row input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--jade)}
   .row .val{font-size:15px; font-weight:500; min-width:64px; text-align:right}
   .run{width:100%; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px;
     background:var(--ink); color:var(--surface); cursor:pointer}
@@ -877,7 +877,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
   .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
   .row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
   .row label{font-size:14px; min-width:60px; color:var(--muted)}
-  .row input[type=range]{flex:1; accent-color:var(--jade)}
+  .row input[type=range]{flex:1; accent-color:var(--jade);height:6px;border-radius:999px;background:var(--jade-soft);-webkit-appearance:none;appearance:none}.row input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--jade);margin-top:-5px}.row input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--jade)}
   .row .val{font-size:15px; font-weight:500; min-width:64px; text-align:right}
   .run{width:100%; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px;
     background:var(--ink); color:var(--surface); cursor:pointer}
