@@ -1176,9 +1176,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{v
 .jreasons li { margin:2px 0; }
 .jdisc { font-size:12px; color:var(--mut3); margin-top:8px; }
 </style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script><div class="wrap">
-<h1>📈 取引所間 先物サヤ取り市場室</h1>
-<p class="sub">複数取引所のリアルタイム価格を見て、社員たちが取引所間の先物価格差（アービトラージ）の観点から判断・分析する部屋です。</p>
-<div class="motto">🧭 モットー：まちがいに早く気づく会社。ここは投資情報会社arbitrageの<strong>『取引所間 先物サヤ取り市場室』</strong>です。同じ先物の取引所間の価格差を、手数料・送金・税を引いた“手取り”の目線で判断・分析します。社員は「絶対もうかる」とは言わず、わからないことは正直に言います。投資の判断は、いつもあなた自身のものです。</div>
+<h1>相場チェック</h1>
 <div id="grid" class="grid"><div class="coin">読み込み中…</div></div>
 <p id="upd" class="upd"></p>
 <div class="judge">
