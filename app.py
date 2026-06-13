@@ -423,8 +423,8 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
 """
 
 KIHON_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — 練習投資シミュレーター</title>
@@ -438,6 +438,9 @@ KIHON_HTML = r"""<!DOCTYPE html>
     --jade:#0f7a5f; --jade-soft:#e3f1ec; --amber:#b5751a; --amber-soft:#f6ecdb;
     --muted:#5d6470; --border:#e7e2d7; --border-strong:#d8d2c4; --loss:#b23b3b;
   }
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--loss:#ff5b5b;--line3:#1b2740;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;--loss:#b23b3b;--line3:#eeeeee;}
+
   *{box-sizing:border-box}
   body{margin:0; background:var(--paper); color:var(--ink); line-height:1.7;
     font-family:'Noto Sans JP', system-ui, 'Hiragino Sans', 'Yu Gothic', sans-serif; -webkit-font-smoothing:antialiased}
@@ -453,7 +456,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
   .row input[type=range]{flex:1; accent-color:var(--jade)}
   .row .val{font-size:15px; font-weight:500; min-width:92px; text-align:right}
   .run{width:100%; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px;
-    background:var(--ink); color:#fff; cursor:pointer}
+    background:var(--ink); color:var(--surface); cursor:pointer}
   .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px}
   .stat{background:var(--paper); border:1px solid var(--border); border-radius:12px; padding:12px}
   .stat .k{font-size:12px; color:var(--muted); margin-bottom:4px}
@@ -468,7 +471,9 @@ KIHON_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
+  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
     <span class="brand">arbitrage</span>
@@ -564,9 +569,9 @@ KIHON_HTML = r"""<!DOCTYPE html>
     $('div').style.color = divFinal >= invested ? 'var(--jade)' : 'var(--loss)';
 
     const ds = [
-      {label:'集中', data:concentrated, borderColor:'#b5751a', borderWidth:2, pointRadius:0, tension:0.1},
-      {label:'分散', data:diversified, borderColor:'#0f7a5f', borderWidth:2, pointRadius:0, tension:0.1},
-      {label:'元本', data:investedLine, borderColor:'#5d6470', borderWidth:1.5, borderDash:[5,5], pointRadius:0, tension:0}
+      {label:'集中', data:concentrated, borderColor:'var(--amber)', borderWidth:2, pointRadius:0, tension:0.1},
+      {label:'分散', data:diversified, borderColor:'var(--jade)', borderWidth:2, pointRadius:0, tension:0.1},
+      {label:'元本', data:investedLine, borderColor:'var(--muted)', borderWidth:1.5, borderDash:[5,5], pointRadius:0, tension:0}
     ];
 
     if(chart){
@@ -582,7 +587,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
           plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>yen(c.parsed.y)}}},
           scales:{
             x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:false, font:{family:'Noto Sans JP'}}},
-            y:{ticks:{callback:v=>'¥'+(v/10000).toFixed(0)+'万', font:{family:'Noto Sans JP'}}, grid:{color:'#eee'}}
+            y:{ticks:{callback:v=>'¥'+(v/10000).toFixed(0)+'万', font:{family:'Noto Sans JP'}}, grid:{color:'var(--line3)'}}
           }
         }
       });
@@ -607,8 +612,8 @@ KIHON_HTML = r"""<!DOCTYPE html>
 """
 
 FACTOR_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — ファクター投資の練習</title>
@@ -622,6 +627,9 @@ FACTOR_HTML = r"""<!DOCTYPE html>
     --jade:#0f7a5f; --jade-soft:#e3f1ec; --amber:#b5751a; --amber-soft:#f6ecdb;
     --muted:#5d6470; --border:#e7e2d7; --border-strong:#d8d2c4; --loss:#b23b3b;
   }
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--loss:#ff5b5b;--line3:#1b2740;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;--loss:#b23b3b;--line3:#eeeeee;}
+
   *{box-sizing:border-box}
   body{margin:0; background:var(--paper); color:var(--ink); line-height:1.7;
     font-family:'Noto Sans JP', system-ui, 'Hiragino Sans', 'Yu Gothic', sans-serif; -webkit-font-smoothing:antialiased}
@@ -636,13 +644,13 @@ FACTOR_HTML = r"""<!DOCTYPE html>
   .seg{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px}
   .seg button{font-family:inherit; font-size:14px; padding:9px 16px; border:1px solid var(--border-strong); border-radius:10px;
     background:var(--surface); color:var(--muted); cursor:pointer}
-  .seg button.on{background:var(--jade); color:#fff; border-color:var(--jade); font-weight:500}
+  .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
   .row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
   .row label{font-size:14px; min-width:60px; color:var(--muted)}
   .row input[type=range]{flex:1; accent-color:var(--jade)}
   .row .val{font-size:15px; font-weight:500; min-width:64px; text-align:right}
   .run{width:100%; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px;
-    background:var(--ink); color:#fff; cursor:pointer}
+    background:var(--ink); color:var(--surface); cursor:pointer}
   .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px}
   .stat{background:var(--paper); border:1px solid var(--border); border-radius:12px; padding:12px}
   .stat .k{font-size:12px; color:var(--muted); margin-bottom:4px}
@@ -661,7 +669,9 @@ FACTOR_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
+  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
     <span class="brand">arbitrage</span>
@@ -785,8 +795,8 @@ FACTOR_HTML = r"""<!DOCTYPE html>
     for(let m=0; m<months; m++) labels.push(m%12===11 ? ((m+1)/12)+'年' : '');
 
     const ds = [
-      {label:'戦略', data:stratLine, borderColor:'#0f7a5f', borderWidth:2, pointRadius:0, tension:0.1},
-      {label:'市場', data:marketLine, borderColor:'#b5751a', borderWidth:2, pointRadius:0, tension:0.1}
+      {label:'戦略', data:stratLine, borderColor:'var(--jade)', borderWidth:2, pointRadius:0, tension:0.1},
+      {label:'市場', data:marketLine, borderColor:'var(--amber)', borderWidth:2, pointRadius:0, tension:0.1}
     ];
 
     if(chart){
@@ -802,7 +812,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
           plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>yen(c.parsed.y)}}},
           scales:{
             x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:false, font:{family:'Noto Sans JP'}}},
-            y:{ticks:{callback:v=>(v/10000).toFixed(0)+'万', font:{family:'Noto Sans JP'}}, grid:{color:'#eee'}}
+            y:{ticks:{callback:v=>(v/10000).toFixed(0)+'万', font:{family:'Noto Sans JP'}}, grid:{color:'var(--line3)'}}
           }
         }
       });
@@ -832,8 +842,8 @@ FACTOR_HTML = r"""<!DOCTYPE html>
 """
 
 ARBITRAGE_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — アービトラージの練習</title>
@@ -847,6 +857,9 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
     --jade:#0f7a5f; --jade-soft:#e3f1ec; --amber:#b5751a; --amber-soft:#f6ecdb;
     --muted:#5d6470; --border:#e7e2d7; --border-strong:#d8d2c4; --loss:#b23b3b; --loss-soft:#f6e3e1;
   }
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--loss:#ff5b5b;--loss-soft:#3a1d1d;--line3:#1b2740;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;--loss:#b23b3b;--loss-soft:#f6e3e1;--line3:#eeeeee;}
+
   *{box-sizing:border-box}
   body{margin:0; background:var(--paper); color:var(--ink); line-height:1.7;
     font-family:'Noto Sans JP', system-ui, 'Hiragino Sans', 'Yu Gothic', sans-serif; -webkit-font-smoothing:antialiased}
@@ -861,13 +874,13 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
   .seg{display:flex; gap:8px; margin-bottom:18px}
   .seg button{font-family:inherit; font-size:14px; padding:9px 16px; border:1px solid var(--border-strong); border-radius:10px;
     background:var(--surface); color:var(--muted); cursor:pointer}
-  .seg button.on{background:var(--jade); color:#fff; border-color:var(--jade); font-weight:500}
+  .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
   .row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
   .row label{font-size:14px; min-width:60px; color:var(--muted)}
   .row input[type=range]{flex:1; accent-color:var(--jade)}
   .row .val{font-size:15px; font-weight:500; min-width:64px; text-align:right}
   .run{width:100%; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px;
-    background:var(--ink); color:#fff; cursor:pointer}
+    background:var(--ink); color:var(--surface); cursor:pointer}
   .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px}
   .stat{background:var(--paper); border:1px solid var(--border); border-radius:12px; padding:12px}
   .stat .k{font-size:12px; color:var(--muted); margin-bottom:4px}
@@ -879,7 +892,9 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:#0f7a5f;text-decoration:none">← 練習場へ</a></p>
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
+  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
     <span class="brand">arbitrage</span>
@@ -974,7 +989,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
     const labels = [];
     for(let i=0; i<steps; i++) labels.push((i%52===51) ? ((i+1)/52)+'年' : '');
 
-    const ds = [{label:'残高', data:line, borderColor:'#0f7a5f', borderWidth:2, pointRadius:0, tension:0.05}];
+    const ds = [{label:'残高', data:line, borderColor:'var(--jade)', borderWidth:2, pointRadius:0, tension:0.05}];
     if(chart){
       chart.data.labels = labels; chart.data.datasets = ds; chart.update();
     } else {
@@ -985,7 +1000,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
           plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>yen(c.parsed.y)}}},
           scales:{
             x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:false, font:{family:'Noto Sans JP'}}},
-            y:{ticks:{callback:v=>(v/10000).toFixed(0)+'万', font:{family:'Noto Sans JP'}}, grid:{color:'#eee'}}
+            y:{ticks:{callback:v=>(v/10000).toFixed(0)+'万', font:{family:'Noto Sans JP'}}, grid:{color:'var(--line3)'}}
           }
         }
       });
