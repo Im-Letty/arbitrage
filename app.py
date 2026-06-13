@@ -1338,6 +1338,7 @@ renderJudge(snapshot);
 # 分析に参加する社員（順番に発言する）
 LOG_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="/weights.js"></script>
 <title>判定の振り返り — arbitrage</title>
 <style>
 body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:880px;margin:0 auto;padding:24px;background:#0b0e14;color:#e6e6e6;line-height:1.7}
