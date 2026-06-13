@@ -425,7 +425,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
 
   <div class="topbar">
     <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
@@ -619,7 +619,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
 
   <div class="topbar">
     <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
@@ -838,7 +838,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
 
   <div class="topbar">
     <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
@@ -1398,10 +1398,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .note{background:var(--panel2);border:1px dashed var(--bd2);border-radius:10px;padding:12px;color:var(--mut);font-size:13px;margin:12px 0}
 .btn{display:inline-block;background:var(--acc);color:var(--acctx);padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
 </style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
-<p><a href="/market">&larr; 市場室へ</a> &nbsp; <a href="/">arbitrage トップ</a></p>
-<h1>📜 判定の振り返り（社員たちが向上するための記録）</h1>
-<p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
-<div class="note">※ 記録はこの端末（ブラウザ）の中だけに保存され、外部には送信されません。市場室で判定するほど記録が増えます。</div>
+<p><a href="/">← arbitrage トップへ</a></p>
+<h1>📜 判定の振り返り</h1>
 <div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div><div class="card"><div id="board"></div></div><div class="card"><div id="cboard"></div></div>
 <div class="card"><div id="mboard"></div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
