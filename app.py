@@ -176,57 +176,24 @@ HOME_HTML = r"""<!DOCTYPE html>
 
   <div class="topbar"><span class="brand">arbitrage</span><span class="badge">投資・お金の情報・教育</span></div>
   <h1 class="hero">ようこそ arbitrage へ</h1>
-  <p class="lead">暗号資産の先物サヤ取り（取引所どうしの価格差）に特化した、情報・教育の場です。本物の価格を見ながら、できるだけ正確に・根拠を持って判断しようとし、まちがいに早く気づこうとする社員たちが、「今は条件がいい・悪い」を理由つきで考えます。初心者からプロまで、自分の言語で使えます。</p>
-  <div style="background:var(--jade-soft);border:1px solid var(--line2);border-radius:14px;padding:14px 16px;margin:0 0 18px"><p style="font-size:15px;font-weight:700;color:var(--jade);margin:0 0 6px">🧭 わたしたちのモットー：「まちがいに早く気づく会社」</p><p style="font-size:12.5px;color:var(--muted);margin:0">絶対に勝つことはできません。だからこそ、すぐに結論を出さない・まちがえても責めない・わからないときは「わからない」と言える——そんな環境を大切にします。</p></div>
-<div class="flow"><span>世界の情報</span><span class="arw">→</span><span>arbitrageの中で読み解く</span><span class="arw">→</span><span>あなた（世界の利用者）へ</span></div>
   <div class="building">
     <div class="building-title">arbitrage — あなたの投資情報会社</div>
     <div class="rooms">
-      <a class="room analyze full" href="/reception">
-        <p class="rt">💬 受付カウンター（AIアナリスト）</p>
-        <p class="rd">情報をチェックし、冷静に分析し、あなたの言語とレベルで答えます。質問してみてください。</p>
-      </a>
-      <a class="room jade" href="/market">
-        <p class="rt">📈 株価グラフ＆分析</p>
-        <p class="rd">本物のリアルタイム価格をグラフで見て、社員の分析メモ付きで読む。</p>
-      </a>
-      <a class="room safe" href="/practice">
-        <p class="rt">🎯 投資の練習場</p>
-        <p class="rd">積立・分散・ファクターなどを、リスクなしで試して学ぶ。</p>
-      </a>
+      <a class="room gold full" href="/market">
+<p class="rt">📈 練習市場室</p>
+</a>
+      <a class="room jade full" href="/log">
+<p class="rt">📊 通信簿</p>
+</a>
+      <a class="room jade full" href="/arbitrage">
+<p class="rt">💹 アービトラージの学習</p>
+</a>
       <a class="room safe full" href="/members">
 <p class="rt">👥 社員紹介室</p>
-<p class="rd">arbitrageで働く社員たちと、それぞれが守る約束を見る。</p>
 </a>
-<a class="room jade full" href="/meeting-room">
+      <a class="room jade full" href="/meeting-room">
 <p class="rt">🗣️ 社員会議室</p>
-<p class="rd">あなたの相談に、社員たちが順番に意見を出し合って答えます。</p>
 </a>
-<a class="room gold full" href="/market">
-<p class="rt">📈 練習市場室</p>
-<p class="rd">本物のリアルタイム価格（暗号資産）を見て、社員たちが各手法の観点から判断・分析します。</p>
-</a>
-<a class="room jade full" href="/arbitrage">
-<p class="rt">💹 アービトラージの学習</p>
-<p class="rd">取引所間の先物サヤ取りの考え方を、やさしく学ぶ。</p>
-</a>
-<a class="room safe full" href="/basics">
-<p class="rt">🧮 練習投資シミュレーター</p>
-<p class="rd">積立・分散などをリスクなしで試して、数字の動きを体感する。</p>
-</a>
-<a class="room safe full" href="/factor">
-<p class="rt">🔬 ファクター投資の練習</p>
-<p class="rd">割安・規模・勢いなどの「ファクター」の考え方を練習する。</p>
-</a>
-<div class="rule">
-        <p class="rt">📘 社員のルールブック — 破ってはいけない4つの約束</p>
-        <ul>
-          <li>「絶対儲かる」とは言わない（確実な利益は存在しない）</li>
-          <li>わからないことは言わない・でっち上げない</li>
-          <li>情報は複数の情報源で確認する</li>
-          <li>投資判断は本人の責任。個別の売買アドバイスは出さない</li>
-        </ul>
-      </div>
     </div>
   </div>
   <div class="foot">arbitrage は教育・情報提供を目的としたサービスです。お金を運用するものではなく、利益を保証するものでもありません。投資にはリスクがあり、最終的な判断はご自身の責任で行ってください。</div>
