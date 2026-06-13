@@ -160,6 +160,9 @@ HOME_HTML = r"""<!DOCTYPE html>
   .room.analyze{border-left:1px solid var(--border)}
   .room.safe{border-left:1px solid var(--border)}
   .room .rt{font-weight:700;font-size:15px;margin:0 0 3px}
+.room .rt{display:flex;align-items:center;justify-content:center;gap:8px;}
+.room .ricon{flex:0 0 auto;color:var(--acc);stroke:var(--acc);}
+
   .room .rd{font-size:12.5px;color:var(--muted);margin:0}
   .room.full{grid-column:1 / -1}
   .rule{grid-column:1 / -1;background:var(--amber-soft);border:1px solid var(--line1);border-radius:14px;padding:14px 16px;margin-top:2px}
@@ -180,13 +183,13 @@ HOME_HTML = r"""<!DOCTYPE html>
     
     <div class="rooms">
       <a class="room gold full" href="/market">
-<p class="rt">📈 練習市場室</p>
+<p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/></svg> 相場をチェック</p>
 </a>
       <a class="room jade full" href="/log">
-<p class="rt">📊 通信簿</p>
+<p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.5"/><path d="M3 4v3.5H6.5"/><path d="M12 8v4l3 2"/></svg> 過去のデータ</p>
 </a>
       <a class="room safe full" href="/members">
-<p class="rt">👥 社員紹介室</p>
+<p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.9 3-6.5 7-6.5s7 2.6 7 6.5"/></svg> チーム</p>
 </a>
     </div>
   </div>
