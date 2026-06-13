@@ -152,7 +152,7 @@ HOME_HTML = r"""<!DOCTYPE html>
   .flow{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin:0 0 10px;flex-wrap:wrap}
   .flow .arw{color:var(--jade);font-weight:700}
   .building{border:1px solid var(--border-strong);border-radius:28px;background:var(--surface);padding:22px;box-shadow:0 16px 34px -14px rgba(188,131,120,.26)}
-  .building-title{text-align:center;font-weight:700;font-size:15px;margin:4px 0 16px;color:var(--ink);position:relative;padding-bottom:16px}.building-title::after{content:"\25C7";display:block;color:var(--acc);font-size:12px;letter-spacing:4px;opacity:.85;width:120px;margin:8px auto 0;padding-bottom:12px;border-bottom:1px solid;border-image:linear-gradient(90deg,transparent,var(--acc) 50%,transparent) 1}
+  
   .rooms{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .room{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:28px;padding:20px 22px;background:var(--surface);box-shadow:0 14px 34px -18px rgba(170,120,110,.34);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
   .room:hover{transform:translateY(-3px);box-shadow:0 22px 40px -16px rgba(170,120,110,.42)}[data-theme="B"] .room{background:linear-gradient(180deg,#ffffff 0%,#fdf6f4 100%)}[data-theme="B"] .room:hover{background:linear-gradient(180deg,#ffffff 0%,#fbeeea 100%)}
@@ -174,10 +174,10 @@ HOME_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
 
-  <div class="topbar"><span class="brand">arbitrage</span><span class="badge">投資・お金の情報・教育</span></div>
-  <h1 class="hero">ようこそ arbitrage へ</h1>
+  <div class="topbar"><span class="brand">arbitrage</span></div>
+  
   <div class="building">
-    <div class="building-title">arbitrage — あなたの投資情報会社</div>
+    
     <div class="rooms">
       <a class="room gold full" href="/market">
 <p class="rt">📈 練習市場室</p>
@@ -1011,8 +1011,8 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 
 <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
 <div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員紹介室</span></div>
-<h1 class="hero">うちの社員たち</h1>
-<p class="lead">「負けない会社」をつくるために集めた仲間です。一人ひとりが、破ってはいけない約束のどれかを担当しています。スター選手はいません。でも、みんなで支え合います。</p>
+
+
 <a href="/meeting-room" style="display:inline-block;text-decoration:none;background:var(--jade);color:var(--surface);font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
 <div class="members">
 <div class="member"><div class="mhead"><span class="me">🔎</span><span class="mn">事実確認係ハジメ</span></div><p class="md">各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みは足さない。</p><p class="mp"><span class="ptag">守る約束</span> ②③ 出どころ・鮮度・一情報源を警告し、最新値は持たないと正直に言い、確認は本人に促す</p></div>
