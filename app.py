@@ -1144,46 +1144,54 @@ def arbitrage():
     return Response(ARBITRAGE_HTML, mimetype="text/html")
 
 # ===== 練習市場室（ペーパー・暗号資産）=====
-MARKET_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
+MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script><meta charset="utf-8">
 <script src="/judge.js"></script>
 <script src="/weights.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>取引所間 先物サヤ取り市場室 — arbitrage</title>
-<style>
+<style>:root{--bg:#070d18;--tx:#eef3fa;--panel:#101d31;--panel2:#0b1626;--bd:#21385a;--bd2:#33506f;--mottobg:#101d31;--mut:#a3b6d0;--mut2:#8294ac;--mut3:#76889f;--head:#cdd9e6;--body2:#d6e0ee;--body3:#aebccd;--acc:#cdd9e6;--acctx:#0b1626;--up:#34d17f;--down:#ff5b5b;--flat:#aebccd;--link:#9fc0e6;}
+[data-theme="A"]{--bg:#070d18;--tx:#eef3fa;--panel:#101d31;--panel2:#0b1626;--bd:#21385a;--bd2:#33506f;--mottobg:#101d31;--mut:#a3b6d0;--mut2:#8294ac;--mut3:#76889f;--head:#cdd9e6;--body2:#d6e0ee;--body3:#aebccd;--acc:#cdd9e6;--acctx:#0b1626;--up:#34d17f;--down:#ff5b5b;--flat:#aebccd;--link:#9fc0e6;}
+[data-theme="B"]{--bg:#fdfaf6;--tx:#33302c;--panel:#ffffff;--panel2:#fffdfa;--bd:#efe7dd;--bd2:#e6dbcf;--mottobg:#ffffff;--mut:#6f665d;--mut2:#857b71;--mut3:#94897e;--head:#4a443d;--body2:#48423b;--body3:#5a534b;--acc:#bc8378;--acctx:#ffffff;--up:#3f9b72;--down:#c8635c;--flat:#8c837b;--link:#b06b5f;}
+[data-theme="B"] .motto,[data-theme="B"] .coin,[data-theme="B"] .panel,[data-theme="B"] .judge,[data-theme="B"] .speak,[data-theme="B"] .card{border-radius:24px;box-shadow:0 10px 28px -16px rgba(170,120,110,.40);border-color:#f3ece4;}
+[data-theme="B"] button.go,[data-theme="B"] .btn{border-radius:24px;box-shadow:0 12px 26px -10px rgba(188,131,120,.55);}
+[data-theme="B"] .coin{transition:transform .25s,box-shadow .25s;}
+[data-theme="B"] .coin:hover{transform:translateY(-4px);box-shadow:0 16px 32px -14px rgba(170,120,110,.50);}
+[data-theme="B"] .note{border-radius:18px;}
+
   * { box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; margin:0; background:#0f1117; color:#e8eaed; line-height:1.7; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; margin:0; background:var(--bg); color:var(--tx); line-height:1.7; }
   .wrap { max-width: 860px; margin:0 auto; padding:24px 18px 80px; }
-  a.home { color:#9ab; text-decoration:none; font-size:14px; }
+  a.home { color:var(--link); text-decoration:none; font-size:14px; }
   h1 { font-size:24px; margin:14px 0 4px; }
-  .sub { color:#9aa3b2; font-size:14px; margin:0 0 18px; }
-  .motto { background:#1a2030; border:1px solid #2a3550; border-radius:12px; padding:12px 14px; font-size:14px; color:#cdd6e6; margin-bottom:18px; }
+  .sub { color:var(--mut); font-size:14px; margin:0 0 18px; }
+  .motto { background:var(--mottobg); border:1px solid var(--bd2); border-radius:12px; padding:12px 14px; font-size:14px; color:var(--head); margin-bottom:18px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; margin-bottom:18px; }
-  .coin { background:#161b26; border:1px solid #232a39; border-radius:12px; padding:12px; }
+  .coin { background:var(--panel); border:1px solid var(--bd); border-radius:12px; padding:12px; }
   .coin .sym { font-weight:700; font-size:15px; }
   .coin .px { font-size:18px; margin-top:4px; }
-  .up { color:#3ec78a; } .dn { color:#ff6b6b; }
+  .up { color:var(--up); } .dn { color:var(--down); }
   .coin .chg { font-size:13px; margin-top:2px; }
-  .upd { color:#6b7689; font-size:12px; margin-bottom:14px; }
-  .panel { background:#161b26; border:1px solid #232a39; border-radius:14px; padding:16px; margin-bottom:16px; }
-  label { font-size:14px; color:#cdd6e6; display:block; margin-bottom:6px; }
+  .upd { color:var(--mut3); font-size:12px; margin-bottom:14px; }
+  .panel { background:var(--panel); border:1px solid var(--bd); border-radius:14px; padding:16px; margin-bottom:16px; }
+  label { font-size:14px; color:var(--head); display:block; margin-bottom:6px; }
   select, button { font-size:15px; border-radius:10px; padding:10px 12px; }
-  select { background:#0f1117; color:#e8eaed; border:1px solid #2a3550; width:100%; margin-bottom:10px; }
-  button.go { background:#3a6df0; color:#fff; border:none; cursor:pointer; width:100%; }
+  select { background:var(--bg); color:var(--tx); border:1px solid var(--bd2); width:100%; margin-bottom:10px; }
+  button.go { background:var(--acc); color:var(--acctx); border:none; cursor:pointer; width:100%; }
   button.go:disabled { opacity:.5; cursor:default; }
-  .speak { background:#11161f; border:1px solid #232a39; border-left:3px solid #3a6df0; border-radius:10px; padding:12px 14px; margin-top:12px; }
+  .speak { background:var(--panel2); border:1px solid var(--bd); border-left:3px solid var(--acc); border-radius:10px; padding:12px 14px; margin-top:12px; }
   .speak .who { font-weight:700; font-size:14px; margin-bottom:4px; }
-  .speak .body { font-size:14px; color:#dfe5ee; white-space:pre-wrap; }
-  .note { font-size:13px; color:#8b94a6; margin-top:16px; }
-  .err { color:#ff6b6b; font-size:14px; }
-.judge { background:#11161f; border:1px solid #232a39; border-radius:14px; padding:14px 16px; margin-bottom:16px; }
-.judge h2 { font-size:15px; margin:0 0 8px; color:#cdd6e6; }
+  .speak .body { font-size:14px; color:var(--body2); white-space:pre-wrap; }
+  .note { font-size:13px; color:var(--mut2); margin-top:16px; }
+  .err { color:var(--down); font-size:14px; }
+.judge { background:var(--panel2); border:1px solid var(--bd); border-radius:14px; padding:14px 16px; margin-bottom:16px; }
+.judge h2 { font-size:15px; margin:0 0 8px; color:var(--head); }
 .jrow { display:flex; align-items:center; gap:12px; margin-bottom:8px; flex-wrap:wrap; }
 .jmark { font-size:30px; font-weight:700; line-height:1; }
 .jlabel { font-size:15px; font-weight:700; }
-.jreasons { font-size:13px; color:#aeb7c6; margin:0; padding-left:18px; }
+.jreasons { font-size:13px; color:var(--body3); margin:0; padding-left:18px; }
 .jreasons li { margin:2px 0; }
-.jdisc { font-size:12px; color:#6b7689; margin-top:8px; }
-</style></head><body><div class="wrap">
+.jdisc { font-size:12px; color:var(--mut3); margin-top:8px; }
+</style></head><body><div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 6px;"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--bd2);background:var(--panel);color:var(--tx);border-radius:999px;padding:5px 12px;font-size:12px;">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--bd2);background:var(--panel);color:var(--tx);border-radius:999px;padding:5px 12px;font-size:12px;">☀ 白</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.fontWeight=on?"700":"400";b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script><div class="wrap">
 <h1>📈 取引所間 先物サヤ取り市場室</h1>
 <p class="sub">複数取引所のリアルタイム価格を見て、社員たちが取引所間の先物価格差（アービトラージ）の観点から判断・分析する部屋です。</p>
 <div class="motto">🧭 モットー：まちがいに早く気づく会社。ここは投資情報会社arbitrageの<strong>『取引所間 先物サヤ取り市場室』</strong>です。同じ先物の取引所間の価格差を、手数料・送金・税を引いた“手取り”の目線で判断・分析します。社員は「絶対もうかる」とは言わず、わからないことは正直に言います。投資の判断は、いつもあなた自身のものです。</div>
@@ -1194,7 +1202,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <div class="jrow"><span id="jmark" class="jmark">?</span><span id="jlabel" class="jlabel">通貨を選んで判定します</span></div>
 <ul id="jreasons" class="jreasons"></ul>
 <p class="jdisc">これは本物の価格データを「プロの7か条」の物差しで見た“今の条件の良し悪し”の目安です。「確実に儲かる」という意味ではありません。最終判断はご自身で。</p>
-  <p style="margin-top:8px"><a href="/log" style="color:#7ea8ff;font-size:13px">📜 過去の判定を振り返る（あのとき◎→その後どう動いたか）</a></p>
+  <p style="margin-top:8px"><a href="/log" style="color:var(--link);font-size:13px">📜 過去の判定を振り返る（あのとき◎→その後どう動いたか）</a></p>
 </div>
 <div class="panel">
   <label>どの通貨を社員に分析してもらう？</label>
@@ -1385,19 +1393,27 @@ return L.join("\n")+"\n\n";
 </div></body></html>"""
 
 # 分析に参加する社員（順番に発言する）
-LOG_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
+LOG_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="/weights.js"></script>
 <title>判定の振り返り — arbitrage</title>
-<style>
-body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:880px;margin:0 auto;padding:24px;background:#0b0e14;color:#e6e6e6;line-height:1.7}
-a{color:#7ea8ff}h1{font-size:22px}.muted{color:#8a93a3;font-size:14px}
-.card{background:#141925;border:1px solid #232b3a;border-radius:12px;padding:16px;margin:14px 0}
-table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid #232b3a}
-.mark{font-size:18px;font-weight:bold}.up{color:#3ddc84}.down{color:#ff6b6b}.flat{color:#cbd2e0}
-.note{background:#10151f;border:1px dashed #2c3547;border-radius:10px;padding:12px;color:#9aa3b2;font-size:13px;margin:12px 0}
-.btn{display:inline-block;background:#2b6cff;color:#fff;padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
-</style></head><body>
+<style>:root{--bg:#070d18;--tx:#eef3fa;--panel:#101d31;--panel2:#0b1626;--bd:#21385a;--bd2:#33506f;--mottobg:#101d31;--mut:#a3b6d0;--mut2:#8294ac;--mut3:#76889f;--head:#cdd9e6;--body2:#d6e0ee;--body3:#aebccd;--acc:#cdd9e6;--acctx:#0b1626;--up:#34d17f;--down:#ff5b5b;--flat:#aebccd;--link:#9fc0e6;}
+[data-theme="A"]{--bg:#070d18;--tx:#eef3fa;--panel:#101d31;--panel2:#0b1626;--bd:#21385a;--bd2:#33506f;--mottobg:#101d31;--mut:#a3b6d0;--mut2:#8294ac;--mut3:#76889f;--head:#cdd9e6;--body2:#d6e0ee;--body3:#aebccd;--acc:#cdd9e6;--acctx:#0b1626;--up:#34d17f;--down:#ff5b5b;--flat:#aebccd;--link:#9fc0e6;}
+[data-theme="B"]{--bg:#fdfaf6;--tx:#33302c;--panel:#ffffff;--panel2:#fffdfa;--bd:#efe7dd;--bd2:#e6dbcf;--mottobg:#ffffff;--mut:#6f665d;--mut2:#857b71;--mut3:#94897e;--head:#4a443d;--body2:#48423b;--body3:#5a534b;--acc:#bc8378;--acctx:#ffffff;--up:#3f9b72;--down:#c8635c;--flat:#8c837b;--link:#b06b5f;}
+[data-theme="B"] .motto,[data-theme="B"] .coin,[data-theme="B"] .panel,[data-theme="B"] .judge,[data-theme="B"] .speak,[data-theme="B"] .card{border-radius:24px;box-shadow:0 10px 28px -16px rgba(170,120,110,.40);border-color:#f3ece4;}
+[data-theme="B"] button.go,[data-theme="B"] .btn{border-radius:24px;box-shadow:0 12px 26px -10px rgba(188,131,120,.55);}
+[data-theme="B"] .coin{transition:transform .25s,box-shadow .25s;}
+[data-theme="B"] .coin:hover{transform:translateY(-4px);box-shadow:0 16px 32px -14px rgba(170,120,110,.50);}
+[data-theme="B"] .note{border-radius:18px;}
+
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:880px;margin:0 auto;padding:24px;background:var(--bg);color:var(--tx);line-height:1.7}
+a{color:var(--link)}h1{font-size:22px}.muted{color:var(--mut);font-size:14px}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bd)}
+.mark{font-size:18px;font-weight:bold}.up{color:var(--up)}.down{color:var(--down)}.flat{color:var(--flat)}
+.note{background:var(--panel2);border:1px dashed var(--bd2);border-radius:10px;padding:12px;color:var(--mut);font-size:13px;margin:12px 0}
+.btn{display:inline-block;background:var(--acc);color:var(--acctx);padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
+</style></head><body><div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 6px;"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--bd2);background:var(--panel);color:var(--tx);border-radius:999px;padding:5px 12px;font-size:12px;">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--bd2);background:var(--panel);color:var(--tx);border-radius:999px;padding:5px 12px;font-size:12px;">☀ 白</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.fontWeight=on?"700":"400";b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
 <p><a href="/market">&larr; 市場室へ</a> &nbsp; <a href="/">arbitrage トップ</a></p>
 <h1>📜 判定の振り返り（社員たちが向上するための記録）</h1>
 <p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
