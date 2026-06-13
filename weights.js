@@ -31,46 +31,46 @@
   }
 })(this, function () {
   return {
-    version: 3,
+    version: 4,
     updatedAt: "2026-06-13",
-    note: "初版。9メンバーの役割解釈に基づく初期重み。判定ロジックには未接続（参照のみ）。 v2: C5（取引所間乾離）を9人に追加。C5のdirは「方向の記録」であり良し悪しではない（C1〜C4の+1=良い条件とは意味が異なる）。C5付き記録はjv3.0以降。 v3: C8(funding rate)added. C8 dir is a DIRECTION RECORD (overheating side), not a good/bad rating (same as C5). liq=1.5 spread=1.4 weighted (funding is the core of cost/spread sense). C9(open interest) is raw-value only this stage (dir=0, no score), change-detection + weight column is a FUTURE stage (next version up).",
+    note: "初版。9メンバーの役割解釈に基づく初期重み。判定ロジックには未接続（参照のみ）。 v2: C5（取引所間乾離）を9人に追加。C5のdirは「方向の記録」であり良し悪しではない（C1〜C4の+1=良い条件とは意味が異なる）。C5付き記録はjv3.0以降。 v3: C8(funding rate)added. C8 dir is a DIRECTION RECORD (overheating side), not a good/bad rating (same as C5). liq=1.5 spread=1.4 weighted (funding is the core of cost/spread sense). C9(open interest) is raw-value only this stage (dir=0, no score), change-detection + weight column is a FUTURE stage (next version up). v4: C6(order-book spread) added. C6 is a GOOD/BAD axis (dir=+1=tight/easy to fill, dir=-1=wide/hard to fill, 0=mid; thresholds spread% <=0.05 / >=0.20). UNLIKE C1-C4, C6 does NOT contribute to judge.js mark/score this stage (record-only, same accumulate-raw-first idea as C5/C8); mark-contribution is a FUTURE decision once data accumulates. BUT C6 weight DOES affect the per-member viewpoint score (memberScore: s += dir*w[id]) used in B-2/B-3, so cost=1.6 spread=1.4 liq=1.2 weighted (fill cost is the cost desk's core, fillability is the premise of arbitrage).",
     weights: {
       // 事実確認係 ハジメ：会議の基準点。どの条件にも偏らず素の事実を等しく見る。
       // → 全条件1.0の「基準プロファイル」。他メンバーはこれとの差分で個性が出る。
-      checker:  { C1: 1.0, C2: 1.0, C3: 1.0, C4: 1.0, C5: 1.0, C8: 1.0 },
+      checker:  { C1: 1.0, C2: 1.0, C3: 1.0, C4: 1.0, C5: 1.0, C8: 1.0, C6: 1.0 },
 
       // 価格差ウォッチャー サヤミ：取引所間の価格差そのものに最も敏感。
       // → 値幅C3を最重視。短期ボラC1も価格差の源泉として重め。安定度C4は控えめ。
-      spread:   { C1: 1.2, C2: 0.9, C3: 1.5, C4: 0.8, C5: 1.8, C8: 1.4 },
+      spread:   { C1: 1.2, C2: 0.9, C3: 1.5, C4: 0.8, C5: 1.8, C8: 1.4, C6: 1.4 },
 
       // コスト精査役 テスリ：手数料・スリップージで利益が消えるのを警戒。
       // → 約定の確実さに関わる安定度C4と値幅C3を重視。瞬間的なボラC1は軽視。
-      cost:     { C1: 0.8, C2: 1.0, C3: 1.2, C4: 1.4, C5: 0.9, C8: 1.0 },
+      cost:     { C1: 0.8, C2: 1.0, C3: 1.2, C4: 1.4, C5: 0.9, C8: 1.0, C6: 1.6 },
 
       // 送金・約定リスク係 オクリ：送金中の値動き・約定ズレを警戒。
       // → 送金中に動かれると困るため安定度C4を最重視。トレンドの一貫性C2も重め。短期ボラC1は危険として軽視。
-      transfer: { C1: 0.7, C2: 1.2, C3: 0.9, C4: 1.5, C5: 1.0, C8: 1.0 },
+      transfer: { C1: 0.7, C2: 1.2, C3: 0.9, C4: 1.5, C5: 1.0, C8: 1.0, C6: 1.0 },
 
       // 清算・レバレッジ係 セイサン：強制清算を招く急変動を最も警戒。
       // → 暴れる短期ボラC1を強く警戒（=重く見る）。安定度C4も重視。値幅C3は中立。
-      liq:      { C1: 1.5, C2: 1.0, C3: 1.0, C4: 1.3, C5: 1.2, C8: 1.5 },
+      liq:      { C1: 1.5, C2: 1.0, C3: 1.0, C4: 1.3, C5: 1.2, C8: 1.5, C6: 1.2 },
 
       // 資金分散係 ブンサン：一点集中を避け、ばらつきの中で機会を測る。
       // → 安定度C4を最重視（分散の前提）。値幅C3もそこそこ。トレンド追隨C2は弱め。
-      spread2:  { C1: 1.0, C2: 0.8, C3: 1.1, C4: 1.4, C5: 1.4, C8: 1.0 },
+      spread2:  { C1: 1.0, C2: 0.8, C3: 1.1, C4: 1.4, C5: 1.4, C8: 1.0, C6: 1.0 },
 
       // 歴史係 コヨミ：過去の破綻・出金停止・価格差消失を踏まえる保守派。
       // → 「壊れない」ことを重視し安定度C4を最重視。急なボラC1も警戒で重め。楽観材料になりやすい値幅C3は割り引いて軽視。
-      history:  { C1: 1.3, C2: 1.0, C3: 0.7, C4: 1.6, C5: 1.1, C8: 1.0 },
+      history:  { C1: 1.3, C2: 1.0, C3: 0.7, C4: 1.6, C5: 1.1, C8: 1.0, C6: 1.0 },
 
       // 悪魔の代弁者 アマノジャク：多数派が重視する軸を軽く、軽視されがちな軸を重く見る逆張り。
       // → 全員が重視する安定度C4・値幅C3をあえて割り引き、見落とされやすいトレンドの食い違いC2・短期ボラC1を重く見る。
-      devil:    { C1: 1.3, C2: 1.4, C3: 0.7, C4: 0.6, C5: 0.8, C8: 1.0 },
+      devil:    { C1: 1.3, C2: 1.4, C3: 0.7, C4: 0.6, C5: 0.8, C8: 1.0, C6: 1.0 },
 
       // 監査役 カンサ：会議の最後に極端を均す中庸。突出した重みを持たず全体を点検。
       // → checker同様の基準寄りだが、どの軸にも肩入れしない「ならし役」として全条件を1.0で揃える。
       // → checkerと完全一致させるのは意図的：B-3のメンバー別成績で両者が一致するはず=集計パイプラインの組み込み検算として機能させる。
-      audit:    { C1: 1.0, C2: 1.0, C3: 1.0, C4: 1.0, C5: 1.0, C8: 1.0 }
+      audit:    { C1: 1.0, C2: 1.0, C3: 1.0, C4: 1.0, C5: 1.0, C8: 1.0, C6: 1.0 }
     }
   };
 });
