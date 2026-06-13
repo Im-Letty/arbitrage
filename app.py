@@ -128,8 +128,8 @@ def build_meeting_system(role, lang):
     return "\n".join(parts)
 
 HOME_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — 取引所間 先物サヤ取りの投資情報会社</title>
@@ -138,6 +138,9 @@ HOME_HTML = r"""<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--blue-soft:#e6eef6;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;}
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--blue-soft:#0f1d33;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--soft1:#0f1a2e;--line1:#2a2418;--line2:#14352b;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--blue-soft:#e6eef6;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;--soft1:#f4f1ea;--line1:#ecdcc0;--line2:#cfe5dd;}
+
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-family:'Noto Sans JP',system-ui,'Hiragino Sans','Yu Gothic','Malgun Gothic','Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}
   .wrap{max-width:820px;margin:0 auto;padding:24px 18px 60px}
@@ -148,7 +151,7 @@ HOME_HTML = r"""<!DOCTYPE html>
   .lead{font-size:14px;color:var(--muted);margin:0 0 22px}
   .flow{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin:0 0 10px;flex-wrap:wrap}
   .flow .arw{color:var(--jade);font-weight:700}
-  .building{border:1px solid var(--border-strong);border-radius:20px;background:#f4f1ea;padding:18px;}
+  .building{border:1px solid var(--border-strong);border-radius:20px;background:var(--soft1);padding:18px;}
   .building-title{text-align:center;font-weight:700;font-size:15px;margin:4px 0 16px;color:var(--ink)}
   .rooms{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .room{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:14px;padding:15px 16px;background:var(--surface);transition:transform .08s,box-shadow .08s}
@@ -159,7 +162,7 @@ HOME_HTML = r"""<!DOCTYPE html>
   .room .rt{font-weight:700;font-size:15px;margin:0 0 3px}
   .room .rd{font-size:12.5px;color:var(--muted);margin:0}
   .room.full{grid-column:1 / -1}
-  .rule{grid-column:1 / -1;background:var(--amber-soft);border:1px solid #ecdcc0;border-radius:14px;padding:14px 16px;margin-top:2px}
+  .rule{grid-column:1 / -1;background:var(--amber-soft);border:1px solid var(--line1);border-radius:14px;padding:14px 16px;margin-top:2px}
   .rule .rt{font-weight:700;font-size:14px;margin:0 0 8px}
   .rule ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--muted)}
   .rule li{margin:2px 0}
@@ -169,10 +172,12 @@ HOME_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
   <div class="topbar"><span class="brand">arbitrage</span><span class="badge">投資・お金の情報・教育</span></div>
   <h1 class="hero">ようこそ arbitrage へ</h1>
   <p class="lead">暗号資産の先物サヤ取り（取引所どうしの価格差）に特化した、情報・教育の場です。本物の価格を見ながら、できるだけ正確に・根拠を持って判断しようとし、まちがいに早く気づこうとする社員たちが、「今は条件がいい・悪い」を理由つきで考えます。初心者からプロまで、自分の言語で使えます。</p>
-  <div style="background:#e3f1ec;border:1px solid #cfe5dd;border-radius:14px;padding:14px 16px;margin:0 0 18px"><p style="font-size:15px;font-weight:700;color:#0f7a5f;margin:0 0 6px">🧭 わたしたちのモットー：「まちがいに早く気づく会社」</p><p style="font-size:12.5px;color:#5d6470;margin:0">絶対に勝つことはできません。だからこそ、すぐに結論を出さない・まちがえても責めない・わからないときは「わからない」と言える——そんな環境を大切にします。</p></div>
+  <div style="background:var(--jade-soft);border:1px solid var(--line2);border-radius:14px;padding:14px 16px;margin:0 0 18px"><p style="font-size:15px;font-weight:700;color:var(--jade);margin:0 0 6px">🧭 わたしたちのモットー：「まちがいに早く気づく会社」</p><p style="font-size:12.5px;color:var(--muted);margin:0">絶対に勝つことはできません。だからこそ、すぐに結論を出さない・まちがえても責めない・わからないときは「わからない」と言える——そんな環境を大切にします。</p></div>
 <div class="flow"><span>世界の情報</span><span class="arw">→</span><span>arbitrageの中で読み解く</span><span class="arw">→</span><span>あなた（世界の利用者）へ</span></div>
   <div class="building">
     <div class="building-title">arbitrage — あなたの投資情報会社</div>
@@ -230,8 +235,8 @@ HOME_HTML = r"""<!DOCTYPE html>
 </html>"""
 
 ANALYST_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — AIアナリスト</title>
@@ -244,6 +249,9 @@ ANALYST_HTML = r"""<!DOCTYPE html>
     --jade:#0f7a5f; --jade-soft:#e3f1ec; --amber:#b5751a; --amber-soft:#f6ecdb;
     --muted:#5d6470; --border:#e7e2d7; --border-strong:#d8d2c4;
   }
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;}
+
   *{box-sizing:border-box}
   body{margin:0; background:var(--paper); color:var(--ink); line-height:1.75;
     font-family:'Noto Sans JP', system-ui, 'Hiragino Sans','Yu Gothic','Malgun Gothic','Microsoft YaHei', sans-serif; -webkit-font-smoothing:antialiased}
@@ -256,12 +264,12 @@ ANALYST_HTML = r"""<!DOCTYPE html>
   .label{font-size:13px; color:var(--muted); margin:0 0 8px; font-weight:500}
   .langs{display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap}
   .lang{font-size:13px; padding:6px 12px; border-radius:999px; border:1px solid var(--border-strong); background:var(--surface); color:var(--muted); cursor:pointer}
-  .lang.on{background:var(--ink); color:#fff; border-color:var(--ink); font-weight:500}
+  .lang.on{background:var(--ink); color:var(--surface); border-color:var(--ink); font-weight:500}
   .seg{display:flex; gap:8px; margin-bottom:18px}
   .seg button{font-family:inherit; font-size:14px; padding:8px 16px; border:1px solid var(--border-strong); border-radius:10px; background:var(--surface); color:var(--muted); cursor:pointer}
-  .seg button.on{background:var(--jade); color:#fff; border-color:var(--jade); font-weight:500}
+  .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
   textarea{width:100%; min-height:96px; font-family:inherit; font-size:15px; padding:14px; border:1px solid var(--border-strong); border-radius:12px; background:var(--surface); resize:vertical}
-  .ask{width:100%; margin-top:12px; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px; background:var(--ink); color:#fff; cursor:pointer}
+  .ask{width:100%; margin-top:12px; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px; background:var(--ink); color:var(--surface); cursor:pointer}
   .ask:disabled{opacity:.5; cursor:default}
   .answer{margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; white-space:pre-wrap; font-size:15px; display:none}
   .answer.show{display:block}
@@ -271,7 +279,9 @@ ANALYST_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← arbitrage トップへ</a></p>
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
   <div class="topbar">
     <span class="brand">arbitrage</span>
     <span class="badge">AIアナリスト</span>
@@ -342,8 +352,8 @@ ANALYST_HTML = r"""<!DOCTYPE html>
 """
 
 RENSHUJO_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — 投資の練習場</title>
@@ -356,6 +366,9 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
     --jade:#0f7a5f; --jade-soft:#e3f1ec; --amber:#b5751a; --amber-soft:#f6ecdb;
     --muted:#5d6470; --border:#e7e2d7; --border-strong:#d8d2c4;
   }
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;}
+
   *{box-sizing:border-box}
   body{margin:0; background:var(--paper); color:var(--ink); line-height:1.7;
     font-family:'Noto Sans JP', system-ui, 'Hiragino Sans','Yu Gothic','Malgun Gothic','Microsoft YaHei', sans-serif; -webkit-font-smoothing:antialiased}
@@ -377,6 +390,8 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
   <a class="back" href="/">← arbitrage トップへ</a>
   <p class="brand">arbitrage</p>
   <h1 class="hero">投資の練習場</h1>
