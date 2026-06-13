@@ -72,6 +72,8 @@ CONFLUENCE_RULES = """##########################################################
 ・条件を語る時は、必ず「崩れたらどこで撤退と考えるか（根拠が崩れる価格の目安）」もセットで言う。根拠が崩れたら見送り・撤退、が前提。
 ############################################################"""
 
+MEMORY_GUARD = """【蓄積データ（この視点の過去成績）の扱い】このあとのデータに、あなた自身の視点での過去の判定実績（件数・方向の一致率・反応率・平均変動など）が添えられることがあります。これは『この視点がどんな局面で効きやすく、どんな局面で効きにくいか』という特性を理解するためだけに使ってください。次を厳守します。(1)成績の良し悪しを、自分や他のメンバーの優劣・自己評価に変換しない。成績が良くても『私の判断は正しい』と過信せず、悪くても『どうせ私は外れる』と自虐しない。あなたは自分の役割と人格を保ったまま、特性として淡々と振り返るだけです。(2)数字はすべて参考値であり件数も僅少です。不確実性を必ず明示し、過信しない。成績の数値が示されていない場合は『まだ振り返るには件数が足りない』と述べるに留め、無い数字を作らない。(3)過去の傾向を『だから買え／売れ』『今がチャンス』等の売買サイン・断定へ変換することは禁止。あくまで過去の傾向の振り返りであり、未来を保証しない。(4)四つの約束（実弾運用や自動売買はしない／方向を断定しない／勝敗ラベルを保存しない／教育目的の条件評価のみ）をこの振り返りでも守る。"""
+
 def build_system(lang, level):
     lang_name = LANG_NAMES.get(lang, "日本語")
     if level == "pro":
@@ -1295,12 +1297,59 @@ goBtn.onclick=async function(){
     var snapshot={symbol:NAMES[sym],price:tr.lastPrice,changePct:tr.priceChangePercent,high24:tr.highPrice,low24:tr.lowPrice,hourlyCloses:closes,quoteVolume:(tr.quoteVolume||tr.volume||null),trades:(tr.count!=null?tr.count:null),wap:(tr.weightedAvgPrice||null),volPct:(function(){if(!closes||closes.length<3)return null;var r=[];for(var k=1;k<closes.length;k++){var a=parseFloat(closes[k-1]),b=parseFloat(closes[k]);if(a>0)r.push((b-a)/a*100);}if(!r.length)return null;var m=r.reduce(function(x,y){return x+y;},0)/r.length;var v=r.reduce(function(x,y){return x+(y-m)*(y-m);},0)/r.length;return Math.sqrt(v);})(),trendFirstHalf:(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[0]),b=parseFloat(closes[h-1]);if(a>0)return (b-a)/a*100;return null;})(),trendSecondHalf:(function(){if(!closes||closes.length<4)return null;var h=Math.floor(closes.length/2);var a=parseFloat(closes[h]),b=parseFloat(closes[closes.length-1]);if(a>0)return (b-a)/a*100;return null;})()};
 renderJudge(snapshot);
     var transcript=""; var step=0; var total=999;
-    var histStr=(function(){try{var lg=JSON.parse(localStorage.getItem('arbi_judge_log')||'[]');var sym=(snapshot&&snapshot.symbol)||'';var cur=(snapshot&&snapshot.price)||null;var rows=lg.filter(function(e){return e&&e.symbol===sym&&e.price&&e.mark&&e.ts;});if(!rows.length||!cur)return '';var byMark={};rows.forEach(function(e){var ch=((cur-e.price)/e.price)*100;if(!byMark[e.mark])byMark[e.mark]={n:0,up:0,sum:0};byMark[e.mark].n++;byMark[e.mark].sum+=ch;if(ch>0)byMark[e.mark].up++;});var lines=['\u3010\u904e\u53bb\u306e\u81ea\u5206\u305f\u3061\u306e\u5224\u5b9a\u5b9f\u7e3e\uff08\u540c\u3058\u901a\u8ca8\u30fb\u53c2\u8003\u60c5\u5831\uff09\u3011'];['\u25ce','\u25cb','\u25b3','\u00d7','?'].forEach(function(m){var d=byMark[m];if(!d)return;var avg=(d.sum/d.n).toFixed(2);var rate=Math.round((d.up/d.n)*100);lines.push('\u5224\u5b9a'+m+'\uff1a'+d.n+'\u4ef6\u3002\u305d\u306e\u5f8c\u3001\u73fe\u5728\u5024\u307e\u3067\u5e73\u5747'+avg+'%\uff08\u4e0a\u6607\u3057\u305f\u5272\u5408'+rate+'%\uff09');});if(lines.length<2)return '';lines.push('\u203b\u3053\u308c\u306f\u904e\u53bb\u306e\u50be\u5411\u306e\u53c2\u8003\u3067\u3042\u308a\u3001\u672a\u6765\u3092\u4fdd\u8a3c\u3059\u308b\u3082\u306e\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u58f2\u8cb7\u30b5\u30a4\u30f3\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002');return lines.join('\n');}catch(e){return '';}})();
+    function mbBlock(step){try{
+var keysL=["checker","spread","cost","transfer","liq","spread2","history","devil","audit"];
+var NM={checker:"\u4e8b\u5b9f\u78ba\u8a8d\u4fc2\u30cf\u30b8\u30e1",spread:"\u4fa1\u683c\u5dee\u30a6\u30a9\u30c3\u30c1\u30e3\u30fc \u30b5\u30e4\u30df",cost:"\u30b3\u30b9\u30c8\u7cbe\u67fb\u5f79 \u30c6\u30b9\u30ea",transfer:"\u9001\u91d1\u30fb\u7d04\u5b9a\u30ea\u30b9\u30af\u4fc2 \u30aa\u30af\u30ea",liq:"\u6e05\u7b97\u30fb\u30ec\u30d0\u30ec\u30c3\u30b8\u4fc2 \u30bb\u30a4\u30b5\u30f3",spread2:"\u8cc7\u91d1\u5206\u6563\u4fc2 \u30d6\u30f3\u30b5\u30f3",history:"\u6b74\u53f2\u4fc2\u30b3\u30e8\u30df",devil:"\u60aa\u9b54\u306e\u4ee3\u5f01\u8005\u30a2\u30de\u30ce\u30b8\u30e3\u30af",audit:"\u76e3\u67fb\u5f79\u30ab\u30f3\u30b5"};
+var key=keysL[step];if(!key)return "";
+var WP=(typeof WEIGHT_PROFILES!=="undefined")?WEIGHT_PROFILES:null;
+if(!WP||!WP.weights||!WP.weights[key])return "";
+var w=WP.weights[key];
+var lg;try{lg=JSON.parse(localStorage.getItem("arbi_judge_log")||"[]");}catch(e){return "";}
+if(!lg||!lg.length)return "";
+var hk="r1";var MOVE=0.3;
+var cnt=0,dirN=0,dirHit=0,moveHit=0,absSum=0;
+var c5cnt=0,c5cheap=0,c5neu=0,c5opp=0;
+for(var i=0;i<lg.length;i++){
+var r=lg[i];if(!r||!r.conds||!r.conds.length)continue;
+var v=r[hk];if(v===null||v===undefined||isNaN(v))continue;
+var ch=parseFloat(v);
+var dir=r.trendDir||"neutral";var dirIsSet=(dir==="up"||dir==="down");
+var hit=(dir==="up"&&ch>0)||(dir==="down"&&ch<0);
+var moved=(Math.abs(ch)>=MOVE);
+var s=0;for(var c=0;c<r.conds.length;c++){var cd=r.conds[c];if(cd&&w[cd.id]!=null)s+=cd.dir*w[cd.id];}
+if(!(s>=2))continue;
+cnt++;absSum+=Math.abs(ch);
+if(dirIsSet){dirN++;if(hit)dirHit++;}
+if(moved)moveHit++;
+if(key==="spread"){for(var c2=0;c2<r.conds.length;c2++){var cc=r.conds[c2];if(cc&&cc.id==="C5"){c5cnt++;if(cc.dir>0)c5cheap++;else if(cc.dir===0)c5neu++;else c5opp++;}}}
+}
+var nm=NM[key]||key;
+var H="\u3010\u3053\u306e\u8996\u70b9\uff08\u3042\u306a\u305f="+nm+"\uff09\u306e\u904e\u53bb\u306e\u632f\u308a\u8fd4\u308a\uff5c\u53c2\u8003\u30fb\u4ef6\u6570\u50c5\u5c11\u30fb\u512a\u52a3\u8a55\u4fa1\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3011";
+var L=[H];
+if(cnt===0){L.push("\u3053\u306e\u8996\u70b9\u3067\u307e\u3068\u307e\u3063\u305f\u5224\u5b9a\u304c\u7acb\u3063\u305f\u904e\u53bb\u30c7\u30fc\u30bf\u306f\u307e\u3060\u3042\u308a\u307e\u305b\u3093\u3002");}
+else if(cnt<30){L.push("\u3042\u306a\u305f\u306e\u8996\u70b9\u3067\u5224\u5b9a\u304c\u7acb\u3063\u305f\u5834\u9762\uff1a"+cnt+"\u4ef6\u3002\u30b5\u30f3\u30d7\u30eb\u50c5\u5c11\u306e\u305f\u3081\u53c2\u8003\u7a0b\u5ea6\u3068\u3057\u3001\u5177\u4f53\u7684\u306a\u6570\u5024\u306f\u51fa\u3057\u307e\u305b\u3093\u3002");}
+else{
+var avg=Math.round((absSum/cnt)*100)/100;
+var p2=Math.round((moveHit/cnt)*100);
+var dirPart;
+if(dirN<10){dirPart="\u65b9\u5411\u306e\u4e00\u81f4\uff1a\u6bcd\u6570\u304c\u5c11\u306a\u304f\u975e\u8868\u793a\uff08"+dirN+"\u4ef6\uff09";}
+else{var p1=Math.round((dirHit/dirN)*100);dirPart="\u65b9\u5411\u306e\u4e00\u81f4\uff1a"+p1+"%\uff08\u6bcd\u6570"+dirN+"\u4ef6\uff09";}
+L.push("\u3042\u306a\u305f\u306e\u8996\u70b9\u3067\u5224\u5b9a\u304c\u7acb\u3063\u305f\u5834\u9762\uff1a"+cnt+"\u4ef6\u3002"+dirPart+"\u30010.3%\u8d85\u306e\u53cd\u5fdc\uff1a"+p2+"%\u3001\u5e73\u5747\u5909\u52d5\uff1a"+avg+"%\u3002");
+}
+/* C5\u8a00\u53ca\u306f\u73fe\u72b6 spread(\u30b5\u30e4\u30df)\u306e\u307f\u3002\u5c06\u6765 C5\u91cd\u8996\u30e1\u30f3\u30d0\u30fc(\u4f8b: spread2)\u306b\u5e83\u3052\u308b\u5834\u5408\u306f\u3001\u4e0b\u8a18 key===\"spread\" \u3092\u5bfe\u8c61\u30ad\u30fc\u96c6\u5408\u306e\u5224\u5b9a\u306b\u5dee\u3057\u66ff\u3048\u308b(\u96c6\u8a08\u5074\u306e key===\"spread\" \u3068\u4e21\u65b9)\u3002\u4eca\u56de\u306f\u30b5\u30e4\u30df\u306e\u307f\u3067\u5909\u66f4\u306a\u3057\u3002 */
+if(key==="spread"&&c5cnt>0){
+if(c5cnt>=10){L.push("\u3046\u3061\u53d6\u5f15\u6240\u9593\u306e\u4e56\u96e2\uff08C5\uff09\u306b\u7740\u76ee\u3057\u305f\u5834\u9762\uff1a"+c5cnt+"\u4ef6\u3002\u4e56\u96e2\u306e\u5411\u304d\u306e\u5185\u8a33\uff1a\u5272\u5b89\u5074"+c5cheap+"\u4ef6\uff0f\u4e2d\u7acb"+c5neu+"\u4ef6\uff0f\u53cd\u5bfe\u5074"+c5opp+"\u4ef6\u3002");}
+else{L.push("\u3046\u3061\u53d6\u5f15\u6240\u9593\u306e\u4e56\u96e2\uff08C5\uff09\u306b\u7740\u76ee\u3057\u305f\u5834\u9762\uff1a"+c5cnt+"\u4ef6\uff08\u5411\u304d\u306e\u5185\u8a33\u306f\u4ef6\u6570\u50c5\u5c11\u306e\u305f\u3081\u7701\u7565\uff09\u3002");}
+}
+L.push("\u203b\u3053\u308c\u306f\u904e\u53bb\u306e\u50be\u5411\u306e\u632f\u308a\u8fd4\u308a\u3067\u3042\u308a\u3001\u672a\u6765\u3092\u4fdd\u8a3c\u305b\u305a\u3001\u58f2\u8cb7\u30b5\u30a4\u30f3\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u3053\u306e\u8996\u70b9\u304c\u52b9\u304d\u3084\u3059\u3044\uff0f\u52b9\u304d\u306b\u304f\u3044\u5c40\u9762\u306e\u7279\u6027\u7406\u89e3\u306b\u306e\u307f\u7528\u3044\u3001\u30e1\u30f3\u30d0\u30fc\u306e\u512a\u52a3\u5224\u65ad\u306b\u306f\u4f7f\u3044\u307e\u305b\u3093\u3002");
+return L.join("\n")+"\n\n";
+}catch(e){return "";}}
+      var histStr=(function(){try{var lg=JSON.parse(localStorage.getItem('arbi_judge_log')||'[]');var sym=(snapshot&&snapshot.symbol)||'';var cur=(snapshot&&snapshot.price)||null;var rows=lg.filter(function(e){return e&&e.symbol===sym&&e.price&&e.mark&&e.ts;});if(!rows.length||!cur)return '';var byMark={};rows.forEach(function(e){var ch=((cur-e.price)/e.price)*100;if(!byMark[e.mark])byMark[e.mark]={n:0,up:0,sum:0};byMark[e.mark].n++;byMark[e.mark].sum+=ch;if(ch>0)byMark[e.mark].up++;});var lines=['\u3010\u904e\u53bb\u306e\u81ea\u5206\u305f\u3061\u306e\u5224\u5b9a\u5b9f\u7e3e\uff08\u540c\u3058\u901a\u8ca8\u30fb\u53c2\u8003\u60c5\u5831\uff09\u3011'];['\u25ce','\u25cb','\u25b3','\u00d7','?'].forEach(function(m){var d=byMark[m];if(!d)return;var avg=(d.sum/d.n).toFixed(2);var rate=Math.round((d.up/d.n)*100);lines.push('\u5224\u5b9a'+m+'\uff1a'+d.n+'\u4ef6\u3002\u305d\u306e\u5f8c\u3001\u73fe\u5728\u5024\u307e\u3067\u5e73\u5747'+avg+'%\uff08\u4e0a\u6607\u3057\u305f\u5272\u5408'+rate+'%\uff09');});if(lines.length<2)return '';lines.push('\u203b\u3053\u308c\u306f\u904e\u53bb\u306e\u50be\u5411\u306e\u53c2\u8003\u3067\u3042\u308a\u3001\u672a\u6765\u3092\u4fdd\u8a3c\u3059\u308b\u3082\u306e\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u58f2\u8cb7\u30b5\u30a4\u30f3\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002');return lines.join('\n');}catch(e){return '';}})();
       // ※順序はサーバーのMEETING_AGENDAと一致必須。メンバーの順序・人数を変更する際は両方を同時に更新すること
       var TEAM_KEYS=["checker","spread","cost","transfer","liq","spread2","history","devil","audit"];
       var __mj=null; try{ if(typeof arbiJudge==="function") __mj=arbiJudge(snapshot); }catch(__pe){ __mj=null; }
       while(step<total){
-      var res=await fetch("/market_analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({snapshot:snapshot,step:step,transcript:transcript,history:histStr})});
+      var res=await fetch("/market_analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({snapshot:snapshot,step:step,transcript:transcript,history:((typeof mbBlock==="function"?mbBlock(step):"")+histStr)})});
       var j=await res.json();
       if(j.error){ out.innerHTML+="<div class=\"speak err\">"+j.error+"</div>"; break; }
       total=j.total;
@@ -1577,6 +1626,8 @@ def build_market_system(member, lang):
         REASON_RULES,
         "",
         CONFLUENCE_RULES,
+        "",
+        MEMORY_GUARD,
         "",
         "ここは投資情報会社arbitrageの『取引所間 先物サヤ取り市場室』です。複数取引所のリアルタイム価格データを見て、取引所間の先物価格差（アービトラージ）の観点から判断・分析する場です。",
         "あなたは世界最上級のプロです。プロの中でも、とりわけ『自分のまちがいに、誰よりも早く気づく』ことに長けた一流です。社員「" + member["name"] + "」として発言します。あなたの役割：" + member["job"],
