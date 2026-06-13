@@ -137,9 +137,9 @@ HOME_HTML = r"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--blue-soft:#e6eef6;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;}
-:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--blue-soft:#0f1d33;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--soft1:#0f1a2e;--line1:#2a2418;--line2:#14352b;}
-[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--blue-soft:#e6eef6;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;--soft1:#f4f1ea;--line1:#ecdcc0;--line2:#cfe5dd;}
+  :root{--ink:#33302c;--paper:#fdfaf6;--surface:#ffffff;--jade:#3f9b72;--jade-soft:#f5e9e6;--amber:#bc8378;--amber-soft:#f7ece9;--blue-soft:#f7ece9;--muted:#6f665d;--border:#efe7dd;--border-strong:#e6dbcf;--acc:#bc8378;--acctx:#ffffff;--soft1:#fffdfa;--line1:#efe7dd;--line2:#e6dbcf;}
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--blue-soft:#0b1626;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--acc:#cdd9e6;--acctx:#0b1626;--soft1:#0b1626;--line1:#21385a;--line2:#21385a;}
+[data-theme="B"]{--ink:#33302c;--paper:#fdfaf6;--surface:#ffffff;--jade:#3f9b72;--jade-soft:#f5e9e6;--amber:#bc8378;--amber-soft:#f7ece9;--blue-soft:#f7ece9;--muted:#6f665d;--border:#efe7dd;--border-strong:#e6dbcf;--acc:#bc8378;--acctx:#ffffff;--soft1:#fffdfa;--line1:#efe7dd;--line2:#e6dbcf;}
 
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-family:'Noto Sans JP',system-ui,'Hiragino Sans','Yu Gothic','Malgun Gothic','Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}
@@ -151,14 +151,14 @@ HOME_HTML = r"""<!DOCTYPE html>
   .lead{font-size:14px;color:var(--muted);margin:0 0 22px}
   .flow{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin:0 0 10px;flex-wrap:wrap}
   .flow .arw{color:var(--jade);font-weight:700}
-  .building{border:1px solid var(--border-strong);border-radius:20px;background:var(--soft1);padding:18px;}
+  .building{border:1px solid var(--border-strong);border-radius:24px;background:var(--surface);padding:18px;box-shadow:0 12px 26px -10px rgba(188,131,120,.30)}
   .building-title{text-align:center;font-weight:700;font-size:15px;margin:4px 0 16px;color:var(--ink)}
   .rooms{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .room{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:14px;padding:15px 16px;background:var(--surface);transition:transform .08s,box-shadow .08s}
-  .room:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
-  .room.jade{background:var(--blue-soft)}
-  .room.analyze{background:var(--jade-soft)}
-  .room.safe{background:var(--jade-soft)}
+  .room{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:24px;padding:16px 18px;background:var(--surface);box-shadow:0 10px 28px -16px rgba(170,120,110,.40);transition:transform .08s,box-shadow .08s}
+  .room:hover{transform:translateY(-2px);box-shadow:0 16px 32px -14px rgba(170,120,110,.50)}
+  .room.jade{border-left:3px solid var(--acc)}
+  .room.analyze{border-left:3px solid var(--acc)}
+  .room.safe{border-left:3px solid var(--acc)}
   .room .rt{font-weight:700;font-size:15px;margin:0 0 3px}
   .room .rd{font-size:12.5px;color:var(--muted);margin:0}
   .room.full{grid-column:1 / -1}
@@ -185,14 +185,8 @@ HOME_HTML = r"""<!DOCTYPE html>
       <a class="room jade full" href="/log">
 <p class="rt">📊 通信簿</p>
 </a>
-      <a class="room jade full" href="/arbitrage">
-<p class="rt">💹 アービトラージの学習</p>
-</a>
       <a class="room safe full" href="/members">
 <p class="rt">👥 社員紹介室</p>
-</a>
-      <a class="room jade full" href="/meeting-room">
-<p class="rt">🗣️ 社員会議室</p>
 </a>
     </div>
   </div>
