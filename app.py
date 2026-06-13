@@ -1395,9 +1395,9 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .mark{font-size:18px;font-weight:bold}.up{color:var(--up)}.down{color:var(--down)}.flat{color:var(--flat)}
 .note{background:var(--panel2);border:1px dashed var(--bd2);border-radius:10px;padding:12px;color:var(--mut);font-size:13px;margin:12px 0}
 .btn{display:inline-block;background:var(--acc);color:var(--acctx);padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
-</style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
+</style></head><body><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 <p><a href="/">← arbitrage トップへ</a></p>
-<h1>📜 判定の振り返り</h1>
+<div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">過去のデータ</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
 <div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div><div class="card"><div id="board"></div></div><div class="card"><div id="cboard"></div></div>
 <div class="card"><div id="mboard"></div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th>判定</th><th>当時の価格</th><th>今の価格</th><th>その後</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
@@ -1412,7 +1412,7 @@ function load(){
   var rows=document.getElementById("rows");
   var summ=document.getElementById("summary");
   if(!log.length){summ.textContent="まだ記録がありません。市場室で「判定」するとここに貯まります。";return;}
-  summ.textContent="記録 "+log.length+" 件。◎/○ は「条件が良い」と評価したとき、× は「良くない」と評価したときの目安です。当てる記録ではなく、判断を見直すための記録です。";
+  summ.textContent="記録 "+log.length+" 件。";
   var html="";
   for(var i=log.length-1;i>=0;i--){var r=log[i];var d=new Date(r.ts);var then=parseFloat(r.price);
     var mk=r.mark||"?";var mcls=(mk==="◎"||mk==="○")?"up":(mk==="×"?"down":"flat");
@@ -1429,7 +1429,7 @@ function load(){
     var moveHit=obs.filter(function(o){return Math.abs(o.ch)>=0.3;}).length;
     var p1=dirObs.length?Math.round(dirHit/dirObs.length*1000)/10:null;
     var p2=Math.round(moveHit/obs.length*1000)/10;
-    var msg="答え合わせ "+obs.length+"件（1h/4h/24h後の値動き）｜トレンド方向に動いた率: "+(p1===null?"—":p1+"%")+"（対象"+dirObs.length+"件）｜方向不問で±0.3%以上動いた率: "+p2+"%";
+    var msg="これまで "+obs.length+" 件を答え合わせ。予想した向きに動いたのは "+(p1===null?"—":p1+"%")+"（対象 "+dirObs.length+" 件）、はっきり動いた（±0.3%以上）のは "+p2+"% でした。";
     sum.textContent=msg;
   })();
 
