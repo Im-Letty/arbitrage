@@ -224,7 +224,7 @@ ANALYST_HTML = r"""<!DOCTYPE html>
   .lang.on{background:var(--ink); color:var(--surface); border-color:var(--ink); font-weight:500}
   .seg{display:flex; gap:8px; margin-bottom:18px}
   .seg button{font-family:inherit; font-size:14px; padding:8px 16px; border:1px solid var(--border-strong); border-radius:10px; background:var(--surface); color:var(--muted); cursor:pointer}
-  .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
+  .seg button.on{background:var(--amber); color:var(--surface); border-color:var(--amber); font-weight:500}
   textarea{width:100%; min-height:96px; font-family:inherit; font-size:15px; padding:14px; border:1px solid var(--border-strong); border-radius:12px; background:var(--surface); resize:vertical}
   .ask{width:100%; margin-top:12px; font-family:inherit; font-size:16px; font-weight:500; padding:13px; border:0; border-radius:10px; background:var(--ink); color:var(--surface); cursor:pointer}
   .ask:disabled{opacity:.5; cursor:default}
@@ -589,7 +589,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
   .seg{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px}
   .seg button{font-family:inherit; font-size:14px; padding:9px 16px; border:1px solid var(--border-strong); border-radius:10px;
     background:var(--surface); color:var(--muted); cursor:pointer}
-  .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
+  .seg button.on{background:var(--amber); color:var(--surface); border-color:var(--amber); font-weight:500}
   .row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
   .row label{font-size:14px; min-width:60px; color:var(--muted)}
   .row input[type=range]{flex:1; accent-color:var(--jade);height:6px;border-radius:999px;background:var(--jade-soft);-webkit-appearance:none;appearance:none}.row input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--jade);margin-top:-5px}.row input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--jade)}
@@ -815,7 +815,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
   .seg{display:flex; gap:8px; margin-bottom:18px}
   .seg button{font-family:inherit; font-size:14px; padding:9px 16px; border:1px solid var(--border-strong); border-radius:10px;
     background:var(--surface); color:var(--muted); cursor:pointer}
-  .seg button.on{background:var(--jade); color:var(--surface); border-color:var(--jade); font-weight:500}
+  .seg button.on{background:var(--amber); color:var(--surface); border-color:var(--amber); font-weight:500}
   .row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
   .row label{font-size:14px; min-width:60px; color:var(--muted)}
   .row input[type=range]{flex:1; accent-color:var(--jade);height:6px;border-radius:999px;background:var(--jade-soft);-webkit-appearance:none;appearance:none}.row input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:var(--jade-soft)}.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--jade);margin-top:-5px}.row input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--jade)}
@@ -1013,7 +1013,7 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 <div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員紹介室</span></div>
 
 
-<a href="/meeting-room" style="display:inline-block;text-decoration:none;background:var(--jade);color:var(--surface);font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
+<a href="/meeting-room" style="display:inline-block;text-decoration:none;background:var(--amber);color:var(--surface);font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
 <div class="members">
 <div class="member"><div class="mhead"><span class="me">🔎</span><span class="mn">事実確認係ハジメ</span></div><p class="md">各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みは足さない。</p><p class="mp"><span class="ptag">守る約束</span> ②③ 出どころ・鮮度・一情報源を警告し、最新値は持たないと正直に言い、確認は本人に促す</p></div>
 <div class="member"><div class="mhead"><span class="me">⚖️</span><span class="mn">価格差ウォッチャー サヤミ</span></div><p class="md">同じ先物が取引所Aと取引所Bでいくら違うか（価格差・乖離）を見て、差が開いているか・縮みそうかを評価する。狙うのは上下当てではなく取引所間の歪み。</p><p class="mp"><span class="ptag">守る約束</span> ①④ 『見かけの価格差』はコストで消えやすいので、差があるだけでは“いい”と言わない</p></div>
