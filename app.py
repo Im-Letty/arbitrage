@@ -175,9 +175,9 @@ HOME_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <div class="topbar"><span class="brand">arbitrage</span></div>
+  <div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span></div>
   
   <div class="building">
     
@@ -239,11 +239,11 @@ ANALYST_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
   <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
   <div class="topbar">
-    <span class="brand">arbitrage</span>
+    <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
     <span class="badge">AIアナリスト</span>
   </div>
   <h1 class="hero">AIアナリストに質問</h1>
@@ -346,10 +346,10 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
   <a class="back" href="/">← arbitrage トップへ</a>
-  <p class="brand">arbitrage</p>
+  <div class="brandwrap" style="display:flex;align-items:center;gap:8px"><p class="brand">arbitrage</p><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
   <h1 class="hero">投資の練習場</h1>
   <p class="lead">すべて架空のお金です。本物のお金は使いません。安全に、投資のやり方を体験しましょう。</p>
   <div class="grid">
@@ -423,12 +423,12 @@ KIHON_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
   <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
-    <span class="brand">arbitrage</span>
+    <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
     <span class="badge">練習モード・仮想のお金</span>
   </div>
 
@@ -617,12 +617,12 @@ FACTOR_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
   <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
-    <span class="brand">arbitrage</span>
+    <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
     <span class="badge">練習モード・架空の100万円</span>
   </div>
 
@@ -836,12 +836,12 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
   <p style="margin:0 0 14px"><a href="/practice" style="font-size:13px;color:var(--jade);text-decoration:none">← 練習場へ</a></p>
 
   <div class="topbar">
-    <span class="brand">arbitrage</span>
+    <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
     <span class="badge">練習モード・架空の100万円</span>
   </div>
 
@@ -1010,10 +1010,10 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
 <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
-<div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員紹介室</span></div>
+<div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span><span class="badge">社員紹介室</span></div>
 
 
 <a href="/meeting-room" style="display:inline-block;text-decoration:none;background:var(--amber);color:var(--surface);font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
@@ -1077,10 +1077,10 @@ textarea{width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:1
 </head>
 <body>
 <div class="wrap">
-<div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+<script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
 <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
-<div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員会議室</span></div>
+<div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span><span class="badge">社員会議室</span></div>
 <h1 class="hero">社員みんなで会議する</h1>
 <p class="lead">あなたの相談について、社員が一人ずつ順番に意見を出します。事実確認 → 分析 → 反対意見 → やさしくまとめ → 最終チェック、の順です。最初の一人が出るまで少し時間がかかることがあります。</p>
 <p class="label">答えの言語</p>
@@ -1175,7 +1175,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{v
 .jreasons { font-size:13px; color:var(--body3); margin:0; padding-left:18px; }
 .jreasons li { margin:2px 0; }
 .jdisc { font-size:12px; color:var(--mut3); margin-top:8px; }
-</style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script><div class="wrap">
+</style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script><div class="wrap">
 <h1>📈 取引所間 先物サヤ取り市場室</h1>
 <p class="sub">複数取引所のリアルタイム価格を見て、社員たちが取引所間の先物価格差（アービトラージ）の観点から判断・分析する部屋です。</p>
 <div class="motto">🧭 モットー：まちがいに早く気づく会社。ここは投資情報会社arbitrageの<strong>『取引所間 先物サヤ取り市場室』</strong>です。同じ先物の取引所間の価格差を、手数料・送金・税を引いた“手取り”の目線で判断・分析します。社員は「絶対もうかる」とは言わず、わからないことは正直に言います。投資の判断は、いつもあなた自身のものです。</div>
@@ -1397,7 +1397,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .mark{font-size:18px;font-weight:bold}.up{color:var(--up)}.down{color:var(--down)}.flat{color:var(--flat)}
 .note{background:var(--panel2);border:1px dashed var(--bd2);border-radius:10px;padding:12px;color:var(--mut);font-size:13px;margin:12px 0}
 .btn{display:inline-block;background:var(--acc);color:var(--acctx);padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
-</style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>(function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+</style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 <p><a href="/market">&larr; 市場室へ</a> &nbsp; <a href="/">arbitrage トップ</a></p>
 <h1>📜 判定の振り返り（社員たちが向上するための記録）</h1>
 <p class="muted">市場室で出した自動判定（◎○△×?）を、この端末に記録しています。後から「あのとき◎と言ったが、その後どう動いたか」を今の価格と見比べて、次に活かすためのページです。これは教育用で、売買のおすすめではありません。</p>
