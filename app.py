@@ -1030,8 +1030,8 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
 
 
 SHAIN_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — 社員紹介室</title>
@@ -1040,6 +1040,9 @@ SHAIN_HTML = r"""<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;}
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--line2:#14352b;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;--line2:#cfe5dd;}
+
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-family:'Noto Sans JP',system-ui,'Hiragino Sans','Yu Gothic',sans-serif;-webkit-font-smoothing:antialiased}
 .wrap{max-width:820px;margin:0 auto;padding:24px 18px 60px}
@@ -1056,18 +1059,20 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 .mr{font-size:13px;color:var(--muted);margin:0 0 10px}
 .mp{font-size:12.5px;margin:0;color:var(--ink);background:var(--amber-soft);border-radius:10px;padding:8px 10px}
 .ptag{display:inline-block;font-size:11px;font-weight:700;color:var(--amber);margin-right:7px}
-.note{grid-column:1 / -1;background:var(--jade-soft);border:1px solid #cfe5dd;border-radius:14px;padding:14px 16px;font-size:13px;color:var(--muted);margin-top:4px}
+.note{grid-column:1 / -1;background:var(--jade-soft);border:1px solid var(--line2);border-radius:14px;padding:14px 16px;font-size:13px;color:var(--muted);margin-top:4px}
 .foot{margin-top:24px;border-top:1px solid var(--border);padding-top:14px;font-size:12px;color:var(--muted)}
 @media(max-width:560px){.members{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← arbitrage トップへ</a></p>
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
 <div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員紹介室</span></div>
 <h1 class="hero">うちの社員たち</h1>
 <p class="lead">「負けない会社」をつくるために集めた仲間です。一人ひとりが、破ってはいけない約束のどれかを担当しています。スター選手はいません。でも、みんなで支え合います。</p>
-<a href="/meeting-room" style="display:inline-block;text-decoration:none;background:#0f7a5f;color:#fff;font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
+<a href="/meeting-room" style="display:inline-block;text-decoration:none;background:var(--jade);color:var(--surface);font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
 <div class="members">
 <div class="member"><div class="mhead"><span class="me">🔎</span><span class="mn">事実確認係ハジメ</span></div><p class="md">各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みは足さない。</p><p class="mp"><span class="ptag">守る約束</span> ②③ 出どころ・鮮度・一情報源を警告し、最新値は持たないと正直に言い、確認は本人に促す</p></div>
 <div class="member"><div class="mhead"><span class="me">⚖️</span><span class="mn">価格差ウォッチャー サヤミ</span></div><p class="md">同じ先物が取引所Aと取引所Bでいくら違うか（価格差・乖離）を見て、差が開いているか・縮みそうかを評価する。狙うのは上下当てではなく取引所間の歪み。</p><p class="mp"><span class="ptag">守る約束</span> ①④ 『見かけの価格差』はコストで消えやすいので、差があるだけでは“いい”と言わない</p></div>
@@ -1087,8 +1092,8 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 """
 
 KAIGI_HTML = r"""<!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja" data-theme="A">
+<head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arbitrage — 社員会議室</title>
@@ -1097,6 +1102,9 @@ KAIGI_HTML = r"""<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;}
+:root[data-theme="A"]{--ink:#eef3fa;--paper:#070d18;--surface:#101d31;--jade:#34d17f;--jade-soft:#14352b;--amber:#d9a441;--amber-soft:#2a2418;--muted:#a3b6d0;--border:#21385a;--border-strong:#33506f;--line1:#2a2418;}
+[data-theme="B"]{--ink:#16202e;--paper:#faf8f3;--surface:#ffffff;--jade:#0f7a5f;--jade-soft:#e3f1ec;--amber:#b5751a;--amber-soft:#f6ecdb;--muted:#5d6470;--border:#e7e2d7;--border-strong:#d8d2c4;--line1:#ecdcc0;}
+
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-family:'Noto Sans JP',system-ui,'Hiragino Sans','Yu Gothic',sans-serif;-webkit-font-smoothing:antialiased}
 .wrap{max-width:720px;margin:0 auto;padding:24px 18px 60px}
@@ -1108,9 +1116,9 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 .label{font-size:13px;color:var(--muted);margin:0 0 8px;font-weight:500}
 .langs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .lang{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);cursor:pointer}
-.lang.on{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:500}
+.lang.on{background:var(--ink);color:var(--surface);border-color:var(--ink);font-weight:500}
 textarea{width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:14px;border:1px solid var(--border-strong);border-radius:12px;background:var(--surface);resize:vertical}
-.start{width:100%;margin-top:12px;font-family:inherit;font-size:16px;font-weight:500;padding:13px;border:0;border-radius:10px;background:var(--ink);color:#fff;cursor:pointer}
+.start{width:100%;margin-top:12px;font-family:inherit;font-size:16px;font-weight:500;padding:13px;border:0;border-radius:10px;background:var(--ink);color:var(--surface);cursor:pointer}
 .start:disabled{opacity:.5;cursor:default}
 #meeting{margin-top:22px;display:flex;flex-direction:column;gap:12px}
 .bub{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
@@ -1119,13 +1127,15 @@ textarea{width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:1
 .bemo{font-size:20px}
 .bname{font-weight:700;font-size:14px;color:var(--jade)}
 .btext{font-size:14.5px;white-space:pre-wrap}
-.endnote{background:var(--amber-soft);border:1px solid #ecdcc0;border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted)}
+.endnote{background:var(--amber-soft);border:1px solid var(--line1);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted)}
 .foot{margin-top:24px;border-top:1px solid var(--border);padding-top:14px;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:#0f7a5f;text-decoration:none">← arbitrage トップへ</a></p>
+<div class="themebar" style="display:flex;gap:6px;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" data-set="A" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">🌙 紺</button><button type="button" class="tg" data-set="B" style="font:inherit;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px">☀ 白</button></div><script>(function(){function paint(){var c=document.documentElement.getAttribute("data-theme")||"A";var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){var on=b[i].getAttribute("data-set")===c;b[i].style.opacity=on?"1":".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=this.getAttribute("data-set");document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();})();</script>
+
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
 <div class="topbar"><span class="brand">arbitrage</span><span class="badge">社員会議室</span></div>
 <h1 class="hero">社員みんなで会議する</h1>
 <p class="lead">あなたの相談について、社員が一人ずつ順番に意見を出します。事実確認 → 分析 → 反対意見 → やさしくまとめ → 最終チェック、の順です。最初の一人が出るまで少し時間がかかることがあります。</p>
