@@ -1198,7 +1198,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{v
   <button id="go" class="go">この通貨を社員たちに分析してもらう</button>
   <div id="out"></div>
 </div>
-<p class="note">価格データ提供：Binanceの公開API（リアルタイム）。表示は米ドル建てです。これは教育・練習用で、売買のおすすめ（サイン）ではありません。情報はひとつだけでなく複数で確かめましょう。</p>
+<p class="note">価格データ：Binance公開API（米ドル建て）</p>
 <script>
 var API="https://api.binance.com";
 var SYMS=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT"];
