@@ -248,6 +248,29 @@ async function main() {
     // /v5/market/tickers?category=linear returns every perp in one call; symbol is BTCUSDT form (same as picked.sym),
     // so NO pre-filter/alias step is needed (unlike Kraken). Build futMap[symbol]={fr,oi,oiUsd,mark}.
     // On any failure, futMap stays empty => every symbol gets C1-C5 only (pre-v4 output, fully backward compatible).
+    // C6: one bulk Binance bookTicker fetch for all symbols (server-only, v5).
+    // /api/v3/ticker/bookTicker (no symbol) returns best bid/ask for every symbol in one call,
+    // via the same US-safe data-api.binance.vision host (api.binance.com is 451). +1 call only.
+    // btMap[symbol] = spread% = (ask-bid)/((ask+bid)/2)*100, only when bid>0 && ask>0 (empty/halted books skipped).
+    // On any failure, btMap stays empty => no C6 for any symbol (pre-v5 output, fully backward compatible).
+    const btMap = {};
+    try {
+      const bt = await fetchJson(API + "/api/v3/ticker/bookTicker");
+      const btList = (bt && bt.data && Array.isArray(bt.data)) ? bt.data : null;
+      if (btList) {
+        btList.forEach(function (x) {
+          if (!x || !x.symbol) return;
+          const bid = parseFloat(x.bidPrice);
+          const ask = parseFloat(x.askPrice);
+          if (!isFinite(bid) || !isFinite(ask) || bid <= 0 || ask <= 0) return;
+          const sp = (ask - bid) / ((ask + bid) / 2) * 100;
+          if (isFinite(sp) && sp >= 0) btMap[x.symbol] = sp;
+        });
+      }
+      console.log("bookticker: status=" + (bt ? bt.status : "n/a") + " books=" + Object.keys(btMap).length);
+    } catch (e) {
+      console.warn("bookticker fetch failed (continuing without C6): " + (e && e.message ? e.message : e));
+    }
     const futMap = {};
     try {
       const by = await fetchJson(BYBIT + "/v5/market/tickers?category=linear");
@@ -294,11 +317,14 @@ async function main() {
         // C8/C9: attach Bybit perp data only when this symbol has a Bybit linear perp (futMap hit).
         const __fut = futMap[sym];
         if (__fut && Object.keys(__fut).length > 0) { snap.fut = __fut; }
+        // C6: attach order-book spread% only when this symbol had a valid book (btMap hit).
+        const __sp = btMap[sym];
+        if (typeof __sp === "number" && isFinite(__sp)) { snap.spread = __sp; }
         const r = arbiJudge(snap);
         const price = parseFloat(snap.price);
         const changePct = parseFloat(snap.changePct);
         await client.query(
-          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver, pick) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '4.0', $13)",
+          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver, pick) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '5.0', $13)",
           [
             snap.symbol,
             'binance-spot',
