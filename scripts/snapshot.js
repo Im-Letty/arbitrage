@@ -3,6 +3,10 @@
 // Runs in GitHub Actions (Node 20). Uses the SINGLE-SOURCE judge.js shared with the browser.
 // Selects the top-N USDT spot pairs by 24h quote volume each run, runs arbiJudge,
 // and writes one row per selected symbol to Neon.
+// C5 (cross-exchange divergence, jv3.0+): server-only. This script fetches Kraken USD prices once
+//   and attaches snap.kr={price,dev} so arbiJudge adds a C5 cond. The BROWSER never sets snap.kr,
+//   so browser records carry C1-C4 only while server records may carry C1-C5. The aggregation side
+//   (app.py board / B-3) treats C5 as OPTIONAL, so the differing conds composition mixes safely.
 
 const { arbiJudge } = require('../judge.js');
 const { Client } = require('pg');
@@ -19,6 +23,14 @@ const TOP_N = 20;
 // No extra API calls: reuse the single ticker list already fetched by selectTickers().
 const EVENT_CHG = 10;   // promote when abs(priceChangePercent) >= this (percent)
 const EVENT_MAX = 10;   // max number of promoted symbols per run
+
+// C5 cross-exchange divergence (server-only). Compare Binance USDT-spot vs Kraken USD price.
+// Design case C: NO normalization; the 0.15 C5 threshold (judge.js) absorbs the ~0.06% USDT/USD peg noise.
+// Kraken USD coverage is much wider than USDT, so we query USD pairs. Symbols absent on Kraken simply
+// get no snap.kr (=> C1-C4 only = backward compatible). One bulk Ticker call per run (no per-symbol calls).
+const KRAKEN = "https://api.kraken.com";
+// Binance base -> Kraken base alias (Kraken quirk: BTC is XBT). Others are same-named.
+const KR_ALIAS = { BTC: "XBT" };
 
 // Stablecoin bases: a USDT pair whose base is itself a stablecoin (e.g. USDCUSDT) is excluded,
 // because stable-vs-stable pairs are not meaningful for this educational arbitrage signal.
@@ -155,6 +167,45 @@ async function main() {
       .map(function (c) { c.pick = "event"; return c; });
     const picked = topSet.concat(events);
     console.log("picked top=" + topSet.length + " event=" + events.length + (events.length ? " [" + events.map(function (c) { return c.sym; }).join(",") + "]" : ""));
+    // --- C5: one bulk Kraken USD price fetch for all picked symbols (server-only) ---
+    const krMap = {};
+    try {
+      const reqList = picked.map(function (p) {
+        const base = p.sym.slice(0, -4);
+        const kbase = (KR_ALIAS[base] || base);
+        return { sym: p.sym, kbase: kbase, krpair: kbase + "USD" };
+      });
+      const pairParam = reqList.map(function (x) { return x.krpair; }).join(",");
+      const t0 = Date.now();
+      const kr = await fetchJson(KRAKEN + "/0/public/Ticker?pair=" + pairParam);
+      const ms = Date.now() - t0;
+      const result = (kr && kr.data && kr.data.result) ? kr.data.result : null;
+      const errs = (kr && kr.data && kr.data.error) ? kr.data.error : [];
+      if (result && (!errs || errs.length === 0)) {
+        // Normalize a Kraken canonical response key to a comparable base.
+        // IMPORTANT: strip ZUSD before USD (every ...ZUSD also ends in USD), then drop a
+        // leading class-prefix X for the 4-char XClass forms (XXBT->XBT, XETH->ETH, XXRP->XRP).
+        const norm = function (key) {
+          var k = key;
+          if (k.slice(-4) === "ZUSD") k = k.slice(0, -4);
+          else if (k.slice(-3) === "USD") k = k.slice(0, -3);
+          if (k.length === 4 && k.charAt(0) === "X") k = k.slice(1);
+          return k;
+        };
+        const keyByBase = {};
+        Object.keys(result).forEach(function (key) { keyByBase[norm(key)] = key; });
+        reqList.forEach(function (x) {
+          const key = keyByBase[x.kbase];
+          if (key && result[key] && result[key].c && result[key].c[0] != null) {
+            const px = parseFloat(result[key].c[0]);
+            if (isFinite(px) && px > 0) krMap[x.sym] = px;
+          }
+        });
+      }
+      console.log("kraken: status=" + (kr ? kr.status : "n/a") + " ms=" + ms + " matched=" + Object.keys(krMap).length + "/" + picked.length + (errs && errs.length ? (" err=" + JSON.stringify(errs)) : ""));
+    } catch (e) {
+      console.warn("kraken fetch failed (continuing with C1-C4 only): " + (e && e.message ? e.message : e));
+    }
     for (const p of picked) {
       const sym = p.sym;
       const it = p.it;
@@ -168,11 +219,18 @@ async function main() {
           low24: it.lowPrice,
           hourlyCloses: closes
         };
+        // C5: attach Kraken cross-exchange divergence only when a Kraken USD price was obtained.
+        // dev% = (Kraken USD - Binance USDT) / Binance USDT * 100. Case C: no peg normalization.
+        const __krPx = krMap[sym];
+        const __biPx = parseFloat(it.lastPrice);
+        if (typeof __krPx === "number" && isFinite(__krPx) && isFinite(__biPx) && __biPx > 0) {
+          snap.kr = { price: __krPx, dev: (__krPx - __biPx) / __biPx * 100 };
+        }
         const r = arbiJudge(snap);
         const price = parseFloat(snap.price);
         const changePct = parseFloat(snap.changePct);
         await client.query(
-          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver, pick) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '2.1', $13)",
+          "INSERT INTO judge_records (ts, symbol, source, via, price, change_pct, mark, label, trend_dir, r1, r4, r24, conds, judge_ver, pick) VALUES (now(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, '3.0', $13)",
           [
             snap.symbol,
             'binance-spot',
