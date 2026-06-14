@@ -933,10 +933,20 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   <p class="muted" style="margin:0 0 10px;font-size:13px">アービットの判定を架空でなぞったら、架空の残高がどう動いたかの「振り返り」です。未来の売買指示ではありません。初期資金は架空10万円、各判定で現在残高の10%を投下し、24時間後の結果（r24）で损益を確定します。</p>
   <div class="note" style="margin:0 0 12px">※ 現在の記録は約３日分だけなので、この結果は「傾向の一端」にすぎません。データが貯まるほど見えてきます。</div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px">
-    <label style="font-size:13px">往復手数料：<b id="simFeeLbl">0.2</b>%</label>
-    <input id="simFee" type="range" min="0" max="2" step="0.05" value="0.2" style="flex:1;min-width:160px;max-width:320px">
+    <label style="font-size:13px">往復手数料：<b id="simFeeLbl">0.4</b>%</label>
+    <input id="simFee" type="range" min="0" max="2" step="0.05" value="0.4" style="flex:1;min-width:160px;max-width:320px">
     <span class="muted" style="font-size:12px">手数料を上げると利益がどう消えるか試せます</span>
   </div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px">
+<label style="font-size:13px">往復スリッページ：<b id="simSlipLbl">0.1</b>%</label>
+<input id="simSlip" type="range" min="0" max="0.3" step="0.01" value="0.1" style="flex:1;min-width:160px;max-width:320px">
+<span class="muted" style="font-size:12px">約定ズレ。買いも売りも不利な価格で計算します</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px">
+<label style="font-size:13px">板スプレッド除外：<b id="simSprLbl">1.5</b>% 超を除外</label>
+<input id="simSpr" type="range" min="0" max="5" step="0.1" value="1.5" style="flex:1;min-width:160px;max-width:320px">
+<span class="muted" style="font-size:12px">板が薄い（スプレッドが広い）銘柄をシミュから外します</span>
+</div>
   <div id="simStatus" class="muted" style="font-size:13px;margin:0 0 8px">読み込み中…</div>
   <table id="simTable" style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>
     <th style="text-align:left;padding:6px 4px;border-bottom:1px solid var(--bd)">戦略</th>
@@ -951,25 +961,33 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <script>
 (function(){
   var SIM_DATA=null;
-  function simRun(buyMarks,fee){
-    var cash=100000, trades=0, wins=0, series=[100000];
+  function simC6sp(d){if(!d||!d.conds)return null;for(var q=0;q<d.conds.length;q++){var cc=d.conds[q];if(cc&&cc.id==="C6"&&typeof cc.sp==="number")return cc.sp;}return null;}
+    function simRun(buyMarks,fee,slip,sprThr){
+    var cash=100000, trades=0, wins=0, series=[100000], excluded=0;
     var recs=SIM_DATA.filter(function(d){return buyMarks.indexOf(d.mark)>=0 && d.r24!=null;});
     recs.sort(function(a,b){return (a.ts||0)-(b.ts||0);});
     for(var i=0;i<recs.length;i++){
+      var sp=simC6sp(recs[i]);
+      if(sp!=null && sprThr>0 && sp>sprThr){excluded++;continue;}
       var stake=cash*0.10;
-      var net=stake*(recs[i].r24/100) - stake*fee;
+      var effR=(recs[i].r24/100) - fee - slip;
+      var net=stake*effR;
       cash+=net; trades++; if(net>0)wins++;
       series.push(Math.round(cash));
     }
-    return {final:Math.round(cash),trades:trades,wins:wins,winRate:trades?(wins/trades*100):0,series:series};
+    return {final:Math.round(cash),trades:trades,wins:wins,winRate:trades?(wins/trades*100):0,series:series,excluded:excluded};
   }
   function fmtY(n){return "¥"+Math.round(n).toLocaleString("ja-JP");}
   function draw(){
     if(!SIM_DATA){return;}
     var fee=parseFloat(document.getElementById("simFee").value)/100;
+    var slip=parseFloat(document.getElementById("simSlip").value)/100;
+    var sprThr=parseFloat(document.getElementById("simSpr").value)/100;
+    document.getElementById("simSlipLbl").textContent=(slip*100).toFixed(2).replace(/0+$/,"").replace(/\.$/,"");
+    document.getElementById("simSprLbl").textContent=(sprThr*100).toFixed(2).replace(/0+$/,"").replace(/\.$/,"");
     document.getElementById("simFeeLbl").textContent=(fee*100).toFixed(2).replace(/0+$/,"").replace(/\.$/,"");
-    var A=simRun(["◎"],fee);
-    var Bp=simRun(["◎","○"],fee);
+    var A=simRun(["◎"],fee,slip,sprThr);
+    var Bp=simRun(["◎","○"],fee,slip,sprThr);
     var rows=[["A「慎重」◎のみ",A,"var(--acc)"],["B「積極」◎○",Bp,"var(--up)"]];
     var tb=document.getElementById("simBody"); tb.innerHTML="";
     for(var k=0;k<rows.length;k++){
@@ -1000,10 +1018,13 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     }
   }
   var fe=document.getElementById("simFee"); if(fe){fe.addEventListener("input",draw);}
+    var fs=document.getElementById("simSlip"); if(fs){fs.addEventListener("input",draw);}
+    var fp=document.getElementById("simSpr"); if(fp){fp.addEventListener("input",draw);}
   fetch("/api/export-v1").then(function(r){return r.json();}).then(function(j){
     SIM_DATA=(j&&j.data)?j.data:[];
     var answered=SIM_DATA.filter(function(d){return d.r24!=null;}).length;
-    document.getElementById("simStatus").textContent="記録 "+SIM_DATA.length+" 件、うち答え合わせ済み（24時間後） "+answered+" 件で検証。";
+    var c6n=SIM_DATA.filter(function(d){return d.r24!=null && simC6sp(d)!=null;}).length;
+    document.getElementById("simStatus").innerHTML="記録 "+SIM_DATA.length+" 件、うち答え合わせ済み（24時間後） "+answered+" 件で検証。<br>板情報（C6）があるのは答え合わせ済み "+answered+" 件中 "+c6n+" 件だけ。板の薄い銘柄の除外は、板データが増えるほど正確になります。";
     draw();
   }).catch(function(e){document.getElementById("simStatus").textContent="データの読み込みに失敗しました。";});
 })();
