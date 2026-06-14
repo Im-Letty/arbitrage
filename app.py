@@ -248,13 +248,6 @@ ANALYST_HTML = r"""<!DOCTYPE html>
   </div>
   <h1 class="hero">AIアナリストに質問</h1>
   <p class="lead">経済・投資・お金の疑問を、あなたの言語とレベルに合わせて、中立に読み解きます。</p>
-  <p class="label">答えの言語</p>
-  <div class="langs" id="langs">
-    <span class="lang on" data-l="ja">日本語</span>
-    <span class="lang" data-l="en">English</span>
-    <span class="lang" data-l="ko">한국어</span>
-    <span class="lang" data-l="zh">中文</span>
-  </div>
   <p class="label">説明のレベル</p>
   <div class="seg" id="levels">
     <button class="on" data-v="beginner">はじめて</button>
@@ -271,11 +264,6 @@ ANALYST_HTML = r"""<!DOCTYPE html>
 <script>
   let lang = "ja";
   let level = "beginner";
-  document.getElementById("langs").addEventListener("click", function(e){
-    const b = e.target.closest(".lang"); if(!b) return;
-    lang = b.dataset.l;
-    document.querySelectorAll("#langs .lang").forEach(x => x.classList.toggle("on", x === b));
-  });
   document.getElementById("levels").addEventListener("click", function(e){
     const b = e.target.closest("button"); if(!b) return;
     level = b.dataset.v;
@@ -1016,7 +1004,7 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 <div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">チーム</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span></div>
 
 
-<a href="/meeting-room" style="display:inline-block;text-decoration:none;background:var(--amber);color:var(--surface);font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ この人たちで会議してもらう →</a>
+<a href="/meeting-room" style="display:inline-block;text-decoration:none;background:var(--amber);color:var(--surface);font-weight:500;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 0 18px">🗣️ 会議</a>
 <div class="members">
 <div class="member"><div class="mhead"><span class="me">🔎</span><span class="mn">事実確認係</span></div><p class="md">各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みは足さない。</p><p class="mp"><span class="ptag">守る約束</span> ②③ 出どころ・鮮度・一情報源を警告し、最新値は持たないと正直に言い、確認は本人に促す</p></div>
 <div class="member"><div class="mhead"><span class="me">⚖️</span><span class="mn">価格差ウォッチャー</span></div><p class="md">同じ先物が取引所Aと取引所Bでいくら違うか（価格差・乖離）を見て、差が開いているか・縮みそうかを評価する。狙うのは上下当てではなく取引所間の歪み。</p><p class="mp"><span class="ptag">守る約束</span> ①④ 『見かけの価格差』はコストで消えやすいので、差があるだけでは“いい”と言わない</p></div>
@@ -1079,11 +1067,9 @@ textarea{width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:1
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
 <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
-<div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span><span class="badge">社員会議室</span></div>
+<div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">会議</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span></div>
 <h1 class="hero">社員みんなで会議する</h1>
 <p class="lead">あなたの相談について、社員が一人ずつ順番に意見を出します。事実確認 → 分析 → 反対意見 → やさしくまとめ → 最終チェック、の順です。最初の一人が出るまで少し時間がかかることがあります。</p>
-<p class="label">答えの言語</p>
-<div class="langs" id="langs"><span class="lang on" data-l="ja">日本語</span><span class="lang" data-l="en">English</span><span class="lang" data-l="ko">한국어</span><span class="lang" data-l="zh">中文</span></div>
 <p class="label">相談したいこと</p>
 <textarea id="q" placeholder="例：はじめての投資。少額でつみたてを始めるか迷っています。"></textarea>
 <button class="start" id="startBtn">会議を始める</button>
@@ -1093,7 +1079,6 @@ textarea{width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:1
 <script>
 var lang="ja";var TOTAL=5;
 var input=document.getElementById("q");var box=document.getElementById("meeting");var btn=document.getElementById("startBtn");
-document.getElementById("langs").addEventListener("click",function(e){var b=e.target.closest(".lang");if(!b)return;lang=b.dataset.l;document.querySelectorAll("#langs .lang").forEach(function(x){x.classList.toggle("on",x===b);});});
 function bubble(emoji,name,text,thinking){var d=document.createElement("div");d.className="bub"+(thinking?" think":"");d.innerHTML='<div class="who"><span class="bemo"></span><span class="bname"></span></div><div class="btext"></div>';d.querySelector(".bemo").textContent=emoji;d.querySelector(".bname").textContent=name;d.querySelector(".btext").textContent=text;box.appendChild(d);window.scrollTo(0,document.body.scrollHeight);return d;}
 async function run(){var q=input.value.trim();if(!q)return;btn.disabled=true;btn.textContent="会議中…";box.innerHTML="";var transcript="";for(var step=0;;step++){var t=bubble("💭","社員が考えています…","",true);var data;try{var r=await fetch("/meeting",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q,step:step,transcript:transcript,lang:lang})});data=await r.json();}catch(err){t.classList.remove("think");t.querySelector(".btext").textContent="通信でエラーが起きました。少し待ってもう一度ためしてください。";break;}if(data.error){t.classList.remove("think");t.querySelector(".btext").textContent="うまくいきませんでした："+data.error;break;}TOTAL=data.total;t.classList.remove("think");t.querySelector(".bemo").textContent=data.emoji;t.querySelector(".bname").textContent=data.speaker;t.querySelector(".btext").textContent=data.text;transcript+=data.speaker+"："+data.text+"\n\n";window.scrollTo(0,document.body.scrollHeight);if(step>=TOTAL-1)break;}var end=document.createElement("div");end.className="endnote";end.textContent="会議は以上です。各社員は最後に今のコンディションを ◎/○/△/×/? の5段階で示しています（とくに監査役のまとめが総合判定です）。これは“今の条件の良し悪し”の目安であって、売買サインでも利益の保証でもありません。最終的な判断はご自身の責任で行ってください。";box.appendChild(end);btn.disabled=false;btn.textContent="もう一度 会議する";}
 btn.addEventListener("click",run);
@@ -1179,8 +1164,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{v
 <div id="grid" class="grid"><div class="coin">読み込み中…</div></div>
 <p id="upd" class="upd"></p>
 <div class="judge">
-<h2>🧭 今のコンディション自動判定（教育用・売買サインではありません）</h2>
-<div class="jrow"><span id="jmark" class="jmark">?</span><span id="jlabel" class="jlabel">通貨を選んで判定します</span></div>
+<div class="jrow"><span id="jmark" class="jmark">?</span><span id="jlabel" class="jlabel"></span></div>
 <ul id="jreasons" class="jreasons"></ul>
 </div>
 <div class="panel">
@@ -1275,7 +1259,6 @@ var goBtn=document.getElementById("go");
 goBtn.onclick=async function(){
   var sym=document.getElementById("sym").value;
   var out=document.getElementById("out"); out.innerHTML="";
-  try{ if(typeof WEIGHT_PROFILES!=="undefined"&&WEIGHT_PROFILES){ var __nv=document.createElement("div"); __nv.className="vpoint-note"; __nv.textContent="※「視点」はメンバー別の重み(v"+WEIGHT_PROFILES.version+")による参考値です。公式判定は全員共通のmarkです。"; out.appendChild(__nv); } }catch(__ne){}
   goBtn.disabled=true; goBtn.textContent="社員たちが分析中…";
   try{
     var tr=await fetch(API+"/api/v3/ticker/24hr?symbol="+sym).then(r=>r.json());
