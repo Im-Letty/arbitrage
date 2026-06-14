@@ -108,17 +108,20 @@ async function fetchCloses(sym) {
 // Second job (case A): fill in r1/r4/r24 once the target time (ts+Nh) + 60s has passed,
 // using the same data-api.binance.vision spot source as the original record. Browser-side
 // arbiFillResults (localStorage) is intentionally left untouched: server fills server rows.
+async function markFail(client, id) {
+  try { await client.query("UPDATE judge_records SET fail_n = COALESCE(fail_n,0)+1, give_up = (COALESCE(fail_n,0)+1 >= 3) WHERE id = $1", [id]); } catch (e) {}
+}
 async function backfillResults(client) {
   const SELECT_SQL =
     "SELECT id, symbol, ts, price, horizon FROM (" +
     "  SELECT id, symbol, ts, price, '1' AS horizon FROM judge_records" +
-    "   WHERE r1 IS NULL AND price IS NOT NULL AND ts + interval '1 hour' + interval '60 sec' < now()" +
+    "   WHERE r1 IS NULL AND (give_up IS NULL OR give_up = false) AND price IS NOT NULL AND ts + interval '1 hour' + interval '60 sec' < now()" +
     " UNION ALL " +
     "  SELECT id, symbol, ts, price, '4' AS horizon FROM judge_records" +
-    "   WHERE r4 IS NULL AND price IS NOT NULL AND ts + interval '4 hours' + interval '60 sec' < now()" +
+    "   WHERE r4 IS NULL AND (give_up IS NULL OR give_up = false) AND price IS NOT NULL AND ts + interval '4 hours' + interval '60 sec' < now()" +
     " UNION ALL " +
     "  SELECT id, symbol, ts, price, '24' AS horizon FROM judge_records" +
-    "   WHERE r24 IS NULL AND price IS NOT NULL AND ts + interval '24 hours' + interval '60 sec' < now()" +
+    "   WHERE r24 IS NULL AND (give_up IS NULL OR give_up = false) AND price IS NOT NULL AND ts + interval '24 hours' + interval '60 sec' < now()" +
     ") t ORDER BY ts ASC LIMIT 120";
   const rows = (await client.query(SELECT_SQL)).rows;
   let filled = 0, failed = 0;
@@ -129,10 +132,10 @@ async function backfillResults(client) {
       const bucket = Math.floor(targetMs / 60000) * 60000;
       const klRes = await fetchJson(API + "/api/v3/klines?symbol=" + row.symbol + "&interval=1m&startTime=" + bucket + "&limit=1");
       const kl = klRes.data;
-      if (!Array.isArray(kl) || !kl.length || !Array.isArray(kl[0])) { failed++; continue; }
+      if (!Array.isArray(kl) || !kl.length || !Array.isArray(kl[0])) { await markFail(client, row.id); failed++; continue; }
       const close = parseFloat(kl[0][4]);
       const base = parseFloat(row.price);
-      if (!isFinite(close) || !isFinite(base) || base === 0) { failed++; continue; }
+      if (!isFinite(close) || !isFinite(base) || base === 0) { await markFail(client, row.id); failed++; continue; }
       const pct = Math.round((close - base) / base * 100 * 1000) / 1000;
       const col = row.horizon === "24" ? "r24" : (row.horizon === "4" ? "r4" : "r1");
       const UPDATE_SQL = col === "r24"
@@ -142,8 +145,9 @@ async function backfillResults(client) {
           : "UPDATE judge_records SET r1 = $1 WHERE id = $2");
       await client.query(UPDATE_SQL, [pct, row.id]);
       filled++;
+        try { await client.query("UPDATE judge_records SET fail_n = 0 WHERE id = $1", [row.id]); } catch (e) {}
     } catch (e) {
-      failed++;
+      await markFail(client, row.id); failed++;
     }
   }
   console.log("backfill: candidates=" + rows.length + " filled=" + filled + " failed=" + failed);
@@ -158,6 +162,8 @@ async function main() {
     await client.query(CREATE_SQL);
     await client.query("ALTER TABLE judge_records ADD COLUMN IF NOT EXISTS judge_ver text");
     await client.query("ALTER TABLE judge_records ADD COLUMN IF NOT EXISTS pick text");
+    await client.query("ALTER TABLE judge_records ADD COLUMN IF NOT EXISTS give_up boolean DEFAULT false");
+    await client.query("ALTER TABLE judge_records ADD COLUMN IF NOT EXISTS fail_n int DEFAULT 0");
     const cand = await selectTickers();
     const topSet = cand.slice(0, TOP_N).map(function (c) { c.pick = "top"; return c; });
     const topSyms = new Set(topSet.map(function (c) { return c.sym; }));
