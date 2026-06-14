@@ -191,6 +191,9 @@ HOME_HTML = r"""<!DOCTYPE html>
       <a class="room safe full" href="/members">
 <p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.9 3-6.5 7-6.5s7 2.6 7 6.5"/></svg> チーム</p>
 </a>
+        <a class="room analyze full" href="/virtual">
+<p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v15.5a.5.5 0 0 0 .5.5H20"/><path d="M7 14l4-4 3 3 5-6"/><path d="M19 7h-3m3 0v3"/></svg> バーチャル運用</p>
+</a>
     </div>
   </div>
   <div class="foot">arbitrage は教育・情報提供を目的としたサービスです。お金を運用するものではなく、利益を保証するものでもありません。投資にはリスクがあり、最終的な判断はご自身の責任で行ってください。</div>
@@ -900,7 +903,29 @@ drawCBoard();
 drawMBoard();
 drawBoard();
 load();
-</script>
+</script></body></html>"""VIRTUAL_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="/weights.js"></script>
+<title>バーチャル運用 — arbitrage</title>
+<style>:root{--bg:#070d18;--tx:#eef3fa;--panel:#101d31;--panel2:#0b1626;--bd:#21385a;--bd2:#33506f;--mottobg:#101d31;--mut:#a3b6d0;--mut2:#8294ac;--mut3:#76889f;--head:#cdd9e6;--body2:#d6e0ee;--body3:#aebccd;--acc:#cdd9e6;--acctx:#0b1626;--up:#34d17f;--down:#ff5b5b;--flat:#aebccd;--link:#9fc0e6;}
+[data-theme="A"]{--bg:#070d18;--tx:#eef3fa;--panel:#101d31;--panel2:#0b1626;--bd:#21385a;--bd2:#33506f;--mottobg:#101d31;--mut:#a3b6d0;--mut2:#8294ac;--mut3:#76889f;--head:#cdd9e6;--body2:#d6e0ee;--body3:#aebccd;--acc:#cdd9e6;--acctx:#0b1626;--up:#34d17f;--down:#ff5b5b;--flat:#aebccd;--link:#9fc0e6;}
+[data-theme="B"]{--bg:#fdfaf6;--tx:#33302c;--panel:#ffffff;--panel2:#fffdfa;--bd:#efe7dd;--bd2:#e6dbcf;--mottobg:#ffffff;--mut:#6f665d;--mut2:#857b71;--mut3:#94897e;--head:#4a443d;--body2:#48423b;--body3:#5a534b;--acc:#bc8378;--acctx:#ffffff;--up:#3f9b72;--down:#c8635c;--flat:#8c837b;--link:#b06b5f;}
+[data-theme="B"] .motto,[data-theme="B"] .coin,[data-theme="B"] .panel,[data-theme="B"] .judge,[data-theme="B"] .speak,[data-theme="B"] .card{border-radius:24px;box-shadow:0 10px 28px -16px rgba(170,120,110,.40);border-color:#f3ece4;}
+[data-theme="B"] button.go,[data-theme="B"] .btn{border-radius:24px;box-shadow:0 12px 26px -10px rgba(188,131,120,.55);}
+[data-theme="B"] .coin{transition:transform .25s,box-shadow .25s;}
+[data-theme="B"] .coin:hover{transform:translateY(-4px);box-shadow:0 16px 32px -14px rgba(170,120,110,.50);}
+[data-theme="B"] .note{border-radius:18px;}
+
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:880px;margin:0 auto;padding:24px;background:var(--bg);color:var(--tx);line-height:1.7}
+a{color:var(--link)}h1{font-size:22px}.muted{color:var(--mut);font-size:14px}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bd)}
+.mark{font-size:18px;font-weight:bold}.up{color:var(--up)}.down{color:var(--down)}.flat{color:var(--flat)}
+.note{background:var(--panel2);border:1px dashed var(--bd2);border-radius:10px;padding:12px;color:var(--mut);font-size:13px;margin:12px 0}
+.btn{display:inline-block;background:var(--acc);color:var(--acctx);padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
+</style></head><body><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--mut);text-decoration:none">← トップ</a></p>
+<div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">バーチャル運用</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
 <section class="panel" id="simbox" style="margin-top:18px">
   <h2 style="margin:0 0 6px">架空ポートフォリオ検証（過去の振り返り）</h2>
   <p class="muted" style="margin:0 0 10px;font-size:13px">アービットの判定を架空でなぞったら、架空の残高がどう動いたかの「振り返り」です。未来の売買指示ではありません。初期資金は架空10万円、各判定で現在残高の10%を投下し、24時間後の結果（r24）で损益を確定します。</p>
@@ -982,6 +1007,8 @@ load();
 })();
 </script>
 </body></html>"""
+
+
 
 MARKET_TEAM = [
     {"key": "checker", "name": "事実確認係", "job": "各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みを足さない。出どころ・鮮度・一情報源だけ、を警告し、最新値は持たないと正直に言い、確認は本人に促す。"},
@@ -1103,6 +1130,11 @@ def api_export_v1():
 @app.route("/market")
 def market():
     return Response(MARKET_HTML, mimetype="text/html")
+
+@app.route("/virtual")
+def virtual_run():
+    return Response(VIRTUAL_HTML, mimetype="text/html")
+
 
 @app.route("/log")
 def judge_log():
