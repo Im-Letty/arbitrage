@@ -241,7 +241,7 @@ ANALYST_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
   <div class="topbar">
     <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
     <span class="badge">AIアナリスト</span>
@@ -348,7 +348,7 @@ RENSHUJO_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <a class="back" href="/">← arbitrage トップへ</a>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
   <div class="brandwrap" style="display:flex;align-items:center;gap:8px"><p class="brand">arbitrage</p><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
   <h1 class="hero">投資の練習場</h1>
   <p class="lead">すべて架空のお金です。本物のお金は使いません。安全に、投資のやり方を体験しましょう。</p>
@@ -425,7 +425,7 @@ KIHON_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
 
   <div class="topbar">
     <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
@@ -619,7 +619,7 @@ FACTOR_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
 
   <div class="topbar">
     <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
@@ -838,7 +838,7 @@ ARBITRAGE_HTML = r"""<!DOCTYPE html>
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
+  <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
 
   <div class="topbar">
     <span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span>
@@ -1012,7 +1012,7 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
 <div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">チーム</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span></div>
 
 
@@ -1027,7 +1027,6 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.7;font-fami
 <div class="member"><div class="mhead"><span class="me">📜</span><span class="mn">歴史係</span></div><p class="md">過去にサヤ取りがうまくいかなかった例（取引所破綻・出金停止・急な価格差消失）を思い出させ、楽観に冷や水をかける。前提が違えば結論も変わると伝える。</p><p class="mp"><span class="ptag">守る約束</span> ①④ 過去の実例で「絶対はない」を示し、前提が違えば結論も違うと確認する</p></div>
 <div class="member"><div class="mhead"><span class="me">😈</span><span class="mn">悪魔の代弁者</span></div><p class="md">わざと反対の立場で、見落とされたリスクや「うまくいかない場合」を指摘する。楽観が過ぎれば強く水を差し、断定や暴走にブレーキをかける。</p><p class="mp"><span class="ptag">守る約束</span> ① 「絶対」という考え方そのものを疑い、言わせない</p></div>
 <div class="member"><div class="mhead"><span class="me">🔍</span><span class="mn">監査役</span></div><p class="md">全員の意見にあやしい点・言い過ぎ・抜けがないかを最後に点検する。ルール違反（断定・個別売買の指示）があれば指摘し、最終判断は本人に委ねる。</p><p class="mp"><span class="ptag">守る約束</span> ②④ あやしい点を遠慮なく指摘し、最終判断は本人に委ねる</p></div>
-<div class="note">この人たちがいても「絶対にうまくいく」とは言えません。それでも、誰が何に責任を持つかがはっきりしていると、まちがいに早く気づけます。それが、このチームをそろえる理由です。</div>
 </div>
 <div class="foot">arbitrage は教育・情報提供を目的としたサービスです。利益を保証するものではなく、投資の判断はご自身の責任で行ってください。</div>
 </div>
@@ -1079,7 +1078,7 @@ textarea{width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:1
 <div class="wrap">
 <script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 
-<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--jade);text-decoration:none">← arbitrage トップへ</a></p>
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">← トップ</a></p>
 <div class="topbar"><span class="brandwrap" style="display:inline-flex;align-items:center;gap:8px"><span class="brand">arbitrage</span><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--ink);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></span><span class="badge">社員会議室</span></div>
 <h1 class="hero">社員みんなで会議する</h1>
 <p class="lead">あなたの相談について、社員が一人ずつ順番に意見を出します。事実確認 → 分析 → 反対意見 → やさしくまとめ → 最終チェック、の順です。最初の一人が出るまで少し時間がかかることがあります。</p>
@@ -1176,7 +1175,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{v
 .jreasons li { margin:2px 0; }
 .jdisc { font-size:12px; color:var(--mut3); margin-top:8px; }
 </style></head><body><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script><div class="wrap">
-<div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">相場チェック</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--mut);text-decoration:none">← トップ</a></p> <div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">相場チェック</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
 <div id="grid" class="grid"><div class="coin">読み込み中…</div></div>
 <p id="upd" class="upd"></p>
 <div class="judge">
@@ -1394,7 +1393,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .note{background:var(--panel2);border:1px dashed var(--bd2);border-radius:10px;padding:12px;color:var(--mut);font-size:13px;margin:12px 0}
 .btn{display:inline-block;background:var(--acc);color:var(--acctx);padding:8px 14px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px}
 </style></head><body><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
-<p><a href="/">← arbitrage トップへ</a></p>
+<p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--mut);text-decoration:none">← トップ</a></p>
 <div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">過去のデータ</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
 <div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card"><div id="summary2" class="muted">答え合わせ集計を計算中…</div></div><div class="card"><div id="board"></div></div><div class="card"><div id="cboard"></div></div>
 <div class="card"><div id="mboard"></div></div>
