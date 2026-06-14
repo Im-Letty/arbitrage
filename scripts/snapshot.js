@@ -29,7 +29,7 @@ const EVENT_MAX = 10;   // max number of promoted symbols per run
 // Kraken USD coverage is much wider than USDT, so we query USD pairs. Symbols absent on Kraken simply
 // get no snap.kr (=> C1-C4 only = backward compatible). One bulk Ticker call per run (no per-symbol calls).
 const KRAKEN = "https://api.kraken.com";
-const BYBIT = "https://api.bybit.com";
+const BITGET = "https://api.bitget.com";
 // Binance base -> Kraken base alias (Kraken quirk: BTC is XBT). Others are same-named.
 const KR_ALIAS = { BTC: "XBT", DOGE: "XDG" };
 
@@ -277,29 +277,29 @@ async function main() {
     } catch (e) {
       console.warn("bookticker fetch failed (continuing without C6): " + (e && e.message ? e.message : e));
     }
-    const futMap = {};
-    try {
-      const by = await fetchJson(BYBIT + "/v5/market/tickers?category=linear");
-      const byList = (by && by.data && by.data.result && by.data.result.list) ? by.data.result.list : null;
-      if (byList) {
-        byList.forEach(function (x) {
-          if (!x || !x.symbol) return;
-          const fr = parseFloat(x.fundingRate);
-          const oi = parseFloat(x.openInterest);
-          const oiUsd = parseFloat(x.openInterestValue);
-          const mark = parseFloat(x.markPrice);
-          const f = {};
-          if (isFinite(fr)) f.fr = fr;
-          if (isFinite(oi)) f.oi = oi;
-          if (isFinite(oiUsd)) f.oiUsd = oiUsd;
-          if (isFinite(mark)) f.mark = mark;
-          futMap[x.symbol] = f;
-        });
+          const futMap = {};
+      try {
+        const bg = await fetchJson(BITGET + "/api/v2/mix/market/tickers?productType=usdt-futures");
+        const bgList = (bg && bg.data && Array.isArray(bg.data)) ? bg.data : null;
+        if (bgList) {
+          bgList.forEach(function (x) {
+            if (!x || !x.symbol) return;
+            const fr = parseFloat(x.fundingRate);
+            const oi = parseFloat(x.holdingAmount);
+            const mark = parseFloat(x.markPrice);
+            const oiUsd = (isFinite(oi) && isFinite(mark)) ? oi * mark : NaN;
+            const f = {};
+            if (isFinite(fr)) f.fr = fr;
+            if (isFinite(oi)) f.oi = oi;
+            if (isFinite(oiUsd)) f.oiUsd = oiUsd;
+            if (isFinite(mark)) f.mark = mark;
+            futMap[x.symbol] = f;
+          });
+        }
+        console.log("bitget-fut: status=" + (bg ? bg.status : "n/a") + " perps=" + Object.keys(futMap).length);
+      } catch (e) {
+        console.warn("bitget-fut fetch failed (continuing with C1-C6 only): " + (e && e.message ? e.message : e));
       }
-      console.log("bybit-fut: status=" + (by ? by.status : "n/a") + " perps=" + Object.keys(futMap).length);
-    } catch (e) {
-      console.warn("bybit-fut fetch failed (continuing with C1-C5 only): " + (e && e.message ? e.message : e));
-    }
     for (const p of picked) {
       const sym = p.sym;
       const it = p.it;
