@@ -1343,7 +1343,7 @@ return L.join("\n")+"\n\n";
           if(__wd){ var __vs=document.createElement("span"); __vs.className="vpoint"; __vs.textContent=" 視点: "+__vm; __wd.appendChild(__vs); }
         }
       }catch(__ve){}
-      div.querySelector(".body").textContent=j.text;
+      div.querySelector(".body").textContent=(function(s){try{return String(s).split("\n").map(function(l){return l.replace(/^\s*#{1,6}\s+/,"").replace(/^\s*[-*+]\s+/,"").replace(/^\s*-{3,}\s*$/,"")}).join("\n").replace(/\*\*([^*]+)\*\*/g,"$1").replace(/\*([^*]+)\*/g,"$1").replace(/\n{3,}/g,"\n\n").trim()}catch(e){return s}})(j.text);
       out.appendChild(div);
       transcript+=j.who+"："+j.text+"\n";
       step++;
@@ -1629,7 +1629,7 @@ def build_market_system(member, lang):
         "・モットーは『まちがいに早く気づく会社』。楽観や決めつけのまちがいに、誰よりも早く気づき、やさしく気づかせる。",
         "",
         JUDGE_RULE,
-        "発言は" + lang_name + "で、4〜5文の短さで。自分の役割に集中し、前の人と同じことはくり返さない。",
+        "発言は" + lang_name + "で書く。記号（#、*、-、>などのマークダウン）は使わず、ふつうの文章にする。挨拶や前置き（『了解しました』等）は書かず、いきなり結論・要点から。3文以内で短く。自分の役割に集中し、前の人と同じことはくり返さない。",
     ]
     return "\n".join(parts)
 
