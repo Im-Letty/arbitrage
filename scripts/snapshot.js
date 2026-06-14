@@ -280,7 +280,7 @@ async function main() {
           const futMap = {};
       try {
         const bg = await fetchJson(BITGET + "/api/v2/mix/market/tickers?productType=usdt-futures");
-        const bgList = (bg && bg.data && Array.isArray(bg.data)) ? bg.data : null;
+        const bgList = (bg && bg.data && Array.isArray(bg.data.data)) ? bg.data.data : null;
         if (bgList) {
           bgList.forEach(function (x) {
             if (!x || !x.symbol) return;
