@@ -900,7 +900,88 @@ drawCBoard();
 drawMBoard();
 drawBoard();
 load();
-</script></body></html>"""
+</script>
+<section class="panel" id="simbox" style="margin-top:18px">
+  <h2 style="margin:0 0 6px">架空ポートフォリオ検証（過去の振り返り）</h2>
+  <p class="muted" style="margin:0 0 10px;font-size:13px">アービットの判定を架空でなぞったら、架空の残高がどう動いたかの「振り返り」です。未来の売買指示ではありません。初期資金は架空10万円、各判定で現在残高の10%を投下し、24時間後の結果（r24）で损益を確定します。</p>
+  <div class="note" style="margin:0 0 12px">※ 現在の記録は約３日分だけなので、この結果は「傾向の一端」にすぎません。データが貯まるほど見えてきます。</div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px">
+    <label style="font-size:13px">往復手数料：<b id="simFeeLbl">0.2</b>%</label>
+    <input id="simFee" type="range" min="0" max="2" step="0.05" value="0.2" style="flex:1;min-width:160px;max-width:320px">
+    <span class="muted" style="font-size:12px">手数料を上げると利益がどう消えるか試せます</span>
+  </div>
+  <div id="simStatus" class="muted" style="font-size:13px;margin:0 0 8px">読み込み中…</div>
+  <table id="simTable" style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>
+    <th style="text-align:left;padding:6px 4px;border-bottom:1px solid var(--bd)">戦略</th>
+    <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">最終残高</th>
+    <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">損益</th>
+    <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">取引回数</th>
+    <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">勝率</th>
+  </tr></thead><tbody id="simBody"></tbody></table>
+  <div style="margin-top:14px"><svg id="simChart" width="100%" height="180" style="overflow:visible;font:11px sans-serif"></svg></div>
+  <div class="muted" style="font-size:12px;margin-top:4px"><span style="color:var(--acc)">●</span> A「慎重」◎のみ買い　　<span style="color:var(--up)">●</span> B「積極」◎○買い</div>
+</section>
+<script>
+(function(){
+  var SIM_DATA=null;
+  function simRun(buyMarks,fee){
+    var cash=100000, trades=0, wins=0, series=[100000];
+    var recs=SIM_DATA.filter(function(d){return buyMarks.indexOf(d.mark)>=0 && d.r24!=null;});
+    recs.sort(function(a,b){return (a.ts||0)-(b.ts||0);});
+    for(var i=0;i<recs.length;i++){
+      var stake=cash*0.10;
+      var net=stake*(recs[i].r24/100) - stake*fee;
+      cash+=net; trades++; if(net>0)wins++;
+      series.push(Math.round(cash));
+    }
+    return {final:Math.round(cash),trades:trades,wins:wins,winRate:trades?(wins/trades*100):0,series:series};
+  }
+  function fmtY(n){return "¥"+Math.round(n).toLocaleString("ja-JP");}
+  function draw(){
+    if(!SIM_DATA){return;}
+    var fee=parseFloat(document.getElementById("simFee").value)/100;
+    document.getElementById("simFeeLbl").textContent=(fee*100).toFixed(2).replace(/0+$/,"").replace(/\.$/,"");
+    var A=simRun(["◎"],fee);
+    var Bp=simRun(["◎","○"],fee);
+    var rows=[["A「慎重」◎のみ",A,"var(--acc)"],["B「積極」◎○",Bp,"var(--up)"]];
+    var tb=document.getElementById("simBody"); tb.innerHTML="";
+    for(var k=0;k<rows.length;k++){
+      var nm=rows[k][0], s=rows[k][1];
+      var pnl=s.final-100000;
+      var cls=pnl>=0?"up":"down";
+      var sign=pnl>=0?"+":"";
+      tb.innerHTML+="<tr><td style=\"padding:6px 4px;border-bottom:1px solid var(--bd2)\">"+nm+"</td>"
+        +"<td style=\"text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd2)\">"+fmtY(s.final)+"</td>"
+        +"<td class=\""+cls+"\" style=\"text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd2)\">"+sign+fmtY(pnl).replace("¥","¥")+"</td>"
+        +"<td style=\"text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd2)\">"+s.trades+"回</td>"
+        +"<td style=\"text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd2)\">"+s.winRate.toFixed(1)+"%</td></tr>";
+    }
+    drawChart([["A",A.series,"var(--acc)"],["B",Bp.series,"var(--up)"]]);
+  }
+  function drawChart(sets){
+    var svg=document.getElementById("simChart"); if(!svg)return;
+    var W=svg.clientWidth||600, H=180, pad=8, padL=4;
+    var allMax=100000, allMin=100000, maxLen=0;
+    for(var i=0;i<sets.length;i++){var s=sets[i][1]; if(s.length>maxLen)maxLen=s.length; for(var j=0;j<s.length;j++){if(s[j]>allMax)allMax=s[j]; if(s[j]<allMin)allMin=s[j];}}
+    var rng=(allMax-allMin)||1; var ns="http://www.w3.org/2000/svg"; svg.innerHTML="";
+    var baseY=H-pad-((100000-allMin)/rng)*(H-2*pad);
+    var bl=document.createElementNS(ns,"line"); bl.setAttribute("x1",padL); bl.setAttribute("x2",W); bl.setAttribute("y1",baseY); bl.setAttribute("y2",baseY); bl.setAttribute("stroke","var(--bd)"); bl.setAttribute("stroke-dasharray","3,3"); svg.appendChild(bl);
+    for(var i=0;i<sets.length;i++){
+      var s=sets[i][1], col=sets[i][2]; if(s.length<2)continue;
+      var d=""; for(var j=0;j<s.length;j++){var x=padL+(j/(maxLen-1))*(W-padL-pad); var y=H-pad-((s[j]-allMin)/rng)*(H-2*pad); d+=(j?" L":"M")+x.toFixed(1)+" "+y.toFixed(1);}
+      var p=document.createElementNS(ns,"path"); p.setAttribute("d",d); p.setAttribute("fill","none"); p.setAttribute("stroke",col); p.setAttribute("stroke-width","2"); svg.appendChild(p);
+    }
+  }
+  var fe=document.getElementById("simFee"); if(fe){fe.addEventListener("input",draw);}
+  fetch("/api/export-v1").then(function(r){return r.json();}).then(function(j){
+    SIM_DATA=(j&&j.data)?j.data:[];
+    var answered=SIM_DATA.filter(function(d){return d.r24!=null;}).length;
+    document.getElementById("simStatus").textContent="記録 "+SIM_DATA.length+" 件、うち答え合わせ済み（24時間後） "+answered+" 件で検証。";
+    draw();
+  }).catch(function(e){document.getElementById("simStatus").textContent="データの読み込みに失敗しました。";});
+})();
+</script>
+</body></html>"""
 
 MARKET_TEAM = [
     {"key": "checker", "name": "事実確認係", "job": "各取引所から渡された実データ（今の価格・気配・出来高感・直近の値動き）を正しく読み、どの数字をどう見るかを実演する。思い込みを足さない。出どころ・鮮度・一情報源だけ、を警告し、最新値は持たないと正直に言い、確認は本人に促す。"},
