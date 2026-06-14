@@ -1175,19 +1175,17 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{v
 .jreasons { font-size:13px; color:var(--body3); margin:0; padding-left:18px; }
 .jreasons li { margin:2px 0; }
 .jdisc { font-size:12px; color:var(--mut3); margin-top:8px; }
-</style></head><body><div class="themebar" style="display:flex;justify-content:flex-end;margin:0 0 10px"><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script><div class="wrap">
-<h1>相場チェック</h1>
+</style></head><body><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script><div class="wrap">
+<div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">相場チェック</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
 <div id="grid" class="grid"><div class="coin">読み込み中…</div></div>
 <p id="upd" class="upd"></p>
 <div class="judge">
 <h2>🧭 今のコンディション自動判定（教育用・売買サインではありません）</h2>
 <div class="jrow"><span id="jmark" class="jmark">?</span><span id="jlabel" class="jlabel">通貨を選んで判定します</span></div>
 <ul id="jreasons" class="jreasons"></ul>
-<p class="jdisc">これは本物の価格データを「プロの7か条」の物差しで見た“今の条件の良し悪し”の目安です。「確実に儲かる」という意味ではありません。最終判断はご自身で。</p>
-  <p style="margin-top:8px"><a href="/log" style="color:var(--link);font-size:13px">📜 過去の判定を振り返る（あのとき◎→その後どう動いたか）</a></p>
 </div>
 <div class="panel">
-  <label>どの通貨を社員に分析してもらう？</label>
+  <label>通貨分析</label>
   <select id="sym">
     <option value="BTCUSDT">ビットコイン（BTC）</option>
     <option value="ETHUSDT">イーサリアム（ETH）</option>
@@ -1195,7 +1193,7 @@ MARKET_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{v
     <option value="SOLUSDT">ソラナ（SOL）</option>
     <option value="XRPUSDT">リップル（XRP）</option>
   </select>
-  <button id="go" class="go">この通貨を社員たちに分析してもらう</button>
+  <button id="go" class="go">分析</button>
   <div id="out"></div>
 </div>
 <p class="note">価格データ：Binance公開API（米ドル建て）</p>
@@ -1218,7 +1216,7 @@ async function loadGrid(){
     });
     document.getElementById("grid").innerHTML=html;
     var now=new Date();
-    document.getElementById("upd").textContent="最終更新："+now.toLocaleTimeString("ja-JP")+"（数秒ごとに自動更新）";
+    document.getElementById("upd").textContent="最終更新："+now.toLocaleTimeString("ja-JP");
   }catch(e){ document.getElementById("grid").innerHTML="<div class=\"coin err\">価格を取得できませんでした。</div>"; }
 }
 loadGrid(); setInterval(loadGrid, 10000); try{arbiFillResults();}catch(e){}
@@ -1369,7 +1367,7 @@ return L.join("\n")+"\n\n";
       step++;
     }
   }catch(e){ out.innerHTML+="<div class=\"speak err\">分析中にエラーが起きました。少し待ってからもう一度ためしてください。</div>"; }
-  goBtn.disabled=false; goBtn.textContent="この通貨を社員たちに分析してもらう";
+  goBtn.disabled=false; goBtn.textContent="分析";
 };
 </script>
 </div></body></html>"""
