@@ -903,7 +903,9 @@ drawCBoard();
 drawMBoard();
 drawBoard();
 load();
-</script></body></html>"""VIRTUAL_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script><meta charset="utf-8">
+</script></body></html>"""
+
+VIRTUAL_HTML = r"""<!doctype html><html lang="ja"><head><script>(function(){try{var t=localStorage.getItem("arbi_theme");if(t!=="A"&&t!=="B")t="A";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","A");}})();</script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="/weights.js"></script>
 <title>バーチャル運用 — arbitrage</title>
