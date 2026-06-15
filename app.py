@@ -700,7 +700,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .tip{position:relative;cursor:help;border-bottom:1px dotted var(--mut);white-space:nowrap}.tip .ti{font-size:.8em;opacity:.6;margin-left:1px;font-style:normal}.tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:135%;transform:translateX(-50%);background:var(--panel);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:400;line-height:1.5;white-space:normal;width:max-content;max-width:240px;box-shadow:0 4px 14px rgba(0,0,0,.3);opacity:0;visibility:hidden;transition:opacity .12s;z-index:50;pointer-events:none;text-align:left}.tip::before{content:'';position:absolute;left:50%;bottom:135%;transform:translateX(-50%) translateY(99%);border:6px solid transparent;border-top-color:var(--bd);opacity:0;visibility:hidden;transition:opacity .12s;z-index:51}@media(hover:hover){.tip:hover::after,.tip:hover::before{opacity:1;visibility:visible}}.tip.open::after,.tip.open::before{opacity:1;visibility:visible}.teamhero{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:18px 16px 16px;margin:0 0 12px;text-align:center}.teamhero .th-ttl{font-size:13px;color:var(--mut);letter-spacing:.04em;margin:0 0 2px}.teamhero .th-sub{font-size:11px;color:var(--mut2,var(--mut));margin:0 0 12px}.teamhero .th-big{font-size:46px;line-height:1;font-weight:800;color:var(--acc);margin:2px 0 2px}.teamhero .th-biglbl{font-size:12px;color:var(--mut);margin:0 0 12px}.teamhero .th-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 10px}.teamhero .th-chip{background:var(--panel2,var(--panel));border:1px solid var(--bd);border-radius:10px;padding:7px 12px;min-width:96px}.teamhero .th-cval{font-size:18px;font-weight:700;color:var(--tx)}.teamhero .th-clbl{font-size:10px;color:var(--mut);margin-top:1px}.teamhero .th-note{font-size:10px;color:var(--mut2,var(--mut));margin:6px 0 0;line-height:1.5}</style></head><body><script>document.addEventListener("DOMContentLoaded",function(){function cur(){return document.documentElement.getAttribute("data-theme")||"A";}function paint(){var c=cur();var b=document.querySelectorAll(".tg");for(var i=0;i<b.length;i++){b[i].textContent=(c==="B")?"🌙":"☀";b[i].style.opacity=".55";}}var btns=document.querySelectorAll(".tg");for(var i=0;i<btns.length;i++){btns[i].addEventListener("click",function(){var v=(cur()==="B")?"A":"B";document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("arbi_theme",v);}catch(e){}paint();});}paint();});</script>
 <p style="margin:0 0 14px"><a href="/" style="font-size:13px;color:var(--mut);text-decoration:none">← トップ</a></p>
 <div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">過去のデータ</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
-<div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card teamhero"><div class="th-ttl">アービット ・ チーム総合成績 <span class="tip" data-tip="アービット9人を1つのチームとして見た、全体のまとめ成績です"><i class="ti">ⓘ</i></span></div><div class="th-sub" id="hero-sub">集計中…</div><div class="th-big" id="hero-p1">—</div><div class="th-biglbl">方向的中率 <span class="tip" data-tip="アービットが予想した向きに、実際に動いた割合"><i class="ti">ⓘ</i></span></div><div class="th-chips"><div class="th-chip"><div class="th-cval" id="hero-p2">—</div><div class="th-clbl">有意変動率 <span class="tip" data-tip="はっきり動いた(0.3%以上)割合。小さすぎる動きは除く"><i class="ti">ⓘ</i></span></div></div><div class="th-chip"><div class="th-cval" id="hero-obs">—</div><div class="th-clbl">答え合わせ済み <span class="tip" data-tip="1時間以上たって結果が確定し、集計に入った判定の数"><i class="ti">ⓘ</i></span></div></div></div><div class="th-note">数字は実データそのまま。盛らず正直に出しています。データが増えるほど確かになります。</div><span id="summary2" style="display:none"></span></div><div class="card"><div id="board"></div></div><div class="card"><div id="mboard"></div></div>
+<div class="card"><div id="summary" class="muted">読み込み中…</div></div><div class="card teamhero"><div class="th-ttl">アービット ・ チーム総合成績 <span class="tip" data-tip="アービット9人を1つのチームとして見た、全体のまとめ成績です"><i class="ti">ⓘ</i></span></div><div class="th-sub" id="hero-sub">集計中…</div><div class="th-big" id="hero-p1">—</div><div class="th-biglbl">方向的中率 <span class="tip" data-tip="アービットが予想した向きに、実際に動いた割合"><i class="ti">ⓘ</i></span></div><div class="th-chips"><div class="th-chip"><div class="th-cval" id="hero-p2">—</div><div class="th-clbl">有意変動率 <span class="tip" data-tip="はっきり動いた(0.3%以上)割合。小さすぎる動きは除く"><i class="ti">ⓘ</i></span></div></div><div class="th-chip"><div class="th-cval" id="hero-obs">—</div><div class="th-clbl">答え合わせ済み <span class="tip" data-tip="1時間以上たって結果が確定し、集計に入った判定の数"><i class="ti">ⓘ</i></span></div></div></div><div class="th-note">数字は実データそのまま。盛らず正直に出しています。データが増えるほど確かになります。</div><span id="summary2" style="display:none"></span></div><div class="card"><div id="mboard"></div></div>
 <div class="card"><table><thead><tr><th>日時</th><th>通貨</th><th><span class="tip" data-tip="◎=とても良い ○=良い △=様子見 ×=良くない">判定<i class="ti">ⓘ</i></span></th><th>当時の価格</th><th>今の価格</th><th><span class="tip" data-tip="判定から24時間後に、どれだけ動いたか">r24(24時間後)<i class="ti">ⓘ</i></span></th></tr></thead><tbody id="rows"><tr><td colspan="6" class="muted">記録がまだありません。市場室で判定してみてください。</td></tr></tbody></table></div>
 <p><button class="btn" id="exportBtn">バックアップを保存</button> <button class="btn" id="importBtn">バックアップから復元</button> <button class="btn" id="serverImportBtn">サーバー記録を取り込む</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></p>
 <p><button class="btn" id="clearBtn">記録を消す</button></p>
@@ -849,49 +849,38 @@ var __mHorizon="r1";
 var MB_KEYS=["checker","spread","cost","transfer","liq","spread2","history","devil","audit"];
 var MB_NAMES={checker:"\u4e8b\u5b9f\u78ba\u8a8d\u4fc2",spread:"\u4fa1\u683c\u5dee\u30a6\u30a9\u30c3\u30c1\u30e3\u30fc\u2696\ufe0f",cost:"\u30b3\u30b9\u30c8\u7cbe\u67fb\u5f79\ud83e\uddee",transfer:"\u9001\u91d1\u30fb\u7d04\u5b9a\u30ea\u30b9\u30af\u4fc2\ud83d\ude9a",liq:"\u6e05\u7b97\u30fb\u30ec\u30d0\u30ec\u30c3\u30b8\u4fc2\u26a0\ufe0f",spread2:"\u8cc7\u91d1\u5206\u6563\u4fc2\ud83d\udce6",history:"\u6b74\u53f2\u4fc2\ud83d\udcdc",devil:"\u60aa\u9b54\u306e\u4ee3\u5f01\u8005\ud83d\ude08",audit:"\u76e3\u67fb\u5f79\ud83d\udd0d"};
 function mbMark(s){return (s>=2)?"\u25ce":((s>=1)?"\u25cb":((s>=0)?"\u25b3":"\u00d7"));}
-function drawMBoard(){
-  var el=document.getElementById("mboard");if(!el)return;
-  if(typeof WEIGHT_PROFILES==="undefined"||!WEIGHT_PROFILES||!WEIGHT_PROFILES.weights){el.innerHTML="";return;}
-  var WP=WEIGHT_PROFILES;var log=boardRead();var hk=__mHorizon;
-  var stats={};for(var ki=0;ki<MB_KEYS.length;ki++){stats[MB_KEYS[ki]]={cnt:0,dirN:0,dirHit:0,moveHit:0,absSum:0};}
-  var anyData=false;
+function teamStat(flt){
+  var log=boardRead(); if(!Array.isArray(log)) log=[];
+  var HK=["r24","r4","r1"];
+  var cnt=0, dirN=0, dirHit=0, moveHit=0, absSum=0;
   for(var i=0;i<log.length;i++){
-    var r=log[i];if(!r||!r.conds||!r.conds.length)continue;
-    var v=r[hk];if(v===null||v===undefined||isNaN(v))continue;
-    var ch=parseFloat(v);anyData=true;
-    var dir=r.trendDir||"neutral";var dirIsSet=(dir==="up"||dir==="down");
-    var hit=(dir==="up"&&ch>0)||(dir==="down"&&ch<0);
-    var moved=(Math.abs(ch)>=BOARD_MOVE_THRESH);
-    for(var ki2=0;ki2<MB_KEYS.length;ki2++){
-      var key=MB_KEYS[ki2];var w=WP.weights[key];if(!w)continue;
-      var s=0;for(var c=0;c<r.conds.length;c++){var cd=r.conds[c];if(cd&&w[cd.id]!=null)s+=cd.dir*w[cd.id];}
-      if(mbMark(s)!=="\u25ce")continue;
-      var st=stats[key];st.cnt++;st.absSum+=Math.abs(ch);
-      if(dirIsSet){st.dirN++;if(hit)st.dirHit++;}
-      if(moved)st.moveHit++;
-    }
+    var r=log[i]; if(!r || !flt(r)) continue;
+    var v=null, hk=null;
+    for(var h=0;h<HK.length;h++){ var vv=r[HK[h]]; if(vv!==null&&vv!==undefined&&!isNaN(parseFloat(vv))){ v=vv; hk=HK[h]; break; } }
+    if(v===null) continue;
+    var ch=parseFloat(v); cnt++; absSum+=Math.abs(ch);
+    if(Math.abs(ch)>=BOARD_MOVE_THRESH) moveHit++;
+    var dir=r.trendDir||"neutral";
+    if(dir==="up"||dir==="down"){ dirN++; if((dir==="up"&&ch>0)||(dir==="down"&&ch<0)) dirHit++; }
   }
-  var btns="";for(var b=0;b<BOARD_HKEYS.length;b++){var hkk=BOARD_HKEYS[b][0];var hlbl=BOARD_HKEYS[b][1];btns+='<button class="btn"'+(hkk===hk?" on":"")+' data-mhz="'+hkk+'" style="margin-right:6px">'+hlbl+"</button>";}
-  var head='<div style="margin-bottom:8px">'+btns+"</div>";
-  var titleLine='<div style="font-weight:600;margin-bottom:4px">\u30e1\u30f3\u30d0\u30fc\u5225\u0020\u6210\u7e3e\u0028\u8996\u70b9\u30ea\u30fc\u30b0\u6226\u0029</div>';
-  var explLine='<div class="muted" style="margin-bottom:6px">\u25ce\u306f\u0022\u6761\u4ef6\u304c\u5b89\u5b9a\u0022\u306e\u898b\u7acb\u3066\u3002\u00b1\u0030\u002e\u0033\u0025\u7387\u304c\u4f4e\u3044\u307b\u3069\u898b\u7acb\u3066\u901a\u308a\u3060\u3063\u305f\u3053\u3068\u3092\u793a\u3057\u307e\u3059</div>';
-  if(!anyData){el.innerHTML=titleLine+head+'<div class="muted">\u7b54\u3048\u5408\u308f\u305b\u6e08\u307f\u306e\u0063\u006f\u006e\u0064\u0073\u4ed8\u304d\u30c7\u30fc\u30bf\u304c\u84c4\u7a4d\u3055\u308c\u308b\u3068\u3001\u30e1\u30f3\u30d0\u30fc\u5225\u306e\u9806\u4f4d\u304c\u8868\u793a\u3055\u308c\u307e\u3059\u3002</div>';mboardBind();return;}
-  var rows=[];for(var ki3=0;ki3<MB_KEYS.length;ki3++){var k2=MB_KEYS[ki3];var st2=stats[k2];
-    var p1=st2.dirN?boardPct(st2.dirHit,st2.dirN):null;
-    var p2=st2.cnt?boardPct(st2.moveHit,st2.cnt):null;
-    var avg=st2.cnt?(Math.round(st2.absSum/st2.cnt*100)/100):null;
-    rows.push({key:k2,cnt:st2.cnt,p1:p1,p2:p2,avg:avg});}
-  rows.sort(function(a,b){var pa=(a.p2===null)?Infinity:a.p2;var pb=(b.p2===null)?Infinity:b.p2;if(pa!==pb)return pa-pb;return b.cnt-a.cnt;});
-  var rowsHtml="";for(var ri=0;ri<rows.length;ri++){var rw=rows[ri];
-    var few=(rw.cnt>0&&rw.cnt<30)?' <span class="muted">\u4ef6\u6570\u50c5\u5c11\uff08\u53c2\u8003\u5024\uff09</span>':"";
-    var c1=(rw.p1===null)?"\u2014":(rw.p1+"%");
-    var c2=(rw.p2===null)?"\u2014":(rw.p2+"%");
-    var c3=(rw.avg===null)?"\u2014":(rw.avg+"%");
-    rowsHtml+="<tr><td>"+(ri+1)+"</td><td>"+MB_NAMES[rw.key]+"</td><td>"+rw.cnt+few+"</td><td>"+c1+"</td><td>"+c2+"</td><td>"+c3+"</td></tr>";}
-  var tbl='<table><thead><tr><th>\u9806\u4f4d</th><th>\u30e1\u30f3\u30d0\u30fc</th><th><span class="tip" data-tip="\u305d\u306e\u5224\u5b9a\u304c\u51fa\u305f\u56de\u6570">\u30b5\u30f3\u30d7\u30eb\u6570<i class="ti">\u24d8</i></span></th><th><span class="tip" data-tip="\u30a2\u30fc\u30d3\u30c3\u30c8\u304c\u4e88\u60f3\u3057\u305f\u5411\u304d\u306b\u3001\u5b9f\u969b\u306b\u52d5\u3044\u305f\u5272\u5408">\u7684\u4e2d\u7387<i class="ti">\u24d8</i></span></th><th><span class="tip" data-tip="\u306f\u3063\u304d\u308a\u52d5\u3044\u305f(0.3%\u4ee5\u4e0a)\u5272\u5408\u3002\u5c0f\u3055\u3059\u304e\u308b\u52d5\u304d\u306f\u9664\u304f">\u6709\u610f\u5909\u52d5\u7387<i class="ti">\u24d8</i></span></th><th><span class="tip" data-tip="\u305d\u306e\u5f8c\u3001\u5e73\u5747\u3067\u3069\u308c\u304f\u3089\u3044\u52d5\u3044\u305f\u304b">\u5e73\u5747\u30ea\u30bf\u30fc\u30f3<i class="ti">\u24d8</i></span></th></tr></thead><tbody>'+rowsHtml+"</tbody></table>";
-  var ver=(WP.version!=null?WP.version:"?");
-  var note='<div class="muted" style="margin-top:6px">\u91cd\u307f\u0076"+ver+"\u306b\u3088\u308b\u9061\u53ca\u8a08\u7b97</div>';
-  el.innerHTML=titleLine+explLine+head+tbl+note;mboardBind();
+  return {cnt:cnt, dirN:dirN, dirHit:dirHit, moveHit:moveHit, absSum:absSum,
+    p1:boardPct(dirHit,dirN), p2:boardPct(moveHit,cnt), avg:cnt?Math.round(absSum/cnt*100)/100:null};
+}
+function drawMBoard(){
+  var el=document.getElementById("mboard"); if(!el) return;
+  var TEAMS=[{key:"A",name:"アービット（Aチーム）",flt:function(r){return true;}}];
+  var titleLine='<div style="font-weight:600;margin-bottom:4px">チーム成績（記録単位）</div>';
+  var explLine='<div class="muted" style="font-size:12px;margin-bottom:8px">各チームの的中率を「記録単位」で集計。コイン投げ（50%）とほぼ同じなら、まだ実力が見えていない段階です。データが増えるほど確かになります。</div>';
+  var head='<tr><th>チーム</th><th>サンプル数</th><th>的中率</th><th>有意変動率</th><th>平均リターン</th></tr>';
+  var body='';
+  for(var t=0;t<TEAMS.length;t++){
+    var tm=TEAMS[t]; var st=teamStat(tm.flt);
+    body+='<tr><td>'+tm.name+'</td><td>'+st.cnt+'</td><td>'+(st.p1==null?'—':st.p1+'%')+'</td><td>'+(st.p2==null?'—':st.p2+'%')+'</td><td>'+(st.avg==null?'—':st.avg+'%')+'</td></tr>';
+  }
+  var tbl='<table><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
+  var sub='<div style="font-weight:600;margin:14px 0 6px">アービットの内訳：◎○△×別</div>';
+  el.innerHTML=titleLine+explLine+tbl+sub+'<div id="board"></div>';
+  drawBoard();
 }
 function mboardBind(){var el=document.getElementById("mboard");if(!el)return;var bs=el.querySelectorAll("button[data-mhz]");for(var i=0;i<bs.length;i++){bs[i].onclick=function(){__mHorizon=this.getAttribute("data-mhz");drawMBoard();};}}
 drawMBoard();
