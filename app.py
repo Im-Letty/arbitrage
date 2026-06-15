@@ -927,8 +927,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <div class="titlebar" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><h1 style="margin:0">バーチャル運用</h1><button type="button" class="tg" aria-label="テーマ切替" style="font:inherit;cursor:pointer;border:none;background:transparent;color:var(--tx);border-radius:999px;padding:4px 6px;font-size:20px;line-height:1;opacity:.55;transition:opacity .15s">🌙</button></div>
 <section class="panel" id="simbox" style="margin-top:18px">
   <h2 style="margin:0 0 6px">架空ポートフォリオ検証（過去の振り返り）</h2>
-  <p class="muted" style="margin:0 0 10px;font-size:13px">アービットの判定を架空でなぞったら、架空の残高がどう動いたかの「振り返り」です。未来の売買指示ではありません。初期資金は架空10万円、各判定で現在残高の10%を投下し、24時間後の結果（r24）で损益を確定します。</p>
-  <div class="note" style="margin:0 0 12px">※ 現在の記録は約３日分だけなので、この結果は「傾向の一端」にすぎません。データが貯まるほど見えてきます。</div>
+  <p class="muted" style="margin:0 0 10px;font-size:13px">※ 過去の架空の振り返りで、売買の指示ではありません。</p>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px">
     <label style="font-size:13px">往復手数料：<b id="simFeeLbl">0.4</b>%</label>
     <input id="simFee" type="range" min="0" max="2" step="0.05" value="0.4" style="flex:1;min-width:160px;max-width:320px">
@@ -946,14 +945,14 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 </div>
   <div id="simStatus" class="muted" style="font-size:13px;margin:0 0 8px">読み込み中…</div>
   <table id="simTable" style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>
-    <th style="text-align:left;padding:6px 4px;border-bottom:1px solid var(--bd)">戦略</th>
+    <th style="text-align:left;padding:6px 4px;border-bottom:1px solid var(--bd)">タイプ</th>
     <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">最終残高</th>
-    <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">損益</th>
+    <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">結果</th>
     <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">取引回数</th>
     <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">勝率</th>
   </tr></thead><tbody id="simBody"></tbody></table>
   <div style="margin-top:14px"><svg id="simChart" width="100%" height="180" style="overflow:visible;font:11px sans-serif"></svg></div>
-  <div class="muted" style="font-size:12px;margin-top:4px"><span style="color:var(--acc)">●</span> A「慎重」◎のみ買い　　<span style="color:var(--up)">●</span> B「積極」◎○買い</div>
+  <div class="muted" style="font-size:12px;margin-top:4px"><span style="color:var(--acc)">●</span> A慎重なタイプ ◎のみ買い　　<span style="color:var(--up)">●</span> B積極的なタイプ ◎○買い</div>
 </section>
 <script>
 (function(){
@@ -985,7 +984,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     document.getElementById("simFeeLbl").textContent=(fee*100).toFixed(2).replace(/0+$/,"").replace(/\.$/,"");
     var A=simRun(["◎"],fee,slip,sprThr);
     var Bp=simRun(["◎","○"],fee,slip,sprThr);
-    var rows=[["A「慎重」◎のみ",A,"var(--acc)"],["B「積極」◎○",Bp,"var(--up)"]];
+    var rows=[["A 慎重なタイプ ◎のみ",A,"var(--acc)"],["B 積極的なタイプ ◎○",Bp,"var(--up)"]];
     var tb=document.getElementById("simBody"); tb.innerHTML="";
     for(var k=0;k<rows.length;k++){
       var nm=rows[k][0], s=rows[k][1];
@@ -1021,7 +1020,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     SIM_DATA=(j&&j.data)?j.data:[];
     var answered=SIM_DATA.filter(function(d){return d.r24!=null;}).length;
     var c6n=SIM_DATA.filter(function(d){return d.r24!=null && simC6sp(d)!=null;}).length;
-    document.getElementById("simStatus").innerHTML="記録 "+SIM_DATA.length+" 件、うち答え合わせ済み（24時間後） "+answered+" 件で検証。<br>板情報（C6）があるのは答え合わせ済み "+answered+" 件中 "+c6n+" 件だけ。板の薄い銘柄の除外は、板データが増えるほど正確になります。";
+    document.getElementById("simStatus").innerHTML="運用資産10万円 ／ 記録"+SIM_DATA.length+"件 ／ 答え合わせ済み"+answered+"件<br>板の薄い銘柄の除外は、データが増えるほど正確になります。";
     draw();
   }).catch(function(e){document.getElementById("simStatus").textContent="データの読み込みに失敗しました。";});
 })();
