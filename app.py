@@ -928,7 +928,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">取引回数</th>
     <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">勝率</th>
   </tr></thead><tbody id="simBody"></tbody></table>
-  <div id="simTabs" style="display:flex;gap:8px;margin-top:14px"><button class="btn" id="simTabBal" onclick="setSimView('balance')" style="opacity:1">累積残高</button><button class="btn" id="simTabDay" onclick="setSimView('daily')" style="opacity:.55">1日あたりの利益</button></div><div id="simTypeWrap" style="display:none;gap:8px;margin-top:8px"><button class="btn" id="simTypeB" onclick="setSimType('B')" style="opacity:1">積極なタイプ（◎○）</button><button class="btn" id="simTypeA" onclick="setSimType('A')" style="opacity:.55">慎重なタイプ（◎）</button></div><div style="margin-top:14px"><svg id="simChart" width="100%" height="180" style="overflow:visible;font:11px sans-serif"></svg></div>
+  <div id="simTabs" style="display:flex;gap:8px;margin-top:14px"><button class="btn" id="simTabBal" style="opacity:1">累積残高</button><button class="btn" id="simTabDay" style="opacity:.55">1日あたりの利益</button></div><div id="simTypeWrap" style="display:none;gap:8px;margin-top:8px"><button class="btn" id="simTypeB" style="opacity:1">積極なタイプ（◎○）</button><button class="btn" id="simTypeA" style="opacity:.55">慎重なタイプ（◎）</button></div><div style="margin-top:14px"><svg id="simChart" width="100%" height="180" style="overflow:visible;font:11px sans-serif"></svg></div>
   <div class="muted" style="font-size:12px;margin-top:4px"><span style="color:var(--acc)">●</span> A慎重なタイプ ◎のみ買い　　<span style="color:var(--up)">●</span> B積極的なタイプ ◎○買い</div>
 </section>
 <script>
@@ -996,7 +996,7 @@ function drawChart(sets){
   }
   var fe=document.getElementById("simFee"); if(fe){fe.addEventListener("input",draw);}
     var fs=document.getElementById("simSlip"); if(fs){fs.addEventListener("input",draw);}
-    var fp=document.getElementById("simSpr"); if(fp){fp.addEventListener("input",draw);}
+    var fp=document.getElementById("simSpr"); if(fp){fp.addEventListener("input",draw);}var __tb=document.getElementById("simTabBal"); if(__tb){__tb.addEventListener("click",function(){setSimView("balance");});}var __td=document.getElementById("simTabDay"); if(__td){__td.addEventListener("click",function(){setSimView("daily");});}var __ty=document.getElementById("simTypeB"); if(__ty){__ty.addEventListener("click",function(){setSimType("B");});}var __tx=document.getElementById("simTypeA"); if(__tx){__tx.addEventListener("click",function(){setSimType("A");});}
   fetch("/api/export-v1").then(function(r){return r.json();}).then(function(j){
     SIM_DATA=(j&&j.data)?j.data:[];
     var answered=SIM_DATA.filter(function(d){return d.r24!=null;}).length;
