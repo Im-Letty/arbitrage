@@ -720,19 +720,9 @@ function load(){
     html+="<tr data-sym='"+(r.symbol||"?")+"' data-then='"+(isNaN(then)?"":then)+"'><td class=muted>"+d.toLocaleString("ja-JP")+"</td><td>"+(r.symbol||"?")+"</td><td class='mark "+mcls+"'>"+mk+"</td><td>$"+fmt(then)+"</td><td class='nowp'>…</td><td class='aft'>…</td></tr>";
   }
   rows.innerHTML=html;
-  (function(){
-    var obs=[];
-    log.forEach(function(r){["r1","r4","r24"].forEach(function(k){var v=r[k];if(v!==null&&v!==undefined&&!isNaN(v)){obs.push({ch:parseFloat(v),dir:r.trendDir||"neutral"});}});});
-    var sum=document.getElementById("summary2");if(!sum)return;
-    if(!obs.length){sum.textContent="答え合わせ済みデータがまだありません（1時間以上経過した判定から自動で埋まります）。";return;}
-    var dirObs=obs.filter(function(o){return o.dir==="up"||o.dir==="down";});
-    var dirHit=dirObs.filter(function(o){return (o.dir==="up"&&o.ch>0)||(o.dir==="down"&&o.ch<0);}).length;
-    var moveHit=obs.filter(function(o){return Math.abs(o.ch)>=0.3;}).length;
-    var p1=dirObs.length?Math.round(dirHit/dirObs.length*1000)/10:null;
-    var p2=Math.round(moveHit/obs.length*1000)/10;
-    var msg="これまで "+obs.length+" 件を答え合わせ。予想した向きに動いたのは "+(p1===null?"—":p1+"%")+"（対象 "+dirObs.length+" 件）、はっきり動いた（±0.3%以上）のは "+p2+"% でした。";
-    var hp1=document.getElementById("hero-p1");if(hp1)hp1.textContent=(p1==null?"—":p1+"%");var hp2=document.getElementById("hero-p2");if(hp2)hp2.textContent=p2+"%";var hob=document.getElementById("hero-obs");if(hob)hob.textContent=obs.length+"件";var hsb=document.getElementById("hero-sub");if(hsb)hsb.textContent="9人を1つにまとめた、これまでの通信簿";sum.textContent=msg;
-  })();
+  (function(){var sum=document.getElementById("summary2");if(!sum)return;
+    var st=teamStat(function(r){return true;});if(!st.cnt){sum.textContent="答え合わせ済みデータがまだありません（1時間以上経過した判定から自動で埋まります）。";return;}
+    var p1=st.p1;var p2=st.p2;var msg="これまで "+st.cnt+" 件の判定（記録単位）を検証。方向的中率は "+(p1==null?"—":p1+"%")+"（対象 "+st.dirN+" 件）、はっきり動いた割合は "+(p2==null?"—":p2+"%")+" でした。コイン投げ（50%）とほぼ同じなら、まだ実力が見えていない段階です。";var hp1=document.getElementById("hero-p1");if(hp1)hp1.textContent=(p1==null?"—":p1+"%");var hp2=document.getElementById("hero-p2");if(hp2)hp2.textContent=(p2==null?"—":p2+"%");var hob=document.getElementById("hero-obs");if(hob)hob.textContent=st.cnt+"件";var hsb=document.getElementById("hero-sub");if(hsb)hsb.textContent="9人を1つにまとめた、これまでの通信簿";sum.textContent=msg;})();
 
   var syms=[];log.forEach(function(r){var p=symPair(r.symbol);if(p&&syms.indexOf(p)<0)syms.push(p);});
   syms.forEach(function(p){
