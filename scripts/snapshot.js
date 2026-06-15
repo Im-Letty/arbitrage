@@ -122,7 +122,7 @@ async function backfillResults(client) {
     " UNION ALL " +
     "  SELECT id, symbol, ts, price, '24' AS horizon FROM judge_records" +
     "   WHERE r24 IS NULL AND (give_up IS NULL OR give_up = false) AND price IS NOT NULL AND ts + interval '24 hours' + interval '60 sec' < now()" +
-    ") t ORDER BY ts ASC LIMIT 120";
+    ") t ORDER BY horizon::int ASC, ts ASC LIMIT 300";
   const rows = (await client.query(SELECT_SQL)).rows;
   let filled = 0, failed = 0;
   for (const row of rows) {
@@ -131,7 +131,7 @@ async function backfillResults(client) {
       const targetMs = new Date(row.ts).getTime() + hours * 3600 * 1000;
       const bucket = Math.floor(targetMs / 60000) * 60000;
       const klRes = await fetchJson(API + "/api/v3/klines?symbol=" + row.symbol + "&interval=1m&startTime=" + bucket + "&limit=1");
-      const kl = klRes.data;
+      const kl = klRes.data; if (klRes.status === 429) { continue; }
       if (!Array.isArray(kl) || !kl.length || !Array.isArray(kl[0])) { await markFail(client, row.id); failed++; continue; }
       const close = parseFloat(kl[0][4]);
       const base = parseFloat(row.price);
