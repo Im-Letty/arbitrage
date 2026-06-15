@@ -155,8 +155,11 @@ async function backfillResults(client) {
 
 async function main() {
   const url = process.env.NEON_DATABASE_URL;
+  // Strip sslmode from the connection string to silence pg v3 deprecation warning;
+  // TLS is still enforced by the ssl option below (rejectUnauthorized:false).
+  const cleanUrl = url ? url.replace(/[?&]sslmode=[^&]*/g, '').replace(/[?&]uselibpqcompat=[^&]*/g, '').replace(/\?&/, '?').replace(/[?&]$/, '') : url;
   if (!url) { console.error("NEON_DATABASE_URL is not set"); process.exit(1); }
-  const client = new Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
+  const client = new Client({ connectionString: cleanUrl, ssl: { rejectUnauthorized: false } });
   await client.connect();
   try {
     await client.query(CREATE_SQL);
