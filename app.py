@@ -182,9 +182,6 @@ HOME_HTML = r"""<!DOCTYPE html>
   <div class="building">
     
     <div class="rooms">
-      <a class="room gold full" href="/market">
-<p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/></svg> 相場をチェック</p>
-</a>
       <a class="room jade full" href="/log">
 <p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.5"/><path d="M3 4v3.5H6.5"/><path d="M12 8v4l3 2"/></svg> 過去のデータ</p>
 </a>
