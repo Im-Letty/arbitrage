@@ -928,7 +928,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">取引回数</th>
     <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)">勝率</th>
   </tr></thead><tbody id="simBody"></tbody></table>
-  <div style="margin-top:14px"><svg id="simChart" width="100%" height="180" style="overflow:visible;font:11px sans-serif"></svg></div>
+  <div id="simTabs" style="display:flex;gap:8px;margin-top:14px"><button class="btn" id="simTabBal" onclick="setSimView('balance')" style="opacity:1">累積残高</button><button class="btn" id="simTabDay" onclick="setSimView('daily')" style="opacity:.55">1日あたりの利益</button></div><div id="simTypeWrap" style="display:none;gap:8px;margin-top:8px"><button class="btn" id="simTypeB" onclick="setSimType('B')" style="opacity:1">積極なタイプ（◎○）</button><button class="btn" id="simTypeA" onclick="setSimType('A')" style="opacity:.55">慎重なタイプ（◎）</button></div><div style="margin-top:14px"><svg id="simChart" width="100%" height="180" style="overflow:visible;font:11px sans-serif"></svg></div>
   <div class="muted" style="font-size:12px;margin-top:4px"><span style="color:var(--acc)">●</span> A慎重なタイプ ◎のみ買い　　<span style="color:var(--up)">●</span> B積極的なタイプ ◎○買い</div>
 </section>
 <script>
@@ -936,7 +936,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   var SIM_DATA=null;
   function simC6sp(d){if(!d||!d.conds)return null;for(var q=0;q<d.conds.length;q++){var cc=d.conds[q];if(cc&&cc.id==="C6"&&typeof cc.sp==="number")return cc.sp;}return null;}
     function simRun(buyMarks,fee,slip,sprThr){
-    var cash=100000, trades=0, wins=0, series=[100000], excluded=0;
+    var cash=100000, trades=0, wins=0, series=[100000], excluded=0, dtr=[];
     var recs=SIM_DATA.filter(function(d){return buyMarks.indexOf(d.mark)>=0 && d.r24!=null;});
     recs.sort(function(a,b){return (a.ts||0)-(b.ts||0);});
     for(var i=0;i<recs.length;i++){
@@ -946,9 +946,9 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       var effR=(recs[i].r24/100) - fee - slip;
       var net=stake*effR;
       cash+=net; trades++; if(net>0)wins++;
-      series.push(Math.round(cash));
+      series.push(Math.round(cash));dtr.push({ts:recs[i].ts,net:net});
     }
-    return {final:Math.round(cash),trades:trades,wins:wins,winRate:trades?(wins/trades*100):0,series:series,excluded:excluded};
+    return {final:Math.round(cash),trades:trades,wins:wins,winRate:trades?(wins/trades*100):0,series:series,excluded:excluded,dtr:dtr};
   }
   function fmtY(n){return "¥"+Math.round(n).toLocaleString("ja-JP");}
   function draw(){
@@ -974,9 +974,13 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
         +"<td style=\"text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd2)\">"+s.trades+"回</td>"
         +"<td style=\"text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd2)\">"+s.winRate.toFixed(1)+"%</td></tr>";
     }
-    drawChart([["A",A.series,"var(--acc)"],["B",Bp.series,"var(--up)"]]);
+    if(__simView==="daily"){var __T=(__simType==="A")?A:Bp;drawDailyBars(__T.dtr);}else{drawChart([["A",A.series,"var(--acc)"],["B",Bp.series,"var(--up)"]]);}
   }
-  function drawChart(sets){
+  var __simView="balance", __simType="B";
+function setSimView(v){__simView=v;document.getElementById("simTabBal").style.opacity=(v==="balance")?"1":".55";document.getElementById("simTabDay").style.opacity=(v==="daily")?"1":".55";document.getElementById("simTypeWrap").style.display=(v==="daily")?"flex":"none";draw();}
+function setSimType(t){__simType=t;document.getElementById("simTypeB").style.opacity=(t==="B")?"1":".55";document.getElementById("simTypeA").style.opacity=(t==="A")?"1":".55";draw();}
+function drawDailyBars(dtr){var svg=document.getElementById("simChart");while(svg.firstChild)svg.removeChild(svg.firstChild);var NS="http://www.w3.org/2000/svg";var W=svg.clientWidth||svg.getBoundingClientRect().width||600,H=180;var map={};var order=[];for(var i=0;i<dtr.length;i++){var key=new Date(dtr[i].ts+9*3600*1000).toISOString().slice(0,10);if(map[key]===undefined){map[key]=0;order.push(key);}map[key]+=dtr[i].net;}order.sort();var n=order.length;var mk=document.createElementNS(NS,"text");if(n===0){mk.setAttribute("x",W/2);mk.setAttribute("y",H/2);mk.setAttribute("text-anchor","middle");mk.setAttribute("fill","var(--mut)");mk.setAttribute("font-size","12");mk.textContent="データなし";svg.appendChild(mk);return;}var maxAbs=1;for(var i=0;i<n;i++){var v=Math.abs(map[order[i]]);if(v>maxAbs)maxAbs=v;}var padT=14,padB=22,padL=8,padR=8;var plotH=H-padT-padB;var midY=padT+plotH/2;var plotW=W-padL-padR;var bw=plotW/n;var barW=Math.max(1,bw*0.6);var bl=document.createElementNS(NS,"line");bl.setAttribute("x1",padL);bl.setAttribute("x2",W-padR);bl.setAttribute("y1",midY);bl.setAttribute("y2",midY);bl.setAttribute("stroke","var(--bd)");bl.setAttribute("stroke-dasharray","3,3");svg.appendChild(bl);var zl=document.createElementNS(NS,"text");zl.setAttribute("x",padL);zl.setAttribute("y",midY-3);zl.setAttribute("fill","var(--mut)");zl.setAttribute("font-size","9");zl.textContent="0円";svg.appendChild(zl);var step=Math.ceil(n/8);for(var i=0;i<n;i++){var v=map[order[i]];var h=Math.abs(v)/maxAbs*(plotH/2);var x=padL+i*bw+(bw-barW)/2;var rect=document.createElementNS(NS,"rect");rect.setAttribute("x",x);rect.setAttribute("width",barW);if(v>=0){rect.setAttribute("y",midY-h);rect.setAttribute("height",h);rect.setAttribute("fill","var(--up)");}else{rect.setAttribute("y",midY);rect.setAttribute("height",h);rect.setAttribute("fill","var(--down)");}svg.appendChild(rect);if(i%step===0){var tl=document.createElementNS(NS,"text");tl.setAttribute("x",x+barW/2);tl.setAttribute("y",H-6);tl.setAttribute("text-anchor","middle");tl.setAttribute("fill","var(--mut)");tl.setAttribute("font-size","8");tl.textContent=order[i].slice(5);svg.appendChild(tl);}}}
+function drawChart(sets){
     var svg=document.getElementById("simChart"); if(!svg)return;
     var W=svg.clientWidth||600, H=180, pad=8, padL=4;
     var allMax=100000, allMin=100000, maxLen=0;
