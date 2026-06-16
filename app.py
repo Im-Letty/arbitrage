@@ -1251,5 +1251,74 @@ def ask():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ===== 【裏・非公開】荒れゲージ（表示層のみ・追加・既存に非干渉） =====
+# ※判定(◎○△×)・judge.js・weights.js・snapshot.js・judge_records・/api には一切触れない別物。
+# ※公開ナビには出さない隠しルート。直リンク /arare でのみ表示。
+ARARE_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>荒れゲージ（裏）— arbitrage</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Meiryo,sans-serif;max-width:560px;margin:0 auto;padding:28px 18px 70px;background:#070d18;color:#eef3fa;line-height:1.7}
+h1{font-size:20px;margin:0 0 4px}.sub{color:#a3b6d0;font-size:13px;margin:0 0 20px}
+.card{background:#101d31;border:1px solid #21385a;border-radius:14px;padding:20px;margin:14px 0}
+.gauge{font-size:40px;font-weight:800;line-height:1.1;margin:0 0 6px}
+.lbl{font-size:16px;font-weight:700;margin:0 0 14px}
+.row{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px solid #21385a}
+.row:last-child{border-bottom:none}.k{color:#a3b6d0}.v{font-variant-numeric:tabular-nums}
+.note{background:#0b1626;border:1px dashed #33506f;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#a3b6d0;margin-top:18px}
+.err{color:#ff5b5b;font-size:14px}
+</style></head><body>
+<h1>荒れゲージ <span style="font-size:12px;color:#76889f">（裏・非公開）</span></h1>
+<p class="sub">BTC 1時間足から「今の荒れ具合」を見るだけのページです。</p>
+<div class="card">
+<div id="gauge" class="gauge">…</div>
+<div id="lbl" class="lbl">読み込み中…</div>
+<div class="row"><span class="k">今の vol24（直近24本の値動きの荒さ・標準偏差%）</span><span class="v" id="vol">—</span></div>
+<div class="row"><span class="k">穏やか／普通の境界（50%ile）</span><span class="v" id="b50">—</span></div>
+<div class="row"><span class="k">普通／荒れの境界（90%ile）</span><span class="v" id="b90">—</span></div>
+<div class="row"><span class="k">分布のサンプル数</span><span class="v" id="n">—</span></div>
+</div>
+<div id="out"></div>
+<div class="note">これは“今の荒れ具合”であって、値上がり/値下がりの予測ではありません。🔴でも「売り」を意味しません。境界は取得した過去分布のパーセンタイル（穏やか&lt;50%ile／普通 50–90%ile／荒れ ≥90%ile）から自動算出しており、当たるように手動で閾値を調整していません。</div>
+<script>
+var API="https://api.binance.com";
+function sd(arr){if(arr.length<2)return null;var m=arr.reduce(function(a,b){return a+b;},0)/arr.length;
+var v=arr.reduce(function(a,b){return a+(b-m)*(b-m);},0)/arr.length;return Math.sqrt(v);}
+function vol24At(closes,i){if(i<23)return null;var r=[];
+for(var k=i-22;k<=i;k++){var a=closes[k-1],b=closes[k];if(a>0)r.push((b-a)/a*100);}
+return sd(r);}
+function pctile(sorted,p){if(!sorted.length)return null;
+var idx=(sorted.length-1)*p;var lo=Math.floor(idx),hi=Math.ceil(idx);
+if(lo===hi)return sorted[lo];return sorted[lo]+(sorted[hi]-sorted[lo])*(idx-lo);}
+(async function(){
+try{
+var kl=await fetch(API+"/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=1000").then(function(r){return r.json();});
+var closes=kl.map(function(k){return parseFloat(k[4]);});
+var dist=[];
+for(var i=23;i<closes.length;i++){var v=vol24At(closes,i);if(v!=null&&!isNaN(v))dist.push(v);}
+if(dist.length<30){document.getElementById("lbl").textContent="データ不足で判定できません。";return;}
+var sorted=dist.slice().sort(function(a,b){return a-b;});
+var b50=pctile(sorted,0.50),b90=pctile(sorted,0.90);
+var now=dist[dist.length-1];
+var g,l;
+if(now<b50){g="🟢";l="穏やか";}
+else if(now<b90){g="🟡";l="普通";}
+else{g="🔴";l="荒れ";}
+document.getElementById("gauge").textContent=g;
+document.getElementById("lbl").textContent=l;
+document.getElementById("vol").textContent=now.toFixed(3)+"%";
+document.getElementById("b50").textContent=b50.toFixed(3)+"%";
+document.getElementById("b90").textContent=b90.toFixed(3)+"%";
+document.getElementById("n").textContent=dist.length+"本";
+}catch(e){document.getElementById("out").innerHTML="<div class=\"err\">データを取得できませんでした。</div>";}
+})();
+</script>
+</body></html>"""
+
+@app.route("/arare")
+def arare_backstage():
+    return ARARE_HTML
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
