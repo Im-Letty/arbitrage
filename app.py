@@ -1416,6 +1416,8 @@ th:first-child,td:first-child{text-align:left}
 .thin{background:#fff8ec;color:#8a5a00}
 .ok{color:#0a6b3a}
 .diff{font-size:1rem;margin:12px 0;padding:10px 12px;background:#f0f4ff;border-radius:6px}
+.movelog{margin:14px 0;padding:10px 12px;background:#fafafa;border:1px solid #eee;border-radius:6px;font-size:.88rem}
+.movelog h2{font-size:.98rem;margin:0 0 6px}
 footer{margin-top:20px;font-size:.82rem;color:#666;border-top:1px solid #eee;padding-top:12px}
 small.muted{color:#888}
 </style></head>
@@ -1429,6 +1431,12 @@ small.muted{color:#888}
 <div id="diff" class="diff" style="display:none"></div>
 <div id="tables"></div>
 
+<div class="movelog">
+<h2>気配の移動ログ（直近5件・4秒粒度）</h2>
+<div id="movelog"><small class="muted">記録待ち…</small></div>
+<small class="muted">※ これは4秒間隔のREST取得に基づく記録です。ミリ秒単位の先行指標ではなく、「どちらが先に動かしたか」の厳密な因果でもありません。4秒の窓の中でどちらの最良気配がより大きく動いたか、という相関の観察にとどまります。「狙われた」ことの証拠ではありません。</small>
+</div>
+
 <footer>
 データ源：Binance / Bybit の公開板スナップショット（REST・約4秒ごと取得）。両所ともUSDT建て。<br>
 スリッページ＝(平均約定価格 − 最良気配) / 最良気配。<b>板が薄く数量を満たせない時は「片足リスク（流動性不足）」</b>として警告します。<br>
@@ -1437,6 +1445,8 @@ small.muted{color:#888}
 
 <script>
 const QTYS=[0.1,0.5,1.0];
+let prevBest=null;
+let moveLog=[];
 function walk(levels, qty){
   let need=qty, cost=0, got=0;
   for(const [p,s] of levels){
@@ -1481,6 +1491,16 @@ function rowsFor(name, book){
   return {html, eff, bestAsk, bestBid};
 }
 
+function renderMoveLog(){
+  if(moveLog.length===0){ document.getElementById('movelog').innerHTML='<small class="muted">記録待ち…</small>'; return; }
+  let h='<table><tr><th>時刻</th><th>先に大きく動いた側</th><th>価格変化幅</th><th>その時のgap</th></tr>';
+  for(const m of moveLog){
+    h+='<tr><td>'+m.t+'</td><td>'+m.leader+'</td><td>'+m.move+'</td><td>'+m.gap+'</td></tr>';
+  }
+  h+='</table>';
+  document.getElementById('movelog').innerHTML=h;
+}
+
 async function tick(){
   try{
     const [bn,bb]=await Promise.all([binance(),bybit()]);
@@ -1488,17 +1508,36 @@ async function tick(){
     document.getElementById('tables').innerHTML=B.html+Y.html;
     const q=0.1;
     const buyB=B.eff[q].buy, buyY=Y.eff[q].buy, sellB=B.eff[q].sell, sellY=Y.eff[q].sell;
-    let dtxt;
+    let dtxt, gapVal=null;
     if(buyB.short||buyY.short||sellB.short||sellY.short){
       dtxt='⚠ どちらかの板が薄く、'+q+'BTCを満たせません（片足リスク＝流動性不足）。差は計算しません。';
     } else {
       const buyCheap=Math.min(buyB.avg,buyY.avg);
       const sellHigh=Math.max(sellB.avg,sellY.avg);
-      const gap=(sellHigh-buyCheap)/buyCheap;
+      const gap=(sellHigh-buyCheap)/buyCheap; gapVal=gap;
       dtxt='見かけの実効価格差（'+q+'BTC・最良ケース）：'+pct(gap)
         +' <small class="muted">— ⚠ これは手数料・送金・同時約定の速さを無視した数字です。プラスでも、ほぼ「もう古い板」か「速さの壁」で掴めません。取引の指示ではありません。</small>';
     }
     const d=document.getElementById('diff'); d.style.display='block'; d.innerHTML=dtxt;
+
+    const cur={bn:{bid:B.bestBid, ask:B.bestAsk}, by:{bid:Y.bestBid, ask:Y.bestAsk}};
+    if(prevBest){
+      const mid=(o)=>(o.bid+o.ask)/2;
+      const dBn=(mid(cur.bn)-mid(prevBest.bn))/mid(prevBest.bn);
+      const dBy=(mid(cur.by)-mid(prevBest.by))/mid(prevBest.by);
+      const leader=Math.abs(dBn)>=Math.abs(dBy)?'Binance':'Bybit';
+      const lead=leader==='Binance'?dBn:dBy;
+      moveLog.unshift({
+        t:new Date().toLocaleTimeString('ja-JP'),
+        leader:leader+'（'+(lead>=0?'↑':'↓')+'）',
+        move:'Binance '+pct(dBn)+' / Bybit '+pct(dBy),
+        gap: gapVal===null?'—（片足）':pct(gapVal)
+      });
+      if(moveLog.length>5) moveLog.pop();
+      renderMoveLog();
+    }
+    prevBest=cur;
+
     document.getElementById('status').innerHTML='<small class="muted">更新: '+new Date().toLocaleTimeString('ja-JP')+'（約4秒ごと）</small>';
   }catch(e){
     document.getElementById('status').innerHTML='<small class="muted">取得エラー（'+String(e)+'）— 次の更新で再試行します</small>';
