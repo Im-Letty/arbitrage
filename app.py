@@ -1399,5 +1399,120 @@ def spread_backstage():
     return SPREAD_HTML
 
 
+
+
+DEPTH_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>板の厚さ・実効価格（観測・裏）— arbitrage</title>
+<style>
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;max-width:760px;margin:24px auto;padding:0 14px;color:#1a1a1a;line-height:1.6}
+h1{font-size:1.25rem}
+.note{background:#f6f7f9;border-left:4px solid #c9ccd1;padding:10px 12px;border-radius:6px;font-size:.9rem;color:#444;margin:14px 0}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:.92rem}
+th,td{border:1px solid #e2e4e8;padding:6px 8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+.warn{background:#fff4f4;color:#a40000;font-weight:600}
+.thin{background:#fff8ec;color:#8a5a00}
+.ok{color:#0a6b3a}
+.diff{font-size:1rem;margin:12px 0;padding:10px 12px;background:#f0f4ff;border-radius:6px}
+footer{margin-top:20px;font-size:.82rem;color:#666;border-top:1px solid #eee;padding-top:12px}
+small.muted{color:#888}
+</style></head>
+<body>
+<h1>板の厚さ・実効価格（観測・裏）</h1>
+<div class="note">今の板で <b>指定数量を上から食ったら、平均いくらで約定し、最良気配からどれだけ滑るか</b> を観測します。
+これは <b>取引執行ツールではなく、市場の流動性（板の厚さ・滑り）を学習するための可視化ツール</b>です。
+予測でも売買シグナルでもありません。注文送信もAPIキー入力も一切できません。</div>
+
+<div id="status"><small class="muted">読み込み中…</small></div>
+<div id="diff" class="diff" style="display:none"></div>
+<div id="tables"></div>
+
+<footer>
+データ源：Binance / Bybit の公開板スナップショット（REST・約4秒ごと取得）。両所ともUSDT建て。<br>
+スリッページ＝(平均約定価格 − 最良気配) / 最良気配。<b>板が薄く数量を満たせない時は「片足リスク（流動性不足）」</b>として警告します。<br>
+⚠ 見かけの実効価格差がプラスでも、それはほぼ「もう古い板」「同時約定の速さが無い」ために掴めません。これは記録・観測であって、取引の指示ではありません。
+</footer>
+
+<script>
+const QTYS=[0.1,0.5,1.0];
+function walk(levels, qty){
+  let need=qty, cost=0, got=0;
+  for(const [p,s] of levels){
+    const take=Math.min(need, s);
+    cost+=take*p; got+=take; need-=take;
+    if(need<=1e-9) break;
+  }
+  if(need>1e-9) return {short:true, filled:got};
+  return {avg:cost/got, filled:got};
+}
+function fmt(n){ return n.toLocaleString('en-US',{maximumFractionDigits:2}); }
+function pct(n){ return (n*100).toFixed(3)+'%'; }
+
+async function binance(){
+  const r=await fetch('https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100');
+  const j=await r.json();
+  return {asks:j.asks.map(([p,s])=>[+p,+s]), bids:j.bids.map(([p,s])=>[+p,+s])};
+}
+async function bybit(){
+  const r=await fetch('https://api.bybit.com/v5/market/orderbook?category=spot&symbol=BTCUSDT&limit=200');
+  const j=await r.json();
+  return {asks:(j.result.a||[]).map(([p,s])=>[+p,+s]), bids:(j.result.b||[]).map(([p,s])=>[+p,+s])};
+}
+
+function rowsFor(name, book){
+  const bestAsk=book.asks[0][0], bestBid=book.bids[0][0];
+  let html='<h2 style="font-size:1rem">'+name+'</h2>';
+  html+='<table><tr><th>数量(BTC)</th><th>買い実効価格</th><th>買いスリップ</th><th>売り実効価格</th><th>売りスリップ</th></tr>';
+  const eff={};
+  for(const q of QTYS){
+    const buy=walk(book.asks,q), sell=walk(book.bids,q);
+    eff[q]={buy, sell, bestAsk, bestBid};
+    const cell=(res,best,dir)=>{
+      if(res.short) return '<td class="thin">板不足('+res.filled.toFixed(3)+')</td><td class="thin">片足リスク</td>';
+      const slip=dir==='buy'?(res.avg-best)/best:(best-res.avg)/best;
+      const cls=slip>0.005?'warn':(slip>0.001?'thin':'ok');
+      return '<td>'+fmt(res.avg)+'</td><td class="'+cls+'">'+pct(slip)+'</td>';
+    };
+    html+='<tr><td>'+q+'</td>'+cell(buy,bestAsk,'buy')+cell(sell,bestBid,'sell')+'</tr>';
+  }
+  html+='</table>';
+  return {html, eff, bestAsk, bestBid};
+}
+
+async function tick(){
+  try{
+    const [bn,bb]=await Promise.all([binance(),bybit()]);
+    const B=rowsFor('Binance', bn), Y=rowsFor('Bybit', bb);
+    document.getElementById('tables').innerHTML=B.html+Y.html;
+    const q=0.1;
+    const buyB=B.eff[q].buy, buyY=Y.eff[q].buy, sellB=B.eff[q].sell, sellY=Y.eff[q].sell;
+    let dtxt;
+    if(buyB.short||buyY.short||sellB.short||sellY.short){
+      dtxt='⚠ どちらかの板が薄く、'+q+'BTCを満たせません（片足リスク＝流動性不足）。差は計算しません。';
+    } else {
+      const buyCheap=Math.min(buyB.avg,buyY.avg);
+      const sellHigh=Math.max(sellB.avg,sellY.avg);
+      const gap=(sellHigh-buyCheap)/buyCheap;
+      dtxt='見かけの実効価格差（'+q+'BTC・最良ケース）：'+pct(gap)
+        +' <small class="muted">— ⚠ これは手数料・送金・同時約定の速さを無視した数字です。プラスでも、ほぼ「もう古い板」か「速さの壁」で掴めません。取引の指示ではありません。</small>';
+    }
+    const d=document.getElementById('diff'); d.style.display='block'; d.innerHTML=dtxt;
+    document.getElementById('status').innerHTML='<small class="muted">更新: '+new Date().toLocaleTimeString('ja-JP')+'（約4秒ごと）</small>';
+  }catch(e){
+    document.getElementById('status').innerHTML='<small class="muted">取得エラー（'+String(e)+'）— 次の更新で再試行します</small>';
+  }
+}
+tick(); setInterval(tick, 4000);
+</script>
+</body></html>"""
+
+
+@app.route("/depth")
+def depth():
+    return DEPTH_HTML
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
