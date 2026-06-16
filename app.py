@@ -1524,7 +1524,7 @@ async function tick(){
     const d=document.getElementById('diff'); d.style.display='block'; d.innerHTML=dtxt;
 
     try {
-      const FEE={binance:{taker:0.001}, bybit:{taker:0.001}};
+      const FEE={binance:{taker:0.001, maker:0.001}, bybit:{taker:0.001, maker:0.001}};
       const roundTripFee=FEE.binance.taker+FEE.bybit.taker;
       const ne=document.getElementById('netedge');
       if(buyB.short||buyY.short||sellB.short||sellY.short){
@@ -1543,7 +1543,22 @@ async function tick(){
             +'<td class="'+cls+'">'+(net>=0?'+':'')+pct(net)+(net<0?'（掴めない）':'')+'</td></tr>';
         }
         h+='</table>';
-        h+='<small class="muted">※ 手数料は代表値の定数（実際はVIP段階・割引で変動）。即時両建ての現実ケースとして両レッグtakerで計算。maker×makerなら手数料は下がるが約定しない可能性。取引所間で在庫を動かす場合は出金手数料が別途かかる（この表は在庫運用＝送金ゼロ前提）。これは記録・観測であって取引の指示ではありません。</small>';
+        h+='<small class="muted">※ 手数料は代表値の定数（実際はVIP段階・割引で変動）。即時両建ての現実ケースとして両レッグtakerで計算。取引所間で在庫を動かす場合は出金手数料が別途かかる（この表は在庫運用＝送金ゼロ前提）。これは記録・観測であって取引の指示ではありません。</small>';
+        const rtMaker=FEE.binance.maker+FEE.bybit.maker;
+        h+='<b>もしMaker（指値）で約定していたら（手数料：Binance 0.1% + Bybit 0.1% = 往復0.2%・両レッグmaker・base tier・送金別）</b>';
+        h+='<table><tr><th>数量(BTC)</th><th>見かけ粗利</th><th>往復手数料(maker)</th><th>Maker純益（理論）</th></tr>';
+        for(const q of QTYS){
+          const bc=Math.min(B.eff[q].buy.avg, Y.eff[q].buy.avg);
+          const sh=Math.max(B.eff[q].sell.avg, Y.eff[q].sell.avg);
+          const gross=(sh-bc)/bc;
+          const netM=gross-rtMaker;
+          const clsM=netM>0?'pos':'neg';
+          h+='<tr><td>'+q+'</td><td>'+pct(gross)+'</td><td class="neg">−'+pct(rtMaker)+'</td>'
+            +'<td class="'+clsM+'">'+(netM>=0?'+':'')+pct(netM)+(netM<0?'（掴めない）':'')+'</td></tr>';
+        }
+        h+='</table>';
+        h+='<small class="muted">※ Maker（指値）は手数料が有利になりうるが、その価格に到達せず<b>約定しないリスク（片足リスク）</b>を伴う。この表は『もし両レッグmakerで約定していたら理論上どうなるか』という回帰的シミュレーションであり、約定率は一切保証しない。利益が出ても約定しなければ意味がなく、約定を待つ間に価格は逃げる。Taker＝約定するが負ける／Maker＝勝てるかもだが約定しない、というトレードオフ自体が罠。</small>';
+        h+='<small class="muted">※ base tierでは maker も taker と同率（0.1%）。手数料優位はVIP段階に到達して初めて発生するが、それはあなたのレートではない。だから上下の表はほぼ同じ赤字で並ぶ——指値にしても個人の段階では壁はほとんど動かない、というのが事実。</small>';
         ne.style.display='block'; ne.innerHTML=h;
       }
     } catch(e){ const ne=document.getElementById('netedge'); if(ne) ne.style.display='none'; }
