@@ -1432,6 +1432,7 @@ small.muted{color:#888}
 <div id="status"><small class="muted">読み込み中…</small></div>
 <div id="diff" class="diff" style="display:none"></div>
 <div id="netedge" class="diff" style="display:none;background:#fff8f0"></div>
+<div id="pluscounter" class="diff" style="display:none;background:#f0f4ff"></div>
 <div id="tables"></div>
 
 <div class="movelog">
@@ -1450,6 +1451,7 @@ small.muted{color:#888}
 const QTYS=[0.1,0.5,1.0];
 let prevBest=null;
 let moveLog=[];
+let plusCount=0, plusLeadBn=0, plusLeadBy=0, obsStart=Date.now();
 function walk(levels, qty){
   let need=qty, cost=0, got=0;
   for(const [p,s] of levels){
@@ -1504,6 +1506,23 @@ function renderMoveLog(){
   document.getElementById('movelog').innerHTML=h;
 }
 
+function renderPlusCounter(){
+  const el=document.getElementById('pluscounter');
+  if(!el) return;
+  const mins=((Date.now()-obsStart)/60000);
+  let h='<b>「純益プラス」点灯カウンター（観測中・リロードで0に戻る）</b><br>';
+  h+='観測時間：'+mins.toFixed(1)+'分　／　純益がプラスに転じた瞬間：<b>'+plusCount+'</b>回';
+  if(plusCount===0){
+    h+='<br><span class="muted">→ まだ無し。平常時は往復0.2%の手数料の壁で、純益は常にマイナス。</span>';
+  } else {
+    const rBn=(100*plusLeadBn/plusCount).toFixed(0), rBy=(100*plusLeadBy/plusCount).toFixed(0);
+    h+='<br>そのプラス瞬間に「先に大きく動いた側」：<b>Binance '+plusLeadBn+'回（'+rBn+'%） / Bybit '+plusLeadBy+'回（'+rBy+'%）</b>';
+    h+='<br><span class="muted">→ 先行が一方に偏るほど、プラスに見えた瞬間に自分は「後出し側」にいた、という状況証拠が濃くなる。</span>';
+  }
+  h+='<br><small class="muted">※ これは4秒粒度のRESTに基づく相関であって、ミリ秒の因果＝『どちらが先に動いたか』の証明ではない。だが、プラスに転じた稀な瞬間に先行が偏るなら、それは自分が後出し側にいる強い状況証拠。蓄積はせず、リロードで0に戻る。観測であって取引の指示ではない。</small>';
+  el.innerHTML=h; el.style.display='block';
+}
+
 async function tick(){
   try{
     const [bn,bb]=await Promise.all([binance(),bybit()]);
@@ -1523,6 +1542,7 @@ async function tick(){
     }
     const d=document.getElementById('diff'); d.style.display='block'; d.innerHTML=dtxt;
 
+    let netPlusThisTick=false;
     try {
       const FEE={binance:{taker:0.001, maker:0.001}, bybit:{taker:0.001, maker:0.001}};
       const roundTripFee=FEE.binance.taker+FEE.bybit.taker;
@@ -1538,6 +1558,7 @@ async function tick(){
           const sh=Math.max(B.eff[q].sell.avg, Y.eff[q].sell.avg);
           const gross=(sh-bc)/bc;
           const net=gross-roundTripFee;
+          if(net>0) netPlusThisTick=true;
           const cls=net>0?'pos':'neg';
           h+='<tr><td>'+q+'</td><td>'+pct(gross)+'</td><td class="neg">−'+pct(roundTripFee)+'</td>'
             +'<td class="'+cls+'">'+(net>=0?'+':'')+pct(net)+(net<0?'（掴めない）':'')+'</td></tr>';
@@ -1570,6 +1591,8 @@ async function tick(){
       const dBy=(mid(cur.by)-mid(prevBest.by))/mid(prevBest.by);
       const leader=Math.abs(dBn)>=Math.abs(dBy)?'Binance':'Bybit';
       const lead=leader==='Binance'?dBn:dBy;
+      if(netPlusThisTick){ plusCount++; if(leader==='Binance') plusLeadBn++; else plusLeadBy++; }
+      renderPlusCounter();
       moveLog.unshift({
         t:new Date().toLocaleTimeString('ja-JP'),
         leader:leader+'（'+(lead>=0?'↑':'↓')+'）',
