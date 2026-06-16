@@ -191,6 +191,9 @@ HOME_HTML = r"""<!DOCTYPE html>
         <a class="room analyze full" href="/virtual">
 <p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v15.5a.5.5 0 0 0 .5.5H20"/><path d="M7 14l4-4 3 3 5-6"/><path d="M19 7h-3m3 0v3"/></svg> バーチャル運用</p>
 </a>
+        <a class="room analyze full" href="/depth" target="_blank" rel="noopener">
+<p class="rt"><svg class="ricon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v15.5a.5.5 0 0 0 .5.5H20"/><rect x="7" y="11" width="2.5" height="6"/><rect x="12" y="7" width="2.5" height="10"/><rect x="17" y="13" width="2.5" height="4"/></svg> 板の厚さ・実効価格</p>
+</a>
     </div>
   </div>
   <div class="foot">arbitrage は教育・情報提供を目的としたサービスです。お金を運用するものではなく、利益を保証するものでもありません。投資にはリスクがあり、最終的な判断はご自身の責任で行ってください。</div>
