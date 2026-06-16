@@ -1320,5 +1320,84 @@ def arare_backstage():
     return ARARE_HTML
 
 
+# ===== 【裏・非公開】取引所間 価格差ビュー（表示層のみ・追加・既存に非干渉） =====
+# ※/api/export-v1 を読むだけ。judge.js/weights.js/snapshot.js/judge_records/Secret/採点 には一切触れない。
+# ※公開ナビには出さない隠しルート。直リンク /spread でのみ表示。DB非接続・売買なし・集計表示のみ。
+SPREAD_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>取引所間の価格差（記録・裏）— arbitrage</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Meiryo,sans-serif;max-width:640px;margin:0 auto;padding:28px 18px 70px;background:#070d18;color:#eef3fa;line-height:1.7}
+h1{font-size:20px;margin:0 0 4px}.sub{color:#a3b6d0;font-size:13px;margin:0 0 20px}
+.card{background:#101d31;border:1px solid #21385a;border-radius:14px;padding:20px;margin:14px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 4px}
+.cell{background:#0b1626;border:1px solid #21385a;border-radius:10px;padding:12px 14px}
+.cell .k{color:#a3b6d0;font-size:12px}.cell .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
+.row{display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;border-bottom:1px solid #21385a}
+.row:last-child{border-bottom:none}.k{color:#a3b6d0}.v{font-variant-numeric:tabular-nums}
+svg{width:100%;height:160px;overflow:visible;font:11px sans-serif}
+.note{background:#0b1626;border:1px dashed #33506f;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#a3b6d0;margin-top:18px}
+.err{color:#ff5b5b;font-size:14px}.mut{color:#76889f;font-size:12px}
+</style></head><body>
+<h1>取引所間の価格差 <span style="font-size:12px;color:#76889f">（記録・裏・非公開）</span></h1>
+<p class="sub">Binance現物 と Kraken の同一銘柄の価格乖離（C5.dev）の記録です。実データのみ・異常値は除外。</p>
+<div class="card">
+<div class="grid">
+<div class="cell"><div class="k">中央値 |dev|</div><div class="v" id="med">—</div></div>
+<div class="cell"><div class="k">90%ile |dev|</div><div class="v" id="p90">—</div></div>
+<div class="cell"><div class="k">最大 |dev|（除外後）</div><div class="v" id="max">—</div></div>
+<div class="cell"><div class="k">対象 / 除外</div><div class="v" id="cnt">—</div></div>
+</div>
+</div>
+<div class="card">
+<div class="mut" style="margin-bottom:6px">直近の |dev|% の推移（新しいほど右・除外後）</div>
+<svg id="chart"></svg>
+</div>
+<div id="out"></div>
+<div class="note">これは観測された取引所間の価格差の“記録”です。差は通常とても小さく（中央値~0.07%）、手数料・スプレッド・送金で消えるため、個人が利益にするのは現実的ではありません。予測でも売買シグナルでもありません。明らかなデータ異常（|dev|&gt;1%）は除外しています。</div>
+<script>
+function pctile(s,p){if(!s.length)return null;var i=(s.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return lo===hi?s[lo]:s[lo]+(s[hi]-s[lo])*(i-lo);}
+function r3(x){return x==null?"—":(Math.round(x*1000)/1000).toFixed(3)+"%";}
+(async function(){
+try{
+var j=await fetch("/api/export-v1",{cache:"no-store"}).then(function(r){return r.json();});
+var data=(j&&j.data)?j.data:[];
+var series=[];
+var excluded=0;
+for(var i=0;i<data.length;i++){
+var conds=data[i].conds||[];
+for(var k=0;k<conds.length;k++){
+var c=conds[k];
+if(c&&c.id==="C5"&&typeof c.dev==="number"&&isFinite(c.dev)){
+var a=Math.abs(c.dev);
+if(a>1){excluded++;continue;}
+series.push({ts:data[i].ts,v:a});
+}
+}
+}
+series.sort(function(a,b){return (a.ts||0)-(b.ts||0);});
+var vals=series.map(function(o){return o.v;}).slice().sort(function(a,b){return a-b;});
+if(!vals.length){document.getElementById("out").innerHTML="<div class=\"err\">表示できる価格差データがありません。</div>";return;}
+document.getElementById("med").textContent=r3(pctile(vals,0.5));
+document.getElementById("p90").textContent=r3(pctile(vals,0.9));
+document.getElementById("max").textContent=r3(vals[vals.length-1]);
+document.getElementById("cnt").textContent=vals.length+" / "+excluded;
+var pts=series.slice(-120).map(function(o){return o.v;});
+var svg=document.getElementById("chart");var W=svg.clientWidth||600,H=160,pad=8;
+var mx=Math.max.apply(null,pts)||1;
+var ns="http://www.w3.org/2000/svg";var d="";
+for(var p=0;p<pts.length;p++){var x=pad+(p/(pts.length-1||1))*(W-2*pad);var y=H-pad-(pts[p]/mx)*(H-2*pad);d+=(p?" L":"M")+x.toFixed(1)+" "+y.toFixed(1);}
+var path=document.createElementNS(ns,"path");path.setAttribute("d",d);path.setAttribute("fill","none");path.setAttribute("stroke","#34d17f");path.setAttribute("stroke-width","2");svg.appendChild(path);
+var base=document.createElementNS(ns,"line");base.setAttribute("x1",pad);base.setAttribute("x2",W-pad);base.setAttribute("y1",H-pad);base.setAttribute("y2",H-pad);base.setAttribute("stroke","#21385a");svg.appendChild(base);
+}catch(e){document.getElementById("out").innerHTML="<div class=\"err\">データを取得できませんでした。</div>";}
+})();
+</script>
+</body></html>"""
+
+@app.route("/spread")
+def spread_backstage():
+    return SPREAD_HTML
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
