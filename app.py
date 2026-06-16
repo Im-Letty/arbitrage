@@ -1553,5 +1553,127 @@ def depth():
     return DEPTH_HTML
 
 
+LAG_HTML = r"""<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>WS板維持・自己診断（観測・裏）— arbitrage</title>
+<style>
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;max-width:760px;margin:24px auto;padding:0 14px;color:#1a1a1a;line-height:1.6}
+h1{font-size:1.25rem}h2{font-size:1rem}
+.note{background:#f6f7f9;border-left:4px solid #c9ccd1;padding:10px 12px;border-radius:6px;font-size:.9rem;color:#444;margin:14px 0}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:.92rem}
+th,td{border:1px solid #e2e4e8;padding:6px 8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+.diag{margin:14px 0;padding:10px 12px;background:#fafafa;border:1px solid #eee;border-radius:6px;font-size:.9rem}
+.k{display:inline-block;min-width:220px;color:#555}
+.ok{color:#0a6b3a}.warn{color:#a40000;font-weight:600}.amber{color:#8a5a00}
+small.muted{color:#888}
+footer{margin-top:20px;font-size:.82rem;color:#666;border-top:1px solid #eee;padding-top:12px}
+</style></head>
+<body>
+<h1>WS板維持・自己診断（観測・裏）</h1>
+<div class="note">Bybit の板（orderbook）を WebSocket で<b>読み取り専用</b>で受信し、snapshot＋delta から板を再構築して、その<b>維持が正しく動いているか</b>を自己診断します。
+これは<b>取引執行ツールではなく、板維持ロジックの健全性を観測する道具</b>です。予測でも売買シグナルでもありません。注文送信もAPIキー入力も一切できません。</div>
+
+<h2>現在の板（Bybit BTCUSDT）</h2>
+<table>
+<tr><th>項目</th><th>値</th></tr>
+<tr><td>接続状態</td><td id="conn">—</td></tr>
+<tr><td>最良買 (bid)</td><td id="bid">—</td></tr>
+<tr><td>最良売 (ask)</td><td id="ask">—</td></tr>
+<tr><td>板段数 (買 / 売)</td><td id="depthn">—</td></tr>
+<tr><td>updateId (u)</td><td id="uid">—</td></tr>
+</table>
+
+<div class="diag">
+<h2>セルフ診断コーナー</h2>
+<div><span class="k">メインスレッド遅延</span><span id="mainlag">—</span></div>
+<div><span class="k">板破壊の検知回数</span><span id="breaks">—</span></div>
+<div><span class="k">更新ラグ (now − CTS)</span><span id="ctslag">—</span></div>
+<div><span class="k">受信した delta 総数</span><span id="dcount">—</span></div>
+<div style="margin-top:8px"><small class="muted">※「メインスレッド遅延」=setInterval理想時刻との実測ズレ。大きいほどブラウザが詰まっており、ラグ観測は信用できません。<br>
+※「更新ラグ(now−CTS)」=あなたのPC時計とBybitサーバ時計のズレ込みの値（NTPで数ms〜数十msズレるのが普通）。絶対値より「普段の安定値からのスパイク」を見る指標です。<br>
+※「板破壊」=updateIdが逆転、または大きく飛んだ回数。検知したら板を自動で再取得します（壊れた板を表示し続けないため）。</small></div>
+</div>
+
+<footer>
+データ源：Bybit 公開WS <code>wss://stream.bybit.com/v5/public/spot</code>（orderbook.50.BTCUSDT・読み取り専用）。<br>
+⚠ ここで見えるラグは<b>あなたのPCから見た見かけのラグ（経路差＋ブラウザ遅延＋時計ズレ込み）</b>であり、市場の真の先行/追随ではありません。HFTはコロケーションで経路差を消しますが、個人ブラウザでは原理的に分離できません。これは記録・観測であって、取引の指示ではありません。
+</footer>
+
+<script>
+let bids=new Map(), asks=new Map();
+let lastU=null, breaks=0, dcount=0, lastCts=null, connState='接続中…';
+let ws=null;
+
+function applyDelta(side, arr){ for(const [p,s] of (arr||[])){ (+s===0)?side.delete(p):side.set(p, +s); } }
+
+function connect(){
+  try{ ws=new WebSocket('wss://stream.bybit.com/v5/public/spot'); }
+  catch(e){ connState='接続失敗'; return; }
+  ws.onopen=()=>{ connState='接続済'; ws.send(JSON.stringify({op:'subscribe', args:['orderbook.50.BTCUSDT']})); };
+  ws.onclose=()=>{ connState='切断（再接続します）'; setTimeout(connect, 1500); };
+  ws.onerror=()=>{ connState='エラー'; };
+  ws.onmessage=(ev)=>{
+    let m; try{ m=JSON.parse(ev.data); }catch(e){ return; }
+    if(m.success!==undefined) return;
+    if(!m.topic || !m.data) return;
+    const d=m.data; lastCts=m.cts||m.ts||null;
+    if(m.type==='snapshot'){
+      bids.clear(); asks.clear();
+      applyDelta(bids, d.b); applyDelta(asks, d.a);
+      lastU=d.u;
+    } else if(m.type==='delta'){
+      dcount++;
+      if(lastU!==null && (d.u <= lastU || d.u > lastU + 10)){
+        breaks++;
+        try{ ws.close(); }catch(e){}
+        return;
+      }
+      applyDelta(bids, d.b); applyDelta(asks, d.a);
+      lastU=d.u;
+    }
+  };
+}
+connect();
+
+const TICK=250; let expected=performance.now()+TICK; let mainLag=0;
+function fmt(n){ return n.toLocaleString('en-US',{maximumFractionDigits:2}); }
+function render(){
+  const now=performance.now();
+  mainLag=now-expected; if(mainLag<0) mainLag=0; expected=now+TICK;
+
+  const bb=[...bids].map(([p,s])=>[+p,s]).sort((a,b)=>b[0]-a[0]);
+  const aa=[...asks].map(([p,s])=>[+p,s]).sort((a,b)=>a[0]-b[0]);
+  document.getElementById('conn').textContent=connState;
+  document.getElementById('bid').textContent=bb[0]?fmt(bb[0][0]):'—';
+  document.getElementById('ask').textContent=aa[0]?fmt(aa[0][0]):'—';
+  document.getElementById('depthn').textContent=bb.length+' / '+aa.length;
+  document.getElementById('uid').textContent=(lastU===null?'—':lastU);
+
+  const mlEl=document.getElementById('mainlag');
+  mlEl.textContent=mainLag.toFixed(0)+' ms';
+  mlEl.className = mainLag>200?'warn':(mainLag>80?'amber':'ok');
+
+  const brEl=document.getElementById('breaks');
+  brEl.textContent=breaks+' 回';
+  brEl.className = breaks>0?'amber':'ok';
+
+  const ctsEl=document.getElementById('ctslag');
+  if(lastCts){ const lag=Date.now()-lastCts; ctsEl.textContent=lag+' ms'; ctsEl.className=lag>1000?'warn':(lag>300?'amber':'ok'); }
+  else ctsEl.textContent='—';
+
+  document.getElementById('dcount').textContent=dcount;
+}
+setInterval(render, TICK);
+</script>
+</body></html>"""
+
+
+@app.route("/lag")
+def lag():
+    return LAG_HTML
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
