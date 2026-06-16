@@ -1416,6 +1416,8 @@ th:first-child,td:first-child{text-align:left}
 .thin{background:#fff8ec;color:#8a5a00}
 .ok{color:#0a6b3a}
 .diff{font-size:1rem;margin:12px 0;padding:10px 12px;background:#f0f4ff;border-radius:6px}
+#netedge table{margin:6px 0}
+.neg{color:#a40000;font-weight:600}.pos{color:#0a6b3a;font-weight:600}
 .movelog{margin:14px 0;padding:10px 12px;background:#fafafa;border:1px solid #eee;border-radius:6px;font-size:.88rem}
 .movelog h2{font-size:.98rem;margin:0 0 6px}
 footer{margin-top:20px;font-size:.82rem;color:#666;border-top:1px solid #eee;padding-top:12px}
@@ -1429,6 +1431,7 @@ small.muted{color:#888}
 
 <div id="status"><small class="muted">読み込み中…</small></div>
 <div id="diff" class="diff" style="display:none"></div>
+<div id="netedge" class="diff" style="display:none;background:#fff8f0"></div>
 <div id="tables"></div>
 
 <div class="movelog">
@@ -1519,6 +1522,31 @@ async function tick(){
         +' <small class="muted">— ⚠ これは手数料・送金・同時約定の速さを無視した数字です。プラスでも、ほぼ「もう古い板」か「速さの壁」で掴めません。取引の指示ではありません。</small>';
     }
     const d=document.getElementById('diff'); d.style.display='block'; d.innerHTML=dtxt;
+
+    try {
+      const FEE={binance:{taker:0.001}, bybit:{taker:0.001}};
+      const roundTripFee=FEE.binance.taker+FEE.bybit.taker;
+      const ne=document.getElementById('netedge');
+      if(buyB.short||buyY.short||sellB.short||sellY.short){
+        ne.style.display='block';
+        ne.innerHTML='<b>コスト控除後の純益</b>：⚠ 板が薄く約定できないサイズがあります（片足リスク）。純益は計算しません。';
+      } else {
+        let h='<b>コスト控除後の純益（手数料：Binance 0.1% + Bybit 0.1% = 往復0.2%・両レッグtaker・送金別）</b>';
+        h+='<table><tr><th>数量(BTC)</th><th>見かけ粗利</th><th>往復手数料</th><th>手元に残る純益</th></tr>';
+        for(const q of QTYS){
+          const bc=Math.min(B.eff[q].buy.avg, Y.eff[q].buy.avg);
+          const sh=Math.max(B.eff[q].sell.avg, Y.eff[q].sell.avg);
+          const gross=(sh-bc)/bc;
+          const net=gross-roundTripFee;
+          const cls=net>0?'pos':'neg';
+          h+='<tr><td>'+q+'</td><td>'+pct(gross)+'</td><td class="neg">−'+pct(roundTripFee)+'</td>'
+            +'<td class="'+cls+'">'+(net>=0?'+':'')+pct(net)+(net<0?'（掴めない）':'')+'</td></tr>';
+        }
+        h+='</table>';
+        h+='<small class="muted">※ 手数料は代表値の定数（実際はVIP段階・割引で変動）。即時両建ての現実ケースとして両レッグtakerで計算。maker×makerなら手数料は下がるが約定しない可能性。取引所間で在庫を動かす場合は出金手数料が別途かかる（この表は在庫運用＝送金ゼロ前提）。これは記録・観測であって取引の指示ではありません。</small>';
+        ne.style.display='block'; ne.innerHTML=h;
+      }
+    } catch(e){ const ne=document.getElementById('netedge'); if(ne) ne.style.display='none'; }
 
     const cur={bn:{bid:B.bestBid, ask:B.bestAsk}, by:{bid:Y.bestBid, ask:Y.bestAsk}};
     if(prevBest){
